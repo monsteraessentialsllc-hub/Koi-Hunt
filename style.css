@@ -367,3 +367,60 @@ button { cursor: pointer; }
   width: min(220px, 45vw);
   accent-color: #e5b84a;
 }
+
+/* KOI HUNT branded title treatment */
+.title-lockup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.title-lockup h1 {
+  display: grid;
+  gap: 0;
+  transform: skew(-3deg);
+}
+.title-lockup h1 span:first-child { color: #fff0c2; }
+.title-lockup h1 span:last-child { color: #f07a42; }
+.title-koi {
+  position: relative;
+  color: #f08a45;
+  font-size: 28px;
+  text-shadow: 3px 3px #5d341d;
+  animation: koi-bob 1.8s steps(4, end) infinite;
+}
+.title-koi::before,
+.title-koi::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #fff0c2;
+  top: 50%;
+}
+.title-koi::before { left: -6px; transform: rotate(45deg); }
+.title-koi::after { right: -6px; transform: rotate(45deg); }
+.title-koi-right { animation-delay: -.9s; }
+.title-tagline {
+  margin: 4px 0 18px;
+  color: #c8dc7d;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px #17382f;
+}
+.main-menu .pixel-button::before {
+  display: inline-block;
+  width: 20px;
+  margin-right: 8px;
+  color: #efd36f;
+}
+#play-button::before { content: "▶"; }
+#collection-button::before { content: "◈"; }
+#settings-button::before { content: "⚙"; }
+#credits-button::before { content: "✦"; }
+@keyframes koi-bob {
+  0%,100% { transform: translateY(0) rotate(-8deg); }
+  50% { transform: translateY(-5px) rotate(8deg); }
+}
