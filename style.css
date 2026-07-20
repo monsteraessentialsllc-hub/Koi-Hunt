@@ -459,3 +459,185 @@ button { cursor: pointer; }
 .icon-credits::before {
   content: "★"; position: absolute; inset: -4px 0 0; font-size: 22px; line-height: 18px;
 }
+
+/* Lily-pad art direction */
+:root {
+  --pad-deep: #123f2d;
+  --pad-mid: #2f7441;
+  --pad-light: #6fae55;
+  --pad-edge: #173d2d;
+  --pad-gold: #efd77d;
+  --flower: #f3a9c2;
+}
+
+/* More hand-crafted, storybook-style lettering while keeping the retro feel */
+.home-card h1,
+.panel-heading h2,
+.overlay-panel h2,
+.theme-card h3,
+.world-label,
+.pixel-button,
+.small-button,
+.setting-row,
+.credits-panel strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+}
+
+.home-card h1,
+.panel-heading h2,
+.overlay-panel h2 {
+  font-style: italic;
+  letter-spacing: .12em;
+  text-shadow:
+    3px 0 #6f4b24,
+    0 3px #6f4b24,
+    -1px -1px #fff1a5,
+    5px 5px #17352d;
+}
+
+.panel-heading p,
+.theme-card p,
+.credits-panel p,
+.scores span,
+.bottom-bar {
+  font-family: Monaco, "Courier New", monospace;
+  letter-spacing: .12em;
+}
+
+/* Every game control becomes a lily pad */
+.pixel-button,
+.small-button,
+.theme-card .small-button {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  color: #f8edb0;
+  background:
+    radial-gradient(circle at 33% 27%, rgba(255,255,255,.20) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 45% 45%, var(--pad-light) 0 12%, var(--pad-mid) 48%, var(--pad-deep) 78%);
+  border: 4px solid var(--pad-edge);
+  border-radius: 53% 47% 50% 46% / 49% 54% 46% 51%;
+  box-shadow:
+    inset 0 -7px 0 rgba(4,42,27,.34),
+    inset 0 4px 0 rgba(207,238,149,.20),
+    0 5px 0 #082d25,
+    0 8px 12px rgba(1,26,24,.35);
+  text-shadow: 2px 2px #173b29;
+  clip-path: polygon(0 4%, 85% 2%, 77% 22%, 99% 35%, 96% 93%, 12% 100%, 0 82%);
+  transition: transform .12s ease, filter .12s ease;
+}
+
+.pixel-button::before,
+.small-button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 7px 12px 10px 11px;
+  border-radius: 50%;
+  border: 2px solid rgba(190,226,126,.20);
+  transform: rotate(-3deg);
+}
+
+.pixel-button::after,
+.small-button::after {
+  content: "✿";
+  position: absolute;
+  right: 9%;
+  top: -9px;
+  color: var(--flower);
+  font-family: Georgia, serif;
+  font-size: 17px;
+  line-height: 1;
+  text-shadow: 1px 1px #733c56;
+  transform: rotate(10deg);
+}
+
+.pixel-button.primary {
+  color: #fff2af;
+  background:
+    radial-gradient(circle at 31% 24%, rgba(255,255,255,.24) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 45% 45%, #8fc963 0 12%, #3e8548 48%, #175137 80%);
+  border-color: #234c31;
+}
+
+.pixel-button:not(.primary) {
+  color: #f0e7a2;
+  background:
+    radial-gradient(circle at 33% 27%, rgba(255,255,255,.18) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 45% 45%, #6da853 0 12%, #2f7543 50%, #143f30 82%);
+  border-color: #204d33;
+}
+
+.pixel-button:hover,
+.small-button:hover {
+  filter: brightness(1.12) saturate(1.08);
+  transform: translateY(-2px) rotate(-.5deg);
+}
+
+.pixel-button:active,
+.small-button:active {
+  transform: translate(2px, 3px) rotate(.5deg);
+  box-shadow: inset 0 -4px 0 rgba(4,42,27,.3), 0 2px 0 #082d25;
+}
+
+.main-menu {
+  gap: 15px;
+}
+
+.main-menu .pixel-button {
+  min-height: 58px;
+  padding: 14px 32px 14px 24px;
+  font-size: 17px;
+  letter-spacing: .12em;
+}
+
+.main-menu .pixel-button:nth-child(even) { transform: rotate(1deg); }
+.main-menu .pixel-button:nth-child(odd) { transform: rotate(-1deg); }
+.main-menu .pixel-button:nth-child(even):hover,
+.main-menu .pixel-button:nth-child(odd):hover { transform: translateY(-2px) rotate(0deg); }
+
+.menu-icon {
+  color: #f7df85;
+  filter: drop-shadow(2px 2px 0 #21452e);
+}
+
+/* Panel text gets a softer botanical presentation */
+.theme-card h3 {
+  color: #f4d980;
+  font-style: italic;
+  letter-spacing: .08em;
+  text-shadow: 2px 2px #17392d;
+}
+
+.credits-panel strong {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #f2dc89;
+  font-style: italic;
+  letter-spacing: .08em;
+  text-shadow: 2px 2px #17392d;
+}
+
+.theme-card .small-button,
+.safe-bar .small-button {
+  min-height: 42px;
+}
+
+.theme-card.locked .small-button,
+.theme-card.locked .theme-select {
+  color: #b7b99e;
+  background: radial-gradient(ellipse at 45% 45%, #5d6854 0 12%, #3e493e 55%, #2b342f 82%);
+  border-color: #4f5c4e;
+  filter: grayscale(.25);
+}
+
+@media (max-width: 560px) {
+  .main-menu .pixel-button {
+    min-height: 54px;
+    font-size: 15px;
+    padding-inline: 18px 28px;
+  }
+  .pixel-button::after,
+  .small-button::after { font-size: 14px; top: -7px; }
+}
