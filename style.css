@@ -362,3 +362,8 @@ button { cursor: pointer; }
 .theme-card.unlocked .unlock-note {
   color: #8fc66c !important;
 }
+
+.music-volume-row input[type="range"] {
+  width: min(220px, 45vw);
+  accent-color: #e5b84a;
+}
