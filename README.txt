@@ -1,36 +1,35 @@
-KOI HUNT: ANACONDA POND EDITION
+KOI HUNT: ANACONDA POND EDITION — UPDATED BUILD
 
-FILES
+FILES TO UPLOAD TO GITHUB
 - index.html
 - style.css
 - game.js
+- README.txt
 
-HOW TO TEST
-1. Keep all three files in the same folder.
-2. Open index.html in Chrome.
-3. Click Start Game.
-4. Use Arrow Keys or WASD.
-5. Press Space to pause.
+NEW FEATURES
+- Main menu with Play, Collection, Settings, and Credits.
+- Original anaconda wraps around the inner main-menu square.
+- Tail begins before the koi and the head follows directly behind it.
+- Lily pads and water reeds added to the menu pond.
+- More blocky, pixel-style typography and interface.
+- Collection screen with two complete worlds:
+  1. Anaconda Pond — green anaconda, orange koi, blue pond.
+  2. Thornback Trail — grey thorn-pattern snake, grey mouse, grass field.
+- Selecting a Collection world changes the snake, target, and background.
+- Separate best score saved for each world.
+- Settings screen for background animation and scanlines.
 
 GAME RULES
-- The play space is square.
-- The pond edges wrap around.
+- Keyboard only: Arrow Keys or WASD.
+- Space pauses.
+- The square play field wraps at every edge.
 - Hitting a wall does not end the game.
-- You only lose by biting the anaconda's own body.
-- Best score is stored in the browser.
+- The only losing condition is biting the snake's own body.
 
-HOW TO ADD TO SQUARESPACE
-These three files must be hosted somewhere that serves a normal webpage,
-such as GitHub Pages, Netlify, Cloudflare Pages, or another web host.
-
-After hosting, add an Embed or Code Block in Squarespace and use:
-
-<iframe
-  src="YOUR-HOSTED-GAME-URL"
-  title="Koi Hunt: Anaconda Pond Edition"
-  style="width:100%;max-width:620px;aspect-ratio:1/1.18;border:0;display:block;margin:auto;"
-  loading="lazy">
-</iframe>
-
-Do not upload index.html directly to the Squarespace asset library and expect it
-to run as a webpage; Squarespace normally treats uploaded files as downloads.
+HOW TO UPDATE GITHUB
+1. Open your Koi-Hunt repository.
+2. Choose Add file > Upload files.
+3. Upload the four individual files from this folder.
+4. GitHub will warn that files already exist; allow them to replace the old versions.
+5. Commit the changes.
+6. Wait about one minute and refresh the GitHub Pages game link.

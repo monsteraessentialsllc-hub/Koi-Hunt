@@ -8,33 +8,102 @@
 </head>
 <body>
   <main id="koi-hunt" class="game-app">
+    <!-- MAIN MENU -->
     <section id="home-screen" class="screen home-screen">
-      <div class="home-card">
-        <div class="pixel-koi" aria-hidden="true"></div>
+      <div class="menu-stage">
+        <canvas id="menu-canvas" width="560" height="680" aria-hidden="true"></canvas>
 
-        <h1>KOI HUNT</h1>
-        <p class="subtitle">ANACONDA POND EDITION</p>
+        <div class="home-card">
+          <h1>KOI HUNT</h1>
+          <p class="subtitle">ANACONDA POND EDITION</p>
 
-        <button id="start-button" class="pixel-button" type="button">
-          START GAME
-        </button>
+          <nav class="main-menu" aria-label="Game menu">
+            <button id="play-button" class="pixel-button primary" type="button">PLAY</button>
+            <button id="collection-button" class="pixel-button" type="button">COLLECTION</button>
+            <button id="settings-button" class="pixel-button" type="button">SETTINGS</button>
+            <button id="credits-button" class="pixel-button" type="button">CREDITS</button>
+          </nav>
 
-        <div class="instructions">
-          <p><strong>ARROW KEYS</strong> OR <strong>WASD</strong> TO MOVE</p>
-          <p>EAT THE KOI TO GROW</p>
-          <p>THE POND EDGES WRAP AROUND</p>
-          <p>DON'T BITE YOURSELF</p>
-          <p><strong>SPACE</strong> TO PAUSE</p>
+          <div class="new-theme-banner">
+            <span class="banner-kicker">NEW WORLD AVAILABLE</span>
+            <strong>THORNBACK TRAIL</strong>
+            <span>CHASE A GREY MOUSE THROUGH THE GRASS</span>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- COLLECTION -->
+    <section id="collection-screen" class="screen hidden">
+      <div class="panel-shell collection-shell">
+        <header class="panel-heading">
+          <h2>COLLECTION</h2>
+          <p>CHOOSE A WORLD</p>
+        </header>
+
+        <div class="theme-grid">
+          <article class="theme-card" data-theme="anacondaPond">
+            <canvas class="theme-preview" width="240" height="150" aria-label="Anaconda Pond preview"></canvas>
+            <h3>ANACONDA POND</h3>
+            <p>GREEN ANACONDA · ORANGE KOI · BLUE POND</p>
+            <button class="theme-select small-button" type="button">SELECT</button>
+          </article>
+
+          <article class="theme-card" data-theme="thornbackTrail">
+            <canvas class="theme-preview" width="240" height="150" aria-label="Thornback Trail preview"></canvas>
+            <h3>THORNBACK TRAIL</h3>
+            <p>THORNY SNAKE · GREY MOUSE · WILD GRASS</p>
+            <button class="theme-select small-button" type="button">SELECT</button>
+          </article>
+        </div>
+
+        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings-screen" class="screen hidden">
+      <div class="panel-shell simple-panel">
+        <header class="panel-heading">
+          <h2>SETTINGS</h2>
+          <p>DISPLAY OPTIONS</p>
+        </header>
+
+        <label class="setting-row">
+          <span>WATER / GRASS ANIMATION</span>
+          <input id="animation-toggle" type="checkbox" checked />
+        </label>
+
+        <label class="setting-row">
+          <span>PIXEL SCANLINES</span>
+          <input id="scanline-toggle" type="checkbox" />
+        </label>
+
+        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
+      </div>
+    </section>
+
+    <!-- CREDITS -->
+    <section id="credits-screen" class="screen hidden">
+      <div class="panel-shell simple-panel credits-panel">
+        <header class="panel-heading">
+          <h2>CREDITS</h2>
+        </header>
+
+        <p>GAME CONCEPT &amp; ORIGINAL ART</p>
+        <strong>SANTINO · MONSTERA ESSENTIALS</strong>
+        <p>PIXEL GAME BUILD</p>
+        <strong>KOI HUNT</strong>
+
+        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
+      </div>
+    </section>
+
+    <!-- GAME SCREEN -->
     <section id="game-screen" class="screen game-screen hidden">
       <div class="game-shell">
         <header class="safe-bar">
-          <button id="menu-button" class="small-button" type="button">
-            MAIN MENU
-          </button>
+          <button id="menu-button" class="small-button" type="button">MAIN MENU</button>
 
           <div class="scores" aria-live="polite">
             <div>
@@ -47,26 +116,19 @@
             </div>
           </div>
 
-          <button id="pause-button" class="small-button" type="button">
-            PAUSE
-          </button>
+          <button id="pause-button" class="small-button" type="button">PAUSE</button>
         </header>
 
+        <div class="world-label" id="world-label">ANACONDA POND</div>
+
         <div class="play-space">
-          <canvas
-            id="game-canvas"
-            width="480"
-            height="480"
-            aria-label="Koi Hunt game"
-          ></canvas>
+          <canvas id="game-canvas" width="480" height="480" aria-label="Koi Hunt game"></canvas>
 
           <div id="overlay" class="overlay hidden">
             <div class="overlay-panel">
               <h2 id="overlay-title">PAUSED</h2>
               <p id="overlay-text">Press Space to continue.</p>
-              <button id="overlay-button" class="pixel-button" type="button">
-                CONTINUE
-              </button>
+              <button id="overlay-button" class="pixel-button primary" type="button">CONTINUE</button>
             </div>
           </div>
         </div>
