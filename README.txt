@@ -25,3 +25,12 @@ MUSIC ASSIGNMENTS
 - Anaconda Deep Water: Goldie complete
 
 Browser note: music begins after the player's first click or key press due to browser autoplay rules.
+
+
+REQUESTED CHANGES:
+1. Better Koi Hunt title/icons
+2. Gameplay-style animated menu background
+3. Top-down prey sprites
+4. Swimmer swimming away
+5. Tree trunk dominant
+6. Unlocks: 100,170,240,310 (+70 thereafter)
