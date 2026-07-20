@@ -4,7 +4,74 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Koi Hunt</title>
-  <link rel="stylesheet" href="style.css?v=8bit-pond-1" />
+  <style>
+:root{
+  --ink:#071a20;--deep:#082f3c;--water:#087d9a;--water2:#0a9bb0;--foam:#b9f1e9;
+  --wood:#4b2b16;--wood2:#7a4a20;--gold:#f3c64e;--cream:#fff2b4;
+  --leaf:#4d8e2b;--leaf2:#79b83c;--leaf3:#9bd355;--leafDark:#173c20;
+  --pink:#f497bd;--panel:#0a3944;--panel2:#0c5160;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#041f28;color:var(--cream)}
+body{display:grid;place-items:start center;padding:12px;font-family:"Courier New",monospace;font-weight:900;image-rendering:pixelated;-webkit-font-smoothing:none}
+button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96vw,700px);letter-spacing:1px}.screen{width:100%;animation:screenIn .18s steps(3,end)}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.game-app.scanlines::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 2px,transparent 2px 5px)}
+
+/* shared 8-bit frames */
+.home-screen,.panel-shell,.game-shell{border:6px solid #071b20;outline:4px solid #9a6b28;box-shadow:0 0 0 4px #d0a13b,10px 10px 0 #031317;background:#082f3c}
+.panel-shell,.game-shell{padding:12px;min-height:640px;background:linear-gradient(rgba(5,49,58,.96),rgba(5,49,58,.96)),repeating-linear-gradient(90deg,#0a6774 0 24px,#0b7280 24px 48px)}
+
+/* main menu */
+.home-screen{overflow:hidden}.menu-stage{position:relative;width:100%;aspect-ratio:560/680;min-height:620px}
+#menu-canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated}
+.home-card{position:absolute;z-index:2;left:50%;top:50%;transform:translate(-50%,-50%);width:min(82%,470px);padding:20px 22px 24px;text-align:center;background:rgba(3,41,51,.74);border:4px solid #153f45;box-shadow:0 0 0 4px rgba(242,198,78,.7),8px 8px 0 rgba(2,18,23,.65)}
+.game-logo{margin:0 0 20px;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(5px 5px 0 #06191d)}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:9px;line-height:.82}
+.logo-koi,.logo-hunt{font-family:Impact,"Arial Black",sans-serif;font-size:clamp(54px,11vw,88px);letter-spacing:2px;-webkit-text-stroke:3px #071a20;text-shadow:4px 0 #071a20,0 4px #071a20,4px 4px #071a20}
+.logo-koi{color:#f0a33c}.logo-hunt{color:#78c849}.logo-fish{width:clamp(92px,20vw,145px);height:auto;display:block;margin-top:-3px;image-rendering:pixelated}
+.logo-sub{margin-top:2px;color:#b9eff0;font-size:11px;letter-spacing:4px;text-shadow:2px 2px #063b49}
+.main-menu{display:grid;gap:13px;width:min(100%,330px);margin:auto}
+
+/* lily-pad buttons with chunky pixel depth */
+.pixel-button,.small-button{position:relative;isolation:isolate;border:0;color:#fff4b7;text-transform:uppercase;letter-spacing:2px;text-shadow:2px 2px 0 #17311e;cursor:pointer;image-rendering:pixelated}
+.pixel-button{min-height:62px;padding:12px 44px;font-size:18px;background:transparent}
+.pixel-button::before,.small-button::before{content:"";position:absolute;z-index:-2;inset:5px 4px 2px 4px;background:#18361f;border:4px solid #071a12;border-radius:54% 46% 52% 48%/55% 50% 50% 45%;transform:translate(5px,6px)}
+.pixel-button::after,.small-button::after{content:"";position:absolute;z-index:-1;inset:0 7px 7px 0;background:linear-gradient(180deg,#9ad650 0 18%,#6bae35 19% 58%,#3d792c 59% 100%);border:4px solid #153b20;border-radius:54% 46% 52% 48%/55% 50% 50% 45%;box-shadow:inset 0 5px 0 rgba(225,255,166,.35),inset -7px -7px 0 rgba(23,65,29,.35)}
+.pixel-button:hover::after,.small-button:hover::after{filter:brightness(1.12);transform:translateY(-2px)}
+.pixel-button:active,.small-button:active{transform:translate(5px,5px)}
+.pixel-button:active::before,.small-button:active::before{transform:translate(1px,1px)}
+.pixel-button:active::after,.small-button:active::after{transform:translateY(3px)}
+.pixel-button.primary{color:#fffbe0}.pixel-button.primary::after{background:linear-gradient(180deg,#c6eb65 0 18%,#82c943 19% 58%,#4d8c2e 59% 100%)}
+.pixel-button .menu-icon{display:inline-grid;place-items:center;width:27px;margin-right:9px;color:#ffe77c;font-size:20px}
+.main-menu .pixel-button:nth-child(1) .menu-icon::before{content:"▶"}.main-menu .pixel-button:nth-child(2) .menu-icon::before{content:"◆"}.main-menu .pixel-button:nth-child(3) .menu-icon::before{content:"⚙"}.main-menu .pixel-button:nth-child(4) .menu-icon::before{content:"★"}
+.main-menu .pixel-button::marker{display:none}.main-menu .pixel-button::after{clip-path:polygon(0 0,86% 0,100% 20%,92% 100%,10% 100%,0 70%)}
+.main-menu .pixel-button:nth-child(odd)::after{transform:rotate(-1deg)}.main-menu .pixel-button:nth-child(even)::after{transform:rotate(1deg)}
+.main-menu .pixel-button:nth-child(odd)::before{transform:translate(5px,7px) rotate(-1deg)}.main-menu .pixel-button:nth-child(even)::before{transform:translate(5px,7px) rotate(1deg)}
+.main-menu .pixel-button span+*{vertical-align:middle}
+.main-menu .pixel-button{overflow:visible}.main-menu .pixel-button:nth-child(1)::marker{content:""}
+.main-menu .pixel-button::selection{background:transparent}
+
+/* tiny flower attached to menu pads */
+.main-menu .pixel-button{--flower-x:88%}.main-menu .pixel-button::before{box-shadow:none}
+.main-menu .pixel-button .menu-icon{position:relative}
+.main-menu .pixel-button .menu-icon::after{content:"✿";position:absolute;left:245px;top:-4px;color:var(--pink);font-size:22px;text-shadow:2px 2px #6c3150}
+
+/* headings */
+.panel-heading{text-align:center;margin:8px 0 22px}.panel-heading h2,.overlay-panel h2{margin:0;color:var(--gold);font-family:Impact,"Arial Black",sans-serif;font-size:clamp(34px,7vw,58px);letter-spacing:3px;-webkit-text-stroke:2px #071a20;text-shadow:4px 4px 0 #5b3518}.panel-heading p{margin:7px 0 0;color:#b8e477;font-size:12px;letter-spacing:3px}.world-label{margin:7px 0;padding:9px;text-align:center;color:#ffe77c;background:#0a3138;border:4px solid #173e43;box-shadow:inset 0 3px #236672;font-size:12px;letter-spacing:2px}
+
+/* collection cards */
+.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.theme-card{position:relative;padding:10px 10px 14px;text-align:center;background:linear-gradient(#0d5360,#092f38);border:5px solid #152d31;box-shadow:0 0 0 3px #7b5424,7px 7px 0 #03171a;transition:transform .12s steps(2,end)}.theme-card:hover{transform:translateY(-3px)}.theme-card.selected{box-shadow:0 0 0 3px #f2c64e,7px 7px 0 #03171a}.theme-preview{display:block;width:100%;aspect-ratio:8/5;border:4px solid #071a20;image-rendering:pixelated}.theme-card h3{margin:10px 0 5px;color:#ffe57c;font-size:15px;letter-spacing:1px}.theme-card p{min-height:38px;margin:0 0 9px;color:#c0d5ad;font-size:9px;line-height:1.45}.unlock-note,.unlock-status{color:#f4ca55!important;min-height:26px!important}.theme-card.locked::after{content:"LOCKED";position:absolute;top:18px;right:15px;padding:5px 7px;color:#fff0a8;background:#402b19;border:3px solid #111;font-size:10px;transform:rotate(3deg)}.theme-card.locked{filter:saturate(.52) brightness(.82)}.theme-card.locked .theme-preview{opacity:.67}.theme-card.locked .small-button{cursor:not-allowed;opacity:.6}
+.small-button{min-height:42px;padding:8px 14px;font-size:10px;background:transparent}.small-button::after{background:linear-gradient(#7e9fb2 0 20%,#58788a 21% 62%,#355263 63%);border-radius:8px;clip-path:none}.small-button::before{border-radius:8px;background:#172c38}.back-button{display:block;margin:25px auto 0;min-width:190px}
+
+/* settings / credits */
+.simple-panel{display:grid;align-content:start;gap:17px}.setting-row{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px;color:#fff1ad;background:#0a4650;border:4px solid #16333a;box-shadow:inset 0 3px #1c6a75,5px 5px #03171a;font-size:12px}.setting-row input[type=checkbox]{width:24px;height:24px;accent-color:#7fc547}.setting-row input[type=range]{width:min(240px,48vw);accent-color:#7fc547}.credits-panel{text-align:center}.credits-panel p{margin:11px 0 3px;color:#a5cfa8;font-size:11px}.credits-panel strong{color:#ffe170;font-size:16px}
+
+/* game HUD */
+.game-shell{min-height:auto}.safe-bar{display:grid;grid-template-columns:minmax(100px,1fr) auto minmax(90px,1fr);align-items:center;gap:10px;padding:9px;background:linear-gradient(#7b4c22,#4d2d17);border:5px solid #24140d;box-shadow:inset 0 4px #a86e31,5px 5px #03171a}.scores{display:flex;justify-content:center;gap:22px;text-align:center}.scores div{padding:4px 10px;background:#0b3039;border:3px solid #16252a}.scores span{display:block;color:#a9dadd;font-size:9px}.scores strong{display:block;color:#ffe16a;font-size:21px}.play-space{position:relative;width:100%;aspect-ratio:1;overflow:hidden;border:6px solid #26150d;outline:3px solid #855728;background:#07313b}#game-canvas{display:block;width:100%;height:100%;image-rendering:pixelated}.bottom-bar{display:flex;justify-content:space-between;gap:12px;margin-top:9px;padding:10px;color:#ffe7a0;background:#4b2d18;border:4px solid #24140d;font-size:9px}.overlay{position:absolute;inset:0;display:grid;place-items:center;padding:20px;background:rgba(3,25,31,.82)}.overlay-panel{width:min(86%,340px);padding:23px 18px;text-align:center;background:#0b4651;border:5px solid #f0c44c;box-shadow:8px 8px #03171a}.overlay-panel p{color:#fff2bd;font-size:12px;line-height:1.5}
+
+@media(max-width:560px){body{padding:7px}.game-app{width:97vw}.menu-stage{min-height:570px}.home-card{width:88%;padding-inline:13px}.logo-koi,.logo-hunt{font-size:clamp(48px,15vw,72px)}.main-menu{width:90%}.pixel-button{font-size:15px;min-height:57px}.main-menu .pixel-button .menu-icon::after{left:215px}.theme-grid{grid-template-columns:1fr}.safe-bar{grid-template-columns:1fr auto 1fr;gap:5px}.small-button{font-size:8px;padding:7px}.scores{gap:7px}.scores strong{font-size:17px}.bottom-bar{font-size:8px}}
+
+</style>
 </head>
 <body>
   <main id="koi-hunt" class="game-app">
@@ -15,9 +82,17 @@
 
         <div class="home-card">
           <h1 class="game-logo" aria-label="Koi Hunt">
-            <span class="logo-word logo-koi">KOI</span>
-            <span class="pixel-koi" aria-hidden="true"><i class="fish-body"></i><i class="fish-tail"></i><i class="fish-fin"></i><i class="fish-eye"></i></span>
-            <span class="logo-word logo-hunt">HUNT</span>
+            <span class="logo-row"><span class="logo-koi">KOI</span><span class="logo-hunt">HUNT</span></span>
+            <svg class="logo-fish" viewBox="0 0 96 36" role="img" aria-label="Pixel koi fish">
+              <g shape-rendering="crispEdges">
+                <path fill="#eef4e7" d="M8 13h10V8h11V5h29v3h12v5h10v10H70v5H58v3H29v-3H18v-5H8z"/>
+                <path fill="#ef6b32" d="M23 9h14v8H23zM45 6h13v8H45zM54 20h12v7H54zM30 21h13v7H30z"/>
+                <path fill="#d95427" d="M18 13h10v10H18zM64 12h10v11H64z"/>
+                <path fill="#d9e6df" d="M2 8h8v7h8v6h-8v7H2l5-10zM38 1h13v5H38zM38 30h13v5H38z"/>
+                <rect fill="#071a20" x="71" y="14" width="4" height="4"/>
+              </g>
+            </svg>
+            <span class="logo-sub">A MONSTERA ARCADE</span>
           </h1>
           <nav class="main-menu" aria-label="Game menu">
             <button id="play-button" class="pixel-button primary" type="button"><span class="menu-icon icon-play" aria-hidden="true"></span>PLAY</button>
@@ -170,12 +245,720 @@
 
         <footer class="bottom-bar">
           <span>MOVE: ARROWS / WASD</span>
+          <span>WALLS WRAP · ONLY SELF-BITES END THE GAME</span>
           <span>PAUSE: SPACE</span>
         </footer>
       </div>
     </section>
   </main>
 
-  <script src="game.js?v=8bit-pond-1"></script>
+  <script>
+(() => {
+  const app = document.getElementById("koi-hunt");
+  const screens = {
+    home: document.getElementById("home-screen"),
+    collection: document.getElementById("collection-screen"),
+    settings: document.getElementById("settings-screen"),
+    credits: document.getElementById("credits-screen"),
+    game: document.getElementById("game-screen")
+  };
+
+  const ui = {
+    play: document.getElementById("play-button"),
+    collection: document.getElementById("collection-button"),
+    settings: document.getElementById("settings-button"),
+    credits: document.getElementById("credits-button"),
+    menu: document.getElementById("menu-button"),
+    pause: document.getElementById("pause-button"),
+    overlay: document.getElementById("overlay"),
+    overlayTitle: document.getElementById("overlay-title"),
+    overlayText: document.getElementById("overlay-text"),
+    overlayButton: document.getElementById("overlay-button"),
+    score: document.getElementById("score"),
+    best: document.getElementById("best-score"),
+    worldLabel: document.getElementById("world-label"),
+    animationToggle: document.getElementById("animation-toggle"),
+    scanlineToggle: document.getElementById("scanline-toggle"),
+    musicToggle: document.getElementById("music-toggle"),
+    musicVolume: document.getElementById("music-volume")
+  };
+
+  const gameCanvas = document.getElementById("game-canvas");
+  const ctx = gameCanvas.getContext("2d");
+  const menuCanvas = document.getElementById("menu-canvas");
+  const menuCtx = menuCanvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  menuCtx.imageSmoothingEnabled = false;
+
+
+  const musicTracks = {
+    menu: "audio/better.mp3",
+    anacondaPond: "audio/medusa.mp3",
+    bambooBallPython: "audio/tts2.mp3",
+    greenTreePython: "audio/gasoline-takes.mp3",
+    rattlesnakeDesert: "audio/loop-demona-finished.mp3",
+    anacondaSwimmer: "audio/goldie-complete.mp3"
+  };
+  const music = new Audio();
+  music.loop = true;
+  music.preload = "auto";
+  let musicEnabled = localStorage.getItem("koiHuntMusic") !== "false";
+  let musicVolume = Number(localStorage.getItem("koiHuntMusicVolume") || 0.55);
+  let activeTrackKey = null;
+  let audioUnlocked = false;
+  music.volume = musicVolume;
+
+  function unlockAudio() {
+    audioUnlocked = true;
+    playMusic(activeTrackKey || "menu");
+  }
+
+  function playMusic(trackKey) {
+    activeTrackKey = trackKey;
+    const source = musicTracks[trackKey] || musicTracks.menu;
+    if (!musicEnabled || !audioUnlocked) {
+      music.pause();
+      return;
+    }
+    if (!music.src.endsWith(source)) {
+      music.src = source;
+      music.currentTime = 0;
+    }
+    music.volume = musicVolume;
+    music.play().catch(() => {});
+  }
+
+  const gridSize = 20;
+  const tileSize = gameCanvas.width / gridSize;
+
+  const themes = {
+    anacondaPond: {
+      name: "ANACONDA POND",
+      targetName: "ORANGE KOI",
+      background: "pond",
+      snakeStyle: "anaconda",
+      unlockScore: 0,
+      unlockText: "AVAILABLE FROM THE START",
+      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" },
+      target: { main: "#f38550", light: "#ffc06f", dark: "#cf4f36" }
+    },
+    bambooBallPython: {
+      name: "BAMBOO BALL PYTHON",
+      targetName: "GREY MOUSE",
+      background: "brightGrass",
+      snakeStyle: "bamboo",
+      unlockScore: 100,
+      unlockText: "UNLOCK AT 100 POINTS",
+      snake: { main: "#d4d8cf", alt: "#eef0e9", light: "#ffffff", dark: "#60473a", accent: "#82604a", white: "#ffffff", eye: "#111818" },
+      target: { main: "#34383b", light: "#dfe4e6", dark: "#101214", pink: "#ff9aa5" }
+    },
+    greenTreePython: {
+      name: "GREEN TREE PYTHON",
+      targetName: "TREE FROG",
+      background: "canopy",
+      snakeStyle: "treePython",
+      unlockScore: 170,
+      unlockText: "UNLOCK AT 170 POINTS",
+      snake: { main: "#60c93f", alt: "#83e75b", light: "#b4f47d", dark: "#164f27", accent: "#f4e36f", eye: "#ffdc4e" },
+      target: { main: "#61d85b", light: "#b7f58d", dark: "#185633", pink: "#ff8b70" }
+    },
+    rattlesnakeDesert: {
+      name: "RATTLESNAKE DESERT",
+      targetName: "DESERT LIZARD",
+      background: "desert",
+      snakeStyle: "rattlesnake",
+      unlockScore: 240,
+      unlockText: "UNLOCK AT 240 POINTS",
+      snake: { main: "#bd9a58", alt: "#d4b86f", light: "#ead58c", dark: "#5c472e", accent: "#2e2b22", eye: "#f4ca52" },
+      target: { main: "#6da34b", light: "#a8d16f", dark: "#34512c", pink: "#df805c" }
+    },
+    anacondaSwimmer: {
+      name: "ANACONDA DEEP WATER",
+      targetName: "SWIMMER",
+      background: "deepPond",
+      snakeStyle: "anaconda",
+      unlockScore: 310,
+      unlockText: "UNLOCK AT 310 POINTS",
+      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" },
+      target: { skin: "#9a5d3c", suit: "#2e83d0", hair: "#251b18", foam: "#d7f4ff" }
+    }
+  };
+
+  let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
+  if (!themes[selectedThemeKey]) selectedThemeKey = "anacondaPond";
+  let snake = [];
+  let target = { x: 14, y: 10 };
+  let direction = { x: 1, y: 0 };
+  let nextDirection = { x: 1, y: 0 };
+  let score = 0;
+  let gameRunning = false;
+  let paused = false;
+  let timer = null;
+  let animationFrame = 0;
+  let menuAnimationId = null;
+  let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
+  const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
+
+  // Versioned unlock progress. This update intentionally starts the collection
+  // progression from zero so worlds remain locked until a new qualifying score
+  // is earned in this version of the game.
+  const unlockResetKey = "koiHuntUnlockResetV3";
+  if (localStorage.getItem(unlockResetKey) !== "done") {
+    localStorage.setItem("koiHuntUnlockProgressV3", "0");
+    localStorage.setItem("koiHuntTheme", "anacondaPond");
+    localStorage.setItem(unlockResetKey, "done");
+  }
+  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV3")) || 0);
+
+  function highestScore() {
+    return unlockProgress;
+  }
+
+  function currentTheme() { return themes[selectedThemeKey]; }
+  function themeUnlocked(key) { return unlockProgress >= themes[key].unlockScore; }
+
+  function ensureValidSelectedTheme() {
+    if (!themeUnlocked(selectedThemeKey)) {
+      selectedThemeKey = "anacondaPond";
+      localStorage.setItem("koiHuntTheme", selectedThemeKey);
+    }
+  }
+  ensureValidSelectedTheme();
+
+  function showScreen(name) {
+    Object.values(screens).forEach(screen => screen.classList.add("hidden"));
+    screens[name].classList.remove("hidden");
+    if (name === "home") startMenuAnimation();
+    else stopMenuAnimation();
+    if (name === "collection") drawThemePreviews();
+    playMusic(name === "game" ? selectedThemeKey : "menu");
+  }
+
+  function stopGame() {
+    gameRunning = false;
+    paused = false;
+    if (timer !== null) clearInterval(timer);
+    timer = null;
+  }
+
+  function showHome() {
+    stopGame();
+    ui.overlay.classList.add("hidden");
+    ui.pause.textContent = "PAUSE";
+    showScreen("home");
+  }
+
+  function startGame() {
+    stopGame();
+    showScreen("game");
+    snake = [{x:7,y:10},{x:6,y:10},{x:5,y:10},{x:4,y:10},{x:3,y:10}];
+    direction = { x: 1, y: 0 };
+    nextDirection = { x: 1, y: 0 };
+    score = 0;
+    ui.score.textContent = score;
+    ui.best.textContent = bestScores[selectedThemeKey] || 0;
+    ui.worldLabel.textContent = currentTheme().name;
+    paused = false;
+    gameRunning = true;
+    ui.pause.textContent = "PAUSE";
+    ui.overlay.classList.add("hidden");
+    placeTarget();
+    drawGame();
+    timer = setInterval(updateGame, 125);
+  }
+
+  function updateGame() {
+    if (!gameRunning || paused) return;
+    if (animateBackground) animationFrame += 1;
+    direction = nextDirection;
+    const newHead = {
+      x: (snake[0].x + direction.x + gridSize) % gridSize,
+      y: (snake[0].y + direction.y + gridSize) % gridSize
+    };
+    const eatsTarget = newHead.x === target.x && newHead.y === target.y;
+    const bodyToCheck = eatsTarget ? snake : snake.slice(0, -1);
+    if (bodyToCheck.some(s => s.x === newHead.x && s.y === newHead.y)) return endGame();
+    snake.unshift(newHead);
+    if (eatsTarget) {
+      score += 10;
+      ui.score.textContent = score;
+      if (score > (bestScores[selectedThemeKey] || 0)) {
+        bestScores[selectedThemeKey] = score;
+        ui.best.textContent = score;
+        localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
+      }
+      if (score > unlockProgress) {
+        unlockProgress = score;
+        localStorage.setItem("koiHuntUnlockProgressV3", String(unlockProgress));
+      }
+      placeTarget();
+    } else snake.pop();
+    drawGame();
+  }
+
+  function endGame() {
+    stopGame();
+    ui.overlayTitle.textContent = "SELF BITTEN";
+    ui.overlayText.textContent = `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
+    ui.overlayButton.textContent = "PLAY AGAIN";
+    ui.overlayButton.dataset.action = "restart";
+    ui.overlay.classList.remove("hidden");
+  }
+
+  function togglePause() {
+    if (!gameRunning) return;
+    paused = !paused;
+    if (paused) {
+      ui.pause.textContent = "RESUME";
+      ui.overlayTitle.textContent = "PAUSED";
+      ui.overlayText.textContent = "PRESS SPACE OR CONTINUE TO RETURN.";
+      ui.overlayButton.textContent = "CONTINUE";
+      ui.overlayButton.dataset.action = "continue";
+      ui.overlay.classList.remove("hidden");
+    } else resumeGame();
+  }
+
+  function resumeGame() {
+    if (!gameRunning) return;
+    paused = false;
+    ui.pause.textContent = "PAUSE";
+    ui.overlay.classList.add("hidden");
+  }
+
+  function placeTarget() {
+    do {
+      target = { x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) };
+    } while (snake.some(s => s.x === target.x && s.y === target.y));
+  }
+
+  function setDirection(name) {
+    const dirs = { up:{x:0,y:-1}, down:{x:0,y:1}, left:{x:-1,y:0}, right:{x:1,y:0} };
+    const candidate = dirs[name];
+    if (!(candidate.x === -direction.x && candidate.y === -direction.y)) nextDirection = candidate;
+  }
+
+  const decorations = {
+    pond: [
+      ["weed",1,2],["weed",17,16],["weed",2,15],["lily",16,2],["lily",3,17],["lily",17,10],["shadow",7,4],["shadow",12,15]
+    ],
+    brightGrass: [
+      ["tuft",1,2],["tuft",17,16],["flower",15,3],["flower",7,16],["stone",2,17],["stone",18,8]
+    ],
+    canopy: [
+      ["moss",4,3],["moss",12,8],["moss",6,14],["moss",13,17],
+      ["bug",4,2],["bug",15,5],["bug",8,11],["bug",12,16],
+      ["leaf",2,17],["leaf",16,1]
+    ],
+    desert: [
+      ["cactus",2,3],["cactus",16,14],["rock",4,16],["rock",15,4],["scrub",8,3],["scrub",12,17]
+    ],
+    deepPond: [
+      ["weed",1,2],["weed",17,16],["lily",16,2],["lily",3,17],["bubble",5,5],["bubble",14,12],["shadow",9,16]
+    ]
+  };
+
+
+  function targetEscapeDirection() {
+    if (!snake.length) return { x: 1, y: 0 };
+    let dx = target.x - snake[0].x;
+    let dy = target.y - snake[0].y;
+    if (Math.abs(dx) >= Math.abs(dy)) return { x: dx >= 0 ? 1 : -1, y: 0 };
+    return { x: 0, y: dy >= 0 ? 1 : -1 };
+  }
+  function drawGame() {
+    const theme = currentTheme();
+    drawWorldBackground(ctx, gameCanvas.width, gameCanvas.height, theme.background, animationFrame);
+    drawWorldDecorations(ctx, theme.background, tileSize);
+    drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
+    drawSnake(ctx, snake, theme, tileSize, direction);
+    ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" ? "#16443a" : "#493c27";
+    ctx.lineWidth = 8;
+    ctx.strokeRect(4, 4, gameCanvas.width - 8, gameCanvas.height - 8);
+  }
+
+  function drawWorldBackground(c, width, height, kind, frame = 0) {
+    const cell = width / 20;
+    const palettes = {
+      pond: ["#078cc4","#0879aa","#0b96c5","#087fae"],
+      deepPond: ["#075f88","#084e72","#0a7397","#086488"],
+      brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
+      canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
+      desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"]
+    };
+    const palette = palettes[kind] || palettes.pond;
+    c.fillStyle = palette[0];
+    c.fillRect(0, 0, width, height);
+    for (let y = 0; y < 20; y++) for (let x = 0; x < 20; x++) {
+      c.fillStyle = palette[(x * 5 + y * 7) % palette.length];
+      c.fillRect(x * cell, y * cell, cell, cell);
+    }
+    if (kind === "pond" || kind === "deepPond") {
+      c.fillStyle = "rgba(220,250,255,.18)";
+      for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
+    } else if (kind === "brightGrass") {
+      c.fillStyle = "rgba(255,255,210,.17)";
+      for (let i=0;i<20;i++) c.fillRect(((i*83)+(frame*2))%width,(i*53)%height,cell,Math.max(3,cell/5));
+    } else if (kind === "canopy") {
+      // This level is viewed from directly above a massive moss-covered trunk.
+      const trunkX = width * .18;
+      const trunkW = width * .64;
+      c.fillStyle = "#694625";
+      c.fillRect(trunkX, 0, trunkW, height);
+      c.fillStyle = "#8a6030";
+      c.fillRect(trunkX + cell * .7, 0, trunkW - cell * 1.4, height);
+      c.fillStyle = "#4c321e";
+      for (let y = 0; y < height; y += cell * 2.4) {
+        c.fillRect(trunkX + cell * .3, y, cell * .7, cell * 1.1);
+        c.fillRect(trunkX + trunkW - cell * 1.1, y + cell, cell * .65, cell * .9);
+      }
+      c.fillStyle = "#60963e";
+      for (let i=0;i<22;i++) {
+        const mx = trunkX + ((i * 71) % Math.max(1, trunkW - cell));
+        const my = ((i * 113) + frame) % height;
+        c.fillRect(mx, my, cell * .65, cell * .3);
+      }
+      c.fillStyle = "rgba(146,238,92,.18)";
+      for (let i=0;i<16;i++) c.fillRect(trunkX + ((i*97)%trunkW),((i*59)+(frame%30))%height,cell*.7,cell*.7);
+    } else {
+      c.fillStyle = "rgba(255,238,176,.16)";
+      for (let i=0;i<20;i++) c.fillRect(((i*91)+(frame*2))%width,(i*47)%height,cell*1.2,Math.max(2,cell/7));
+    }
+  }
+
+  function drawWorldDecorations(c, kind, cell) {
+    (decorations[kind] || []).forEach(([type,gx,gy]) => {
+      const x=gx*cell, y=gy*cell;
+      if (type === "weed" || type === "tuft") {
+        c.fillStyle = type === "weed" ? "#126650" : "#4f7a31";
+        c.fillRect(x+cell*.1,y+cell*.35,cell*.18,cell*.65); c.fillRect(x+cell*.4,y+cell*.1,cell*.18,cell*.9); c.fillRect(x+cell*.7,y+cell*.28,cell*.18,cell*.72);
+      } else if (type === "lily") {
+        c.fillStyle="#285d2b"; c.fillRect(x+cell*.08,y+cell*.2,cell*.84,cell*.62); c.fillStyle="#5a8f43"; c.fillRect(x+cell*.25,y+cell*.08,cell*.6,cell*.66);
+      } else if (type === "shadow") {
+        c.fillStyle="rgba(5,55,66,.3)"; c.fillRect(x,y+cell*.35,cell*2,cell*.28);
+      } else if (type === "flower") {
+        c.fillStyle="#fff3a0"; c.fillRect(x+cell*.3,y+cell*.3,cell*.4,cell*.4); c.fillStyle="#f29ac0"; c.fillRect(x+cell*.12,y+cell*.4,cell*.22,cell*.18); c.fillRect(x+cell*.66,y+cell*.4,cell*.22,cell*.18);
+      } else if (type === "stone" || type === "rock") {
+        c.fillStyle=type==="rock"?"#765d3e":"#657064"; c.fillRect(x+cell*.12,y+cell*.3,cell*.76,cell*.48); c.fillStyle=type==="rock"?"#a17c4f":"#8c9687"; c.fillRect(x+cell*.28,y+cell*.18,cell*.48,cell*.34);
+      } else if (type === "branch") {
+        c.fillStyle="#614325"; c.fillRect(x,y+cell*.3,cell*9,cell*.55); c.fillStyle="#8a6334"; c.fillRect(x,y+cell*.28,cell*9,cell*.15);
+      } else if (type === "moss") {
+        c.fillStyle="#5e9a42"; for(let i=0;i<5;i++) c.fillRect(x+i*cell*.3,y+cell*.6+(i%2)*cell*.1,cell*.25,cell*.35);
+      } else if (type === "bug") {
+        c.fillStyle="#ffd75b"; c.fillRect(x+cell*.35,y+cell*.35,cell*.22,cell*.22); c.fillStyle="#222"; c.fillRect(x+cell*.42,y+cell*.38,cell*.08,cell*.14);
+      } else if (type === "leaf") {
+        c.fillStyle="#3c8c48"; c.fillRect(x+cell*.1,y+cell*.2,cell*.8,cell*.55);
+      } else if (type === "cactus") {
+        c.fillStyle="#397a42"; c.fillRect(x+cell*.38,y,cell*.25,cell); c.fillRect(x+cell*.12,y+cell*.35,cell*.35,cell*.2); c.fillRect(x+cell*.58,y+cell*.55,cell*.3,cell*.2);
+      } else if (type === "scrub") {
+        c.fillStyle="#8a7a3a"; c.fillRect(x+cell*.1,y+cell*.5,cell*.8,cell*.25);
+      } else if (type === "bubble") {
+        c.strokeStyle="rgba(215,248,255,.7)"; c.lineWidth=Math.max(2,cell*.08); c.strokeRect(x+cell*.3,y+cell*.3,cell*.35,cell*.35);
+      }
+    });
+  }
+
+  function drawSnake(c, segments, theme, cell, facing) {
+    const last = Math.max(1, segments.length - 1);
+    for (let index = segments.length - 1; index >= 0; index--) {
+      const s = segments[index];
+      const x=s.x*cell, y=s.y*cell;
+      if (index === 0) drawSnakeHead(c,x,y,theme,cell,facing);
+      else {
+        const tailProgress = index / last;
+        const scale = 1 - tailProgress * 0.58;
+        drawSnakeBody(c,x,y,theme,cell,index,scale);
+      }
+    }
+  }
+
+  function drawSnakeBody(c,x,y,theme,cell,index,scale=1) {
+    const size=cell*.82*scale;
+    const ox=x+(cell-size)/2, oy=y+(cell-size)/2;
+    c.fillStyle=index%2?theme.snake.main:theme.snake.alt;
+    c.fillRect(ox,oy,size,size);
+    c.fillStyle=theme.snake.dark;
+    if (theme.snakeStyle === "bamboo") {
+      c.fillRect(ox+size*.15,oy+size*.15,size*.7,size*.22); c.fillRect(ox+size*.34,oy+size*.45,size*.46,size*.34);
+      c.fillStyle=theme.snake.white; c.fillRect(ox+size*.08,oy+size*.62,size*.28,size*.22);
+    } else if (theme.snakeStyle === "treePython") {
+      c.fillRect(ox+size*.32,oy,size*.2,size); c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.08,oy+size*.18,size*.2,size*.2);
+    } else if (theme.snakeStyle === "rattlesnake") {
+      c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.28,size*.28);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.45,oy,size*.12,size);
+    } else {
+      c.fillRect(ox+size*.15,oy+size*.18,size*.34,size*.48); c.fillRect(ox+size*.55,oy+size*.44,size*.28,size*.35);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.08,oy+size*.08,size*.18,size*.18);
+    }
+  }
+
+  function drawSnakeHead(c,x,y,theme,cell,facing) {
+    c.fillStyle=theme.snake.main; c.fillRect(x+cell*.08,y+cell*.08,cell*.84,cell*.84);
+    c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
+    c.fillStyle=theme.snake.dark;
+    if (theme.snakeStyle === "bamboo") {
+      c.fillRect(x+cell*.15,y+cell*.22,cell*.7,cell*.5); c.fillStyle=theme.snake.white; c.fillRect(x+cell*.1,y+cell*.12,cell*.28,cell*.22); c.fillRect(x+cell*.62,y+cell*.12,cell*.28,cell*.22);
+    } else if (theme.snakeStyle === "treePython") {
+      c.fillRect(x+cell*.35,y+cell*.12,cell*.22,cell*.68); c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.1,y+cell*.38,cell*.22,cell*.18);
+    } else if (theme.snakeStyle === "rattlesnake") {
+      c.fillRect(x+cell*.18,y+cell*.18,cell*.28,cell*.28); c.fillRect(x+cell*.55,y+cell*.5,cell*.25,cell*.25);
+    } else {
+      c.fillRect(x+cell*.24,y+cell*.25,cell*.25,cell*.25); c.fillRect(x+cell*.55,y+cell*.55,cell*.24,cell*.2);
+    }
+    let eyes;
+    if(facing.x===1) eyes=[[.72,.2],[.72,.62]]; else if(facing.x===-1) eyes=[[.12,.2],[.12,.62]]; else if(facing.y===-1) eyes=[[.2,.12],[.62,.12]]; else eyes=[[.2,.72],[.62,.72]];
+    c.fillStyle=theme.snake.eye; eyes.forEach(([ex,ey])=>c.fillRect(x+cell*ex,y+cell*ey,cell*.16,cell*.16));
+    c.fillStyle="#101717"; eyes.forEach(([ex,ey])=>c.fillRect(x+cell*(ex+.06),y+cell*(ey+.04),cell*.06,cell*.09));
+  }
+
+  function drawTarget(c,x,y,theme,cell,facing={x:1,y:0}) {
+    // Every prey sprite is a full-body, directly overhead silhouette.
+    c.save();
+    c.translate(x + cell/2, y + cell/2);
+    const angle = facing.x === 1 ? 0 : facing.x === -1 ? Math.PI : facing.y === 1 ? Math.PI/2 : -Math.PI/2;
+    c.rotate(angle);
+    c.translate(-cell/2, -cell/2);
+
+    if (theme.targetName === "ORANGE KOI") {
+      // Tail, full body, fins and head viewed from above.
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.03,cell*.34,cell*.25,cell*.32);
+      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.24);
+      c.fillRect(cell*.02,cell*.58,cell*.16,cell*.24);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);
+      c.fillRect(cell*.70,cell*.30,cell*.23,cell*.40);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.38,cell*.08,cell*.20,cell*.22);
+      c.fillRect(cell*.38,cell*.70,cell*.20,cell*.22);
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.42,cell*.34,cell*.16,cell*.16);
+      c.fillRect(cell*.62,cell*.52,cell*.12,cell*.12);
+      c.fillStyle="#111";
+      c.fillRect(cell*.80,cell*.34,cell*.07,cell*.07);
+      c.fillRect(cell*.80,cell*.59,cell*.07,cell*.07);
+    } else if (theme.targetName === "GREY MOUSE") {
+      // Thin pink tail, hind legs, torso, ears and pointed snout.
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.02,cell*.46,cell*.27,cell*.09);
+      c.fillRect(cell*.06,cell*.39,cell*.08,cell*.10);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.24,cell*.28,cell*.49,cell*.44);
+      c.fillRect(cell*.68,cell*.35,cell*.22,cell*.30);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.30,cell*.18,cell*.19,cell*.19);
+      c.fillRect(cell*.30,cell*.63,cell*.19,cell*.19);
+      c.fillRect(cell*.78,cell*.41,cell*.14,cell*.18);
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.33,cell*.21,cell*.10,cell*.10);
+      c.fillRect(cell*.33,cell*.69,cell*.10,cell*.10);
+      c.fillRect(cell*.89,cell*.47,cell*.09,cell*.09);
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.73,cell*.39,cell*.07,cell*.07);
+      c.fillRect(cell*.73,cell*.57,cell*.07,cell*.07);
+      c.fillRect(cell*.28,cell*.18,cell*.11,cell*.10);
+      c.fillRect(cell*.28,cell*.72,cell*.11,cell*.10);
+    } else if (theme.targetName === "TREE FROG") {
+      // Complete frog from above: four spread legs, body and two eyes.
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.05,cell*.12,cell*.28,cell*.13);
+      c.fillRect(cell*.05,cell*.75,cell*.28,cell*.13);
+      c.fillRect(cell*.65,cell*.08,cell*.28,cell*.13);
+      c.fillRect(cell*.65,cell*.79,cell*.28,cell*.13);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.25,cell*.23,cell*.52,cell*.54);
+      c.fillRect(cell*.60,cell*.18,cell*.25,cell*.25);
+      c.fillRect(cell*.60,cell*.58,cell*.25,cell*.25);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.34,cell*.30,cell*.26,cell*.40);
+      c.fillStyle="#fff";
+      c.fillRect(cell*.70,cell*.23,cell*.10,cell*.10);
+      c.fillRect(cell*.70,cell*.67,cell*.10,cell*.10);
+      c.fillStyle="#111";
+      c.fillRect(cell*.74,cell*.26,cell*.05,cell*.05);
+      c.fillRect(cell*.74,cell*.70,cell*.05,cell*.05);
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.80,cell*.45,cell*.14,cell*.09);
+    } else if (theme.targetName === "DESERT LIZARD") {
+      // Long full lizard with visible tail and all four legs.
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);
+      c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);
+      c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
+      c.fillRect(cell*.50,cell*.24,cell*.14,cell*.18);
+      c.fillRect(cell*.50,cell*.59,cell*.14,cell*.18);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);
+      c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.38,cell*.38,cell*.22,cell*.12);
+      c.fillRect(cell*.77,cell*.38,cell*.12,cell*.24);
+      c.fillStyle="#111";
+      c.fillRect(cell*.82,cell*.34,cell*.06,cell*.06);
+      c.fillRect(cell*.82,cell*.60,cell*.06,cell*.06);
+    } else {
+      // Swimmer viewed from above, stretched forward and actively escaping.
+      c.fillStyle=theme.target.foam;
+      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.15);
+      c.fillRect(cell*.02,cell*.67,cell*.16,cell*.15);
+      c.fillRect(cell*.20,cell*.08,cell*.12,cell*.14);
+      c.fillRect(cell*.20,cell*.78,cell*.12,cell*.14);
+      c.fillStyle=theme.target.skin;
+      // kicking legs behind
+      c.fillRect(cell*.08,cell*.28,cell*.32,cell*.13);
+      c.fillRect(cell*.08,cell*.59,cell*.32,cell*.13);
+      // torso
+      c.fillRect(cell*.34,cell*.34,cell*.32,cell*.32);
+      // both arms reaching forward
+      c.fillRect(cell*.55,cell*.18,cell*.32,cell*.12);
+      c.fillRect(cell*.55,cell*.70,cell*.32,cell*.12);
+      c.fillRect(cell*.81,cell*.24,cell*.12,cell*.12);
+      c.fillRect(cell*.81,cell*.64,cell*.12,cell*.12);
+      // head leads the escape
+      c.fillRect(cell*.67,cell*.37,cell*.24,cell*.26);
+      c.fillStyle=theme.target.suit;
+      c.fillRect(cell*.31,cell*.35,cell*.32,cell*.30);
+      c.fillStyle=theme.target.hair;
+      c.fillRect(cell*.72,cell*.36,cell*.17,cell*.10);
+    }
+    c.restore();
+  }
+
+  function startMenuAnimation() {
+    if (menuAnimationId) return;
+    const loop = () => {
+      if (screens.home.classList.contains("hidden")) { menuAnimationId=null; return; }
+      if (animateBackground) animationFrame += 0.35;
+      drawMenuScene(animationFrame);
+      menuAnimationId = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+  function stopMenuAnimation() { if(menuAnimationId){cancelAnimationFrame(menuAnimationId);menuAnimationId=null;} }
+
+  function drawMenuScene(frame=0) {
+    const c = menuCtx;
+    drawWorldBackground(c,menuCanvas.width,menuCanvas.height,"pond",frame);
+    const cell = menuCanvas.width / 20;
+    // faint gameplay grid makes the menu feel like a living match
+    c.strokeStyle = "rgba(7,65,80,.22)";
+    c.lineWidth = 1;
+    for (let i=0;i<=20;i++) {
+      c.beginPath(); c.moveTo(i*cell,0); c.lineTo(i*cell,menuCanvas.height); c.stroke();
+      c.beginPath(); c.moveTo(0,i*cell); c.lineTo(menuCanvas.width,i*cell); c.stroke();
+    }
+    drawMenuPondDecorations(frame);
+    // The main menu keeps the living pond/gameplay background, but no animated
+    // snake or koi circles around the title/menu.
+    // gameplay-style score strip behind the title card
+    c.fillStyle="rgba(3,43,51,.82)"; c.fillRect(0,0,menuCanvas.width,40);
+    c.fillStyle="#f4d36e"; c.font="bold 15px monospace";
+    c.fillText("WORLD 01  •  ANACONDA POND",14,25);
+    c.textAlign="right"; c.fillText("KOI: 01",menuCanvas.width-14,25); c.textAlign="left";
+  }
+
+  function drawMenuPondDecorations(frame) {
+    const c=menuCtx;
+    [[36,72,56],[455,74,58],[28,490,64],[456,500,66],[60,590,46],[430,600,48]].forEach(([x,y,s],i)=>{
+      const bob=Math.sin(frame*.03+i)*3; c.fillStyle="#285d2b"; c.fillRect(x,y+bob,s,s*.65); c.fillStyle="#477b34"; c.fillRect(x+s*.2,y-s*.12+bob,s*.62,s*.62);
+    });
+    [[18,165],[510,150],[16,370],[520,350]].forEach(([x,y],i)=>{const sway=Math.sin(frame*.04+i)*4;c.fillStyle="#126650";c.fillRect(x+sway,y+20,8,55);c.fillRect(x+12,y,8,75);c.fillRect(x+24-sway,y+12,8,63);});
+    // extra moving koi silhouettes like real gameplay
+    for (let i=0;i<3;i++) {
+      const fx=((frame*(1.1+i*.25)+i*190)%650)-50;
+      const fy=110+i*170+Math.sin(frame*.025+i)*20;
+      menuCtx.globalAlpha=.55;
+      drawTarget(c,fx,fy,themes.anacondaPond,34,{x:1,y:0});
+      menuCtx.globalAlpha=1;
+    }
+  }
+
+  function drawMovingMenuSnake(frame) {
+    const c=menuCtx, points=[];
+    const cx=280, cy=355, rx=220, ry=270;
+    const count=50, phase=frame*.012;
+    for(let i=0;i<count;i++){
+      const t=(i/(count-1))*Math.PI*2+phase;
+      const wobble=Math.sin(t*3+phase*2)*12;
+      points.push({x:cx+(rx+wobble)*Math.cos(t),y:cy+(ry+wobble)*Math.sin(t)});
+    }
+    // prey runs just in front of the head
+    const head=points[0], next=points[1];
+    const vx=head.x-next.x, vy=head.y-next.y;
+    const mag=Math.hypot(vx,vy)||1;
+    const facing=Math.abs(vx)>=Math.abs(vy)?{x:Math.sign(vx)||1,y:0}:{x:0,y:Math.sign(vy)||1};
+    const kx=head.x+(vx/mag)*58, ky=head.y+(vy/mag)*58;
+    drawTarget(c,kx-24,ky-24,themes.anacondaPond,48,facing);
+    for(let i=points.length-1;i>=1;i--){
+      const p=points[i], progress=i/(points.length-1), size=31-progress*19;
+      c.fillStyle=i%2?themes.anacondaPond.snake.main:themes.anacondaPond.snake.alt;c.fillRect(p.x-size/2,p.y-size/2,size,size);
+      c.fillStyle=themes.anacondaPond.snake.dark;c.fillRect(p.x-size*.25,p.y-size*.2,size*.48,size*.35);
+      c.fillStyle=themes.anacondaPond.snake.accent;c.fillRect(p.x-size*.34,p.y-size*.34,size*.18,size*.18);
+    }
+    drawSnakeHead(c,head.x-29,head.y-29,themes.anacondaPond,58,facing);
+  }
+
+  function drawThemePreviews() {
+    document.querySelectorAll(".theme-card").forEach(card=>{
+      const key=card.dataset.theme, theme=themes[key], canvas=card.querySelector("canvas"), pctx=canvas.getContext("2d");
+      pctx.imageSmoothingEnabled=false;
+      drawWorldBackground(pctx,canvas.width,canvas.height,theme.background,0);
+      drawWorldDecorations(pctx,theme.background,canvas.width/20);
+      const cell=canvas.width/20;
+      drawSnake(pctx,[{x:10,y:7},{x:9,y:7},{x:8,y:7},{x:7,y:7},{x:6,y:7},{x:5,y:7}],theme,cell,{x:1,y:0});
+      drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});
+      const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
+      card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
+      const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":`LOCKED · ${theme.unlockScore}`;
+      const note=card.querySelector("[data-unlock-note]");
+      if(note) note.textContent=unlocked?`UNLOCKED — CHASE THE ${theme.targetName}`:`${Math.min(highestScore(),theme.unlockScore)} / ${theme.unlockScore} TOTAL BEST POINTS`;
+    });
+  }
+
+  function selectTheme(key) {
+    if(!themeUnlocked(key)) return;
+    selectedThemeKey=key; localStorage.setItem("koiHuntTheme",key); drawThemePreviews();
+  }
+
+  document.addEventListener("pointerdown", unlockAudio, { once: true });
+  document.addEventListener("keydown", unlockAudio, { once: true });
+
+  ui.play.addEventListener("click",startGame);
+  ui.collection.addEventListener("click",()=>showScreen("collection"));
+  ui.settings.addEventListener("click",()=>showScreen("settings"));
+  ui.credits.addEventListener("click",()=>showScreen("credits"));
+  ui.menu.addEventListener("click",showHome);
+  ui.pause.addEventListener("click",togglePause);
+  document.querySelectorAll("[data-back-home]").forEach(b=>b.addEventListener("click",showHome));
+  document.querySelectorAll(".theme-select").forEach(b=>b.addEventListener("click",()=>selectTheme(b.closest(".theme-card").dataset.theme)));
+
+  ui.animationToggle.checked=animateBackground;
+  ui.animationToggle.addEventListener("change",()=>{animateBackground=ui.animationToggle.checked;localStorage.setItem("koiHuntAnimate",String(animateBackground));});
+  ui.scanlineToggle.checked=localStorage.getItem("koiHuntScanlines")==="true";
+  app.classList.toggle("scanlines",ui.scanlineToggle.checked);
+  ui.scanlineToggle.addEventListener("change",()=>{app.classList.toggle("scanlines",ui.scanlineToggle.checked);localStorage.setItem("koiHuntScanlines",String(ui.scanlineToggle.checked));});
+  ui.musicToggle.checked = musicEnabled;
+  ui.musicVolume.value = Math.round(musicVolume * 100);
+  ui.musicToggle.addEventListener("change",()=>{
+    musicEnabled = ui.musicToggle.checked;
+    localStorage.setItem("koiHuntMusic", String(musicEnabled));
+    if (musicEnabled) playMusic(activeTrackKey || "menu"); else music.pause();
+  });
+  ui.musicVolume.addEventListener("input",()=>{
+    musicVolume = Number(ui.musicVolume.value) / 100;
+    music.volume = musicVolume;
+    localStorage.setItem("koiHuntMusicVolume", String(musicVolume));
+  });
+  ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
+
+  document.addEventListener("keydown",event=>{
+    const key=event.key.toLowerCase(), controls={arrowup:"up",w:"up",arrowdown:"down",s:"down",arrowleft:"left",a:"left",arrowright:"right",d:"right"};
+    if(controls[key]&&gameRunning&&!paused){event.preventDefault();setDirection(controls[key]);}
+    if(event.code==="Space"&&gameRunning){event.preventDefault();togglePause();}
+  });
+
+  showHome();
+})();
+
+</script>
 </body>
 </html>

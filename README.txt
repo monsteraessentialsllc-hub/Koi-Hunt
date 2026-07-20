@@ -45,3 +45,8 @@ LOCK FIX UPDATE
 - Rattlesnake Desert unlocks at 240.
 - Anaconda Deep Water unlocks at 310.
 - Unlock progress records the highest score earned after this update.
+
+VERSION 3 UI REBUILD
+- index.html now contains the full CSS and JavaScript inline so GitHub Pages cannot display an unstyled white page if style.css or game.js is missed during upload.
+- Keep the audio folder beside index.html.
+- Game rules preserved: keyboard controls, wall wrapping, score +10 per target, and game over only on self-collision.
