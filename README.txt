@@ -25,3 +25,13 @@ MUSIC ASSIGNMENTS
 - Anaconda Deep Water: Goldie complete
 
 Browser note: music begins after the player's first click or key press due to browser autoplay rules.
+
+
+VISUAL REFRESH 2 — IMPLEMENTED
+- Redesigned KOI HUNT logo and themed menu icons.
+- Main menu now renders a living gameplay-style pond with grid, HUD, moving koi and anaconda chase.
+- Full overhead sprites for koi, mouse, frog, lizard and swimmer.
+- Swimmer now stretches forward and kicks away from the snake.
+- Green Tree Python world is dominated by a large moss-covered trunk with bugs.
+- Unlock scores: Bamboo 100, Green Tree 170, Rattlesnake 240, Deep Water 310.
+- Cache-busting query strings added so GitHub Pages/Squarespace load the new CSS and JS.

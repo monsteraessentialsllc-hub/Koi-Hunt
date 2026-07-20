@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Koi Hunt</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=visual-refresh-2" />
 </head>
 <body>
   <main id="koi-hunt" class="game-app">
@@ -14,17 +14,12 @@
         <canvas id="menu-canvas" width="560" height="680" aria-hidden="true"></canvas>
 
         <div class="home-card">
-          <div class="title-lockup" aria-label="Koi Hunt">
-            <span class="title-koi title-koi-left" aria-hidden="true">◆</span>
-            <h1><span>KOI</span><span>HUNT</span></h1>
-            <span class="title-koi title-koi-right" aria-hidden="true">◆</span>
-          </div>
-          <p class="title-tagline">CHASE · GROW · UNLOCK</p>
+          <h1><span class="title-koi" aria-hidden="true">◆</span><span>KOI</span><span class="title-hunt">HUNT</span><span class="title-wave" aria-hidden="true">≈</span></h1>
           <nav class="main-menu" aria-label="Game menu">
-            <button id="play-button" class="pixel-button primary" type="button">PLAY</button>
-            <button id="collection-button" class="pixel-button" type="button">COLLECTION</button>
-            <button id="settings-button" class="pixel-button" type="button">SETTINGS</button>
-            <button id="credits-button" class="pixel-button" type="button">CREDITS</button>
+            <button id="play-button" class="pixel-button primary" type="button"><span class="menu-icon icon-play" aria-hidden="true"></span>PLAY</button>
+            <button id="collection-button" class="pixel-button" type="button"><span class="menu-icon icon-collection" aria-hidden="true"></span>COLLECTION</button>
+            <button id="settings-button" class="pixel-button" type="button"><span class="menu-icon icon-settings" aria-hidden="true"></span>SETTINGS</button>
+            <button id="credits-button" class="pixel-button" type="button"><span class="menu-icon icon-credits" aria-hidden="true"></span>CREDITS</button>
           </nav>
 
 
@@ -177,6 +172,6 @@
     </section>
   </main>
 
-  <script src="game.js"></script>
+  <script src="game.js?v=visual-refresh-2"></script>
 </body>
 </html>

@@ -275,7 +275,9 @@
       ["tuft",1,2],["tuft",17,16],["flower",15,3],["flower",7,16],["stone",2,17],["stone",18,8]
     ],
     canopy: [
-      ["branch",0,4],["branch",10,13],["moss",2,4],["moss",12,13],["bug",4,2],["bug",16,6],["bug",7,17],["leaf",17,15]
+      ["moss",4,3],["moss",12,8],["moss",6,14],["moss",13,17],
+      ["bug",4,2],["bug",15,5],["bug",8,11],["bug",12,16],
+      ["leaf",2,17],["leaf",16,1]
     ],
     desert: [
       ["cactus",2,3],["cactus",16,14],["rock",4,16],["rock",15,4],["scrub",8,3],["scrub",12,17]
@@ -285,11 +287,19 @@
     ]
   };
 
+
+  function targetEscapeDirection() {
+    if (!snake.length) return { x: 1, y: 0 };
+    let dx = target.x - snake[0].x;
+    let dy = target.y - snake[0].y;
+    if (Math.abs(dx) >= Math.abs(dy)) return { x: dx >= 0 ? 1 : -1, y: 0 };
+    return { x: 0, y: dy >= 0 ? 1 : -1 };
+  }
   function drawGame() {
     const theme = currentTheme();
     drawWorldBackground(ctx, gameCanvas.width, gameCanvas.height, theme.background, animationFrame);
     drawWorldDecorations(ctx, theme.background, tileSize);
-    drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize);
+    drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
     drawSnake(ctx, snake, theme, tileSize, direction);
     ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" ? "#16443a" : "#493c27";
     ctx.lineWidth = 8;
@@ -302,7 +312,7 @@
       pond: ["#078cc4","#0879aa","#0b96c5","#087fae"],
       deepPond: ["#075f88","#084e72","#0a7397","#086488"],
       brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
-      canopy: ["#604326","#765333","#4b361f","#835f39"],
+      canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
       desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"]
     };
     const palette = palettes[kind] || palettes.pond;
@@ -319,19 +329,26 @@
       c.fillStyle = "rgba(255,255,210,.17)";
       for (let i=0;i<20;i++) c.fillRect(((i*83)+(frame*2))%width,(i*53)%height,cell,Math.max(3,cell/5));
     } else if (kind === "canopy") {
-      // A dominant top-down tree trunk fills most of this world.
-      c.fillStyle = "#4b321d";
-      c.fillRect(width * .17, 0, width * .66, height);
-      c.fillStyle = "#76502d";
-      c.fillRect(width * .24, 0, width * .15, height);
-      c.fillRect(width * .58, 0, width * .12, height);
-      c.fillStyle = "rgba(185,129,69,.24)";
-      for (let i=0;i<22;i++) {
-        const yy=((i*53)+(frame*.25))%height;
-        c.fillRect(width*.2 + (i%4)*width*.14, yy, width*.09, Math.max(3,cell*.18));
+      // This level is viewed from directly above a massive moss-covered trunk.
+      const trunkX = width * .18;
+      const trunkW = width * .64;
+      c.fillStyle = "#694625";
+      c.fillRect(trunkX, 0, trunkW, height);
+      c.fillStyle = "#8a6030";
+      c.fillRect(trunkX + cell * .7, 0, trunkW - cell * 1.4, height);
+      c.fillStyle = "#4c321e";
+      for (let y = 0; y < height; y += cell * 2.4) {
+        c.fillRect(trunkX + cell * .3, y, cell * .7, cell * 1.1);
+        c.fillRect(trunkX + trunkW - cell * 1.1, y + cell, cell * .65, cell * .9);
       }
-      c.fillStyle = "rgba(80,150,55,.42)";
-      for (let i=0;i<15;i++) c.fillRect((i%2?width*.14:width*.76), (i*47)%height, cell*.9, cell*.7);
+      c.fillStyle = "#60963e";
+      for (let i=0;i<22;i++) {
+        const mx = trunkX + ((i * 71) % Math.max(1, trunkW - cell));
+        const my = ((i * 113) + frame) % height;
+        c.fillRect(mx, my, cell * .65, cell * .3);
+      }
+      c.fillStyle = "rgba(146,238,92,.18)";
+      for (let i=0;i<16;i++) c.fillRect(trunkX + ((i*97)%trunkW),((i*59)+(frame%30))%height,cell*.7,cell*.7);
     } else {
       c.fillStyle = "rgba(255,238,176,.16)";
       for (let i=0;i<20;i++) c.fillRect(((i*91)+(frame*2))%width,(i*47)%height,cell*1.2,Math.max(2,cell/7));
@@ -423,44 +440,117 @@
     c.fillStyle="#101717"; eyes.forEach(([ex,ey])=>c.fillRect(x+cell*(ex+.06),y+cell*(ey+.04),cell*.06,cell*.09));
   }
 
-  function drawTarget(c,x,y,theme,cell) {
-    // All prey are drawn as complete top-down silhouettes so the chase reads clearly.
+  function drawTarget(c,x,y,theme,cell,facing={x:1,y:0}) {
+    // Every prey sprite is a full-body, directly overhead silhouette.
+    c.save();
+    c.translate(x + cell/2, y + cell/2);
+    const angle = facing.x === 1 ? 0 : facing.x === -1 ? Math.PI : facing.y === 1 ? Math.PI/2 : -Math.PI/2;
+    c.rotate(angle);
+    c.translate(-cell/2, -cell/2);
+
     if (theme.targetName === "ORANGE KOI") {
-      c.fillStyle=theme.target.dark; c.fillRect(x+cell*.12,y+cell*.43,cell*.18,cell*.14); // tail base
-      c.fillStyle=theme.target.light; c.fillRect(x+cell*.02,y+cell*.30,cell*.22,cell*.18); c.fillRect(x+cell*.02,y+cell*.54,cell*.22,cell*.18);
-      c.fillStyle=theme.target.main; c.fillRect(x+cell*.22,y+cell*.27,cell*.58,cell*.46);
-      c.fillStyle=theme.target.light; c.fillRect(x+cell*.38,y+cell*.21,cell*.18,cell*.18); c.fillRect(x+cell*.38,y+cell*.64,cell*.18,cell*.18);
-      c.fillStyle="#fff4d0"; c.fillRect(x+cell*.50,y+cell*.33,cell*.16,cell*.30);
-      c.fillStyle="#111"; c.fillRect(x+cell*.72,y+cell*.39,cell*.08,cell*.08); c.fillRect(x+cell*.72,y+cell*.54,cell*.08,cell*.08);
+      // Tail, full body, fins and head viewed from above.
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.03,cell*.34,cell*.25,cell*.32);
+      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.24);
+      c.fillRect(cell*.02,cell*.58,cell*.16,cell*.24);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);
+      c.fillRect(cell*.70,cell*.30,cell*.23,cell*.40);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.38,cell*.08,cell*.20,cell*.22);
+      c.fillRect(cell*.38,cell*.70,cell*.20,cell*.22);
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.42,cell*.34,cell*.16,cell*.16);
+      c.fillRect(cell*.62,cell*.52,cell*.12,cell*.12);
+      c.fillStyle="#111";
+      c.fillRect(cell*.80,cell*.34,cell*.07,cell*.07);
+      c.fillRect(cell*.80,cell*.59,cell*.07,cell*.07);
     } else if (theme.targetName === "GREY MOUSE") {
-      c.fillStyle="#f6fbfc"; c.fillRect(x+cell*.03,y+cell*.12,cell*.94,cell*.76);
-      c.fillStyle=theme.target.pink; c.fillRect(x+cell*.01,y+cell*.47,cell*.26,cell*.07); // full tail
-      c.fillStyle=theme.target.main; c.fillRect(x+cell*.23,y+cell*.31,cell*.52,cell*.38); c.fillRect(x+cell*.67,y+cell*.37,cell*.22,cell*.26);
-      c.fillStyle=theme.target.light; c.fillRect(x+cell*.66,y+cell*.24,cell*.16,cell*.16); c.fillRect(x+cell*.79,y+cell*.26,cell*.15,cell*.15);
-      c.fillStyle=theme.target.dark; c.fillRect(x+cell*.81,y+cell*.43,cell*.07,cell*.07);
-      c.fillRect(x+cell*.32,y+cell*.22,cell*.08,cell*.14); c.fillRect(x+cell*.32,y+cell*.65,cell*.08,cell*.14); c.fillRect(x+cell*.57,y+cell*.22,cell*.08,cell*.14); c.fillRect(x+cell*.57,y+cell*.65,cell*.08,cell*.14);
+      // Thin pink tail, hind legs, torso, ears and pointed snout.
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.02,cell*.46,cell*.27,cell*.09);
+      c.fillRect(cell*.06,cell*.39,cell*.08,cell*.10);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.24,cell*.28,cell*.49,cell*.44);
+      c.fillRect(cell*.68,cell*.35,cell*.22,cell*.30);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.30,cell*.18,cell*.19,cell*.19);
+      c.fillRect(cell*.30,cell*.63,cell*.19,cell*.19);
+      c.fillRect(cell*.78,cell*.41,cell*.14,cell*.18);
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.33,cell*.21,cell*.10,cell*.10);
+      c.fillRect(cell*.33,cell*.69,cell*.10,cell*.10);
+      c.fillRect(cell*.89,cell*.47,cell*.09,cell*.09);
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.73,cell*.39,cell*.07,cell*.07);
+      c.fillRect(cell*.73,cell*.57,cell*.07,cell*.07);
+      c.fillRect(cell*.28,cell*.18,cell*.11,cell*.10);
+      c.fillRect(cell*.28,cell*.72,cell*.11,cell*.10);
     } else if (theme.targetName === "TREE FROG") {
-      c.fillStyle=theme.target.dark; c.fillRect(x+cell*.08,y+cell*.14,cell*.18,cell*.10); c.fillRect(x+cell*.08,y+cell*.76,cell*.18,cell*.10); c.fillRect(x+cell*.74,y+cell*.14,cell*.18,cell*.10); c.fillRect(x+cell*.74,y+cell*.76,cell*.18,cell*.10);
-      c.fillStyle=theme.target.main; c.fillRect(x+cell*.23,y+cell*.27,cell*.54,cell*.46); c.fillRect(x+cell*.13,y+cell*.23,cell*.23,cell*.22); c.fillRect(x+cell*.13,y+cell*.57,cell*.23,cell*.22); c.fillRect(x+cell*.64,y+cell*.23,cell*.23,cell*.22); c.fillRect(x+cell*.64,y+cell*.57,cell*.23,cell*.22);
-      c.fillStyle=theme.target.light; c.fillRect(x+cell*.64,y+cell*.33,cell*.18,cell*.14);
-      c.fillStyle="#fff"; c.fillRect(x+cell*.69,y+cell*.35,cell*.09,cell*.09); c.fillRect(x+cell*.69,y+cell*.53,cell*.09,cell*.09);
-      c.fillStyle="#111"; c.fillRect(x+cell*.73,y+cell*.37,cell*.04,cell*.05); c.fillRect(x+cell*.73,y+cell*.55,cell*.04,cell*.05);
+      // Complete frog from above: four spread legs, body and two eyes.
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.05,cell*.12,cell*.28,cell*.13);
+      c.fillRect(cell*.05,cell*.75,cell*.28,cell*.13);
+      c.fillRect(cell*.65,cell*.08,cell*.28,cell*.13);
+      c.fillRect(cell*.65,cell*.79,cell*.28,cell*.13);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.25,cell*.23,cell*.52,cell*.54);
+      c.fillRect(cell*.60,cell*.18,cell*.25,cell*.25);
+      c.fillRect(cell*.60,cell*.58,cell*.25,cell*.25);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.34,cell*.30,cell*.26,cell*.40);
+      c.fillStyle="#fff";
+      c.fillRect(cell*.70,cell*.23,cell*.10,cell*.10);
+      c.fillRect(cell*.70,cell*.67,cell*.10,cell*.10);
+      c.fillStyle="#111";
+      c.fillRect(cell*.74,cell*.26,cell*.05,cell*.05);
+      c.fillRect(cell*.74,cell*.70,cell*.05,cell*.05);
+      c.fillStyle=theme.target.pink;
+      c.fillRect(cell*.80,cell*.45,cell*.14,cell*.09);
     } else if (theme.targetName === "DESERT LIZARD") {
-      c.fillStyle=theme.target.main; c.fillRect(x+cell*.23,y+cell*.39,cell*.48,cell*.22); c.fillRect(x+cell*.68,y+cell*.34,cell*.21,cell*.32);
-      c.fillRect(x+cell*.04,y+cell*.46,cell*.26,cell*.08); c.fillRect(x+cell*.01,y+cell*.51,cell*.14,cell*.06);
-      c.fillStyle=theme.target.dark; c.fillRect(x+cell*.28,y+cell*.23,cell*.12,cell*.20); c.fillRect(x+cell*.28,y+cell*.58,cell*.12,cell*.20); c.fillRect(x+cell*.53,y+cell*.23,cell*.12,cell*.20); c.fillRect(x+cell*.53,y+cell*.58,cell*.12,cell*.20);
-      c.fillStyle=theme.target.light; c.fillRect(x+cell*.43,y+cell*.35,cell*.18,cell*.10); c.fillStyle="#111"; c.fillRect(x+cell*.80,y+cell*.40,cell*.06,cell*.06); c.fillRect(x+cell*.80,y+cell*.54,cell*.06,cell*.06);
+      // Long full lizard with visible tail and all four legs.
+      c.fillStyle=theme.target.dark;
+      c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);
+      c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);
+      c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
+      c.fillRect(cell*.50,cell*.24,cell*.14,cell*.18);
+      c.fillRect(cell*.50,cell*.59,cell*.14,cell*.18);
+      c.fillStyle=theme.target.main;
+      c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);
+      c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
+      c.fillStyle=theme.target.light;
+      c.fillRect(cell*.38,cell*.38,cell*.22,cell*.12);
+      c.fillRect(cell*.77,cell*.38,cell*.12,cell*.24);
+      c.fillStyle="#111";
+      c.fillRect(cell*.82,cell*.34,cell*.06,cell*.06);
+      c.fillRect(cell*.82,cell*.60,cell*.06,cell*.06);
     } else {
-      // Swimmer faces right with arms stretched forward and kicking legs behind.
-      c.fillStyle=theme.target.foam; c.fillRect(x+cell*.02,y+cell*.19,cell*.94,cell*.64);
-      c.fillStyle=theme.target.skin; c.fillRect(x+cell*.68,y+cell*.37,cell*.18,cell*.24); // head
-      c.fillRect(x+cell*.48,y+cell*.42,cell*.24,cell*.15); // shoulders
-      c.fillRect(x+cell*.78,y+cell*.27,cell*.18,cell*.08); c.fillRect(x+cell*.78,y+cell*.65,cell*.18,cell*.08); // arms reaching
-      c.fillStyle=theme.target.suit; c.fillRect(x+cell*.32,y+cell*.40,cell*.28,cell*.22);
-      c.fillStyle=theme.target.skin; c.fillRect(x+cell*.10,y+cell*.32,cell*.28,cell*.09); c.fillRect(x+cell*.10,y+cell*.59,cell*.28,cell*.09); // kicking legs
-      c.fillStyle=theme.target.hair; c.fillRect(x+cell*.65,y+cell*.34,cell*.16,cell*.08);
-      c.fillStyle="#eafaff"; c.fillRect(x+cell*.03,y+cell*.27,cell*.15,cell*.05); c.fillRect(x+cell*.02,y+cell*.70,cell*.18,cell*.05);
+      // Swimmer viewed from above, stretched forward and actively escaping.
+      c.fillStyle=theme.target.foam;
+      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.15);
+      c.fillRect(cell*.02,cell*.67,cell*.16,cell*.15);
+      c.fillRect(cell*.20,cell*.08,cell*.12,cell*.14);
+      c.fillRect(cell*.20,cell*.78,cell*.12,cell*.14);
+      c.fillStyle=theme.target.skin;
+      // kicking legs behind
+      c.fillRect(cell*.08,cell*.28,cell*.32,cell*.13);
+      c.fillRect(cell*.08,cell*.59,cell*.32,cell*.13);
+      // torso
+      c.fillRect(cell*.34,cell*.34,cell*.32,cell*.32);
+      // both arms reaching forward
+      c.fillRect(cell*.55,cell*.18,cell*.32,cell*.12);
+      c.fillRect(cell*.55,cell*.70,cell*.32,cell*.12);
+      c.fillRect(cell*.81,cell*.24,cell*.12,cell*.12);
+      c.fillRect(cell*.81,cell*.64,cell*.12,cell*.12);
+      // head leads the escape
+      c.fillRect(cell*.67,cell*.37,cell*.24,cell*.26);
+      c.fillStyle=theme.target.suit;
+      c.fillRect(cell*.31,cell*.35,cell*.32,cell*.30);
+      c.fillStyle=theme.target.hair;
+      c.fillRect(cell*.72,cell*.36,cell*.17,cell*.10);
     }
+    c.restore();
   }
 
   function startMenuAnimation() {
@@ -476,41 +566,64 @@
   function stopMenuAnimation() { if(menuAnimationId){cancelAnimationFrame(menuAnimationId);menuAnimationId=null;} }
 
   function drawMenuScene(frame=0) {
-    const c=menuCtx;
+    const c = menuCtx;
     drawWorldBackground(c,menuCanvas.width,menuCanvas.height,"pond",frame);
-    // Gameplay grid and border make the title screen feel like a live level.
-    const cell=menuCanvas.width/20;
-    c.strokeStyle="rgba(227,219,151,.10)"; c.lineWidth=1;
-    for(let i=1;i<20;i++){c.beginPath();c.moveTo(i*cell,0);c.lineTo(i*cell,menuCanvas.height);c.stroke();}
-    for(let i=1;i<25;i++){c.beginPath();c.moveTo(0,i*cell);c.lineTo(menuCanvas.width,i*cell);c.stroke();}
+    const cell = menuCanvas.width / 20;
+    // faint gameplay grid makes the menu feel like a living match
+    c.strokeStyle = "rgba(7,65,80,.22)";
+    c.lineWidth = 1;
+    for (let i=0;i<=20;i++) {
+      c.beginPath(); c.moveTo(i*cell,0); c.lineTo(i*cell,menuCanvas.height); c.stroke();
+      c.beginPath(); c.moveTo(0,i*cell); c.lineTo(menuCanvas.width,i*cell); c.stroke();
+    }
     drawMenuPondDecorations(frame);
     drawMovingMenuSnake(frame);
-    c.strokeStyle="#c8ad58"; c.lineWidth=8; c.strokeRect(5,5,menuCanvas.width-10,menuCanvas.height-10);
+    // gameplay-style score strip behind the title card
+    c.fillStyle="rgba(3,43,51,.82)"; c.fillRect(0,0,menuCanvas.width,40);
+    c.fillStyle="#f4d36e"; c.font="bold 15px monospace";
+    c.fillText("WORLD 01  •  ANACONDA POND",14,25);
+    c.textAlign="right"; c.fillText("KOI: 01",menuCanvas.width-14,25); c.textAlign="left";
   }
 
   function drawMenuPondDecorations(frame) {
     const c=menuCtx;
-    [[32,54,54],[456,66,58],[24,480,64],[448,496,68],[72,590,44],[418,590,48]].forEach(([x,y,s],i)=>{
-      const bob=Math.sin(frame*.03+i)*3; c.fillStyle="#285d2b"; c.fillRect(x,y+bob,s,s*.65); c.fillStyle="#4e8a39"; c.fillRect(x+s*.2,y-s*.12+bob,s*.62,s*.62);
+    [[36,72,56],[455,74,58],[28,490,64],[456,500,66],[60,590,46],[430,600,48]].forEach(([x,y,s],i)=>{
+      const bob=Math.sin(frame*.03+i)*3; c.fillStyle="#285d2b"; c.fillRect(x,y+bob,s,s*.65); c.fillStyle="#477b34"; c.fillRect(x+s*.2,y-s*.12+bob,s*.62,s*.62);
     });
-    [[12,145],[518,130],[12,352],[520,348]].forEach(([x,y],i)=>{const sway=Math.sin(frame*.04+i)*4;c.fillStyle="#126650";c.fillRect(x+sway,y+20,8,55);c.fillRect(x+12,y,8,75);c.fillRect(x+24-sway,y+12,8,63);});
+    [[18,165],[510,150],[16,370],[520,350]].forEach(([x,y],i)=>{const sway=Math.sin(frame*.04+i)*4;c.fillStyle="#126650";c.fillRect(x+sway,y+20,8,55);c.fillRect(x+12,y,8,75);c.fillRect(x+24-sway,y+12,8,63);});
+    // extra moving koi silhouettes like real gameplay
+    for (let i=0;i<3;i++) {
+      const fx=((frame*(1.1+i*.25)+i*190)%650)-50;
+      const fy=110+i*170+Math.sin(frame*.025+i)*20;
+      menuCtx.globalAlpha=.55;
+      drawTarget(c,fx,fy,themes.anacondaPond,34,{x:1,y:0});
+      menuCtx.globalAlpha=1;
+    }
   }
 
   function drawMovingMenuSnake(frame) {
-    const c=menuCtx, cell=28, segments=[];
-    const headX=8+Math.round(Math.sin(frame*.018)*4), headY=8+Math.round(Math.cos(frame*.014)*5);
-    for(let i=0;i<20;i++) segments.push({x:headX-i*.62,y:headY+Math.sin(i*.55+frame*.025)*1.45});
-    for(let i=segments.length-1;i>=0;i--){
-      const p=segments[i], progress=i/(segments.length-1), size=cell*(.94-progress*.58);
-      if(i===0) continue;
-      c.fillStyle=i%2?themes.anacondaPond.snake.main:themes.anacondaPond.snake.alt;c.fillRect(p.x*cell-size/2,p.y*cell-size/2,size,size);
-      c.fillStyle=themes.anacondaPond.snake.dark;c.fillRect(p.x*cell-size*.25,p.y*cell-size*.2,size*.48,size*.35);
-      c.fillStyle=themes.anacondaPond.snake.accent;c.fillRect(p.x*cell-size*.34,p.y*cell-size*.34,size*.18,size*.18);
+    const c=menuCtx, points=[];
+    const cx=280, cy=355, rx=220, ry=270;
+    const count=50, phase=frame*.012;
+    for(let i=0;i<count;i++){
+      const t=(i/(count-1))*Math.PI*2+phase;
+      const wobble=Math.sin(t*3+phase*2)*12;
+      points.push({x:cx+(rx+wobble)*Math.cos(t),y:cy+(ry+wobble)*Math.sin(t)});
     }
-    const preyX=((headX+5+Math.sin(frame*.01)*2)%18+1)*cell, preyY=((headY+Math.cos(frame*.013)*3)%21+1)*cell;
-    drawTarget(c,preyX-cell*.5,preyY-cell*.5,themes.anacondaPond,cell);
-    const h=segments[0], n=segments[1], facing={x:Math.sign(h.x-n.x)||1,y:Math.sign(h.y-n.y)};
-    drawSnakeHead(c,h.x*cell-cell*.52,h.y*cell-cell*.52,themes.anacondaPond,cell*1.04,facing);
+    // prey runs just in front of the head
+    const head=points[0], next=points[1];
+    const vx=head.x-next.x, vy=head.y-next.y;
+    const mag=Math.hypot(vx,vy)||1;
+    const facing=Math.abs(vx)>=Math.abs(vy)?{x:Math.sign(vx)||1,y:0}:{x:0,y:Math.sign(vy)||1};
+    const kx=head.x+(vx/mag)*58, ky=head.y+(vy/mag)*58;
+    drawTarget(c,kx-24,ky-24,themes.anacondaPond,48,facing);
+    for(let i=points.length-1;i>=1;i--){
+      const p=points[i], progress=i/(points.length-1), size=31-progress*19;
+      c.fillStyle=i%2?themes.anacondaPond.snake.main:themes.anacondaPond.snake.alt;c.fillRect(p.x-size/2,p.y-size/2,size,size);
+      c.fillStyle=themes.anacondaPond.snake.dark;c.fillRect(p.x-size*.25,p.y-size*.2,size*.48,size*.35);
+      c.fillStyle=themes.anacondaPond.snake.accent;c.fillRect(p.x-size*.34,p.y-size*.34,size*.18,size*.18);
+    }
+    drawSnakeHead(c,head.x-29,head.y-29,themes.anacondaPond,58,facing);
   }
 
   function drawThemePreviews() {
@@ -521,7 +634,7 @@
       drawWorldDecorations(pctx,theme.background,canvas.width/20);
       const cell=canvas.width/20;
       drawSnake(pctx,[{x:10,y:7},{x:9,y:7},{x:8,y:7},{x:7,y:7},{x:6,y:7},{x:5,y:7}],theme,cell,{x:1,y:0});
-      drawTarget(pctx,14*cell,7*cell,theme,cell);
+      drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});
       const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
       card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
       const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":`LOCKED · ${theme.unlockScore}`;
