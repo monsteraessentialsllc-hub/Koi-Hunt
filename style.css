@@ -642,6 +642,298 @@ button { cursor: pointer; }
   .small-button::after { font-size: 14px; top: -7px; }
 }
 
-.menu-button,button,.btn{background:linear-gradient(#d8eefc,#8bb7dc)!important;border:4px solid #35506b!important;border-bottom-width:8px!important;border-radius:8px!important;color:#20334a!important;font-family:'Press Start 2P',monospace!important;text-shadow:1px 1px #eef8ff!important;box-shadow:inset 0 3px #f7fdff,inset 0 -4px #5b88ad!important}
-.game-title,#title,h1{font-family:'Press Start 2P',monospace!important;letter-spacing:2px;text-shadow:3px 3px #17343f!important}
-.game-title::after,#title::after,h1::after{content:' 🐟';}
+/* ==========================================================
+   KOI HUNT — FUN 8-BIT POND UI
+   ========================================================== */
+:root {
+  --px-ink: #102b2b;
+  --px-ink-2: #061a20;
+  --px-cream: #fff1a8;
+  --px-yellow: #ffc93d;
+  --px-orange: #ee7b31;
+  --px-green-1: #9bd84f;
+  --px-green-2: #4f9b3f;
+  --px-green-3: #245b35;
+  --px-blue-1: #65d3e7;
+  --px-blue-2: #197d9c;
+}
+
+body,
+button,
+input,
+.game-app {
+  font-family: "Courier New", Courier, Monaco, monospace;
+  font-weight: 900;
+  image-rendering: pixelated;
+}
+
+.home-card h1,
+.panel-heading h2,
+.overlay-panel h2,
+.theme-card h3,
+.world-label,
+.pixel-button,
+.small-button,
+.setting-row,
+.credits-panel strong,
+.panel-heading p,
+.theme-card p,
+.credits-panel p,
+.scores,
+.bottom-bar {
+  font-family: "Courier New", Courier, Monaco, monospace;
+  font-style: normal;
+  font-weight: 900;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: none;
+}
+
+.home-card {
+  width: min(76%, 430px);
+  padding: 22px 20px 27px;
+  background: rgba(4, 43, 54, .76);
+  border: 6px solid var(--px-ink);
+  outline: 4px solid #d0a447;
+  box-shadow: 8px 8px 0 rgba(3, 20, 25, .72);
+  backdrop-filter: none;
+}
+.home-card::before,
+.home-card::after { display: none; }
+
+/* chunky 8-bit title */
+.game-logo {
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 24px !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  transform: none !important;
+}
+.logo-word {
+  display: block;
+  position: relative;
+  font-size: clamp(34px, 7.2vw, 55px);
+  letter-spacing: -4px;
+  color: var(--px-yellow);
+  text-shadow:
+    0 4px 0 #f09a24,
+    4px 0 0 #f09a24,
+    4px 4px 0 #a84f22,
+    -3px 0 0 #fff2a5,
+    0 -3px 0 #fff2a5,
+    7px 7px 0 var(--px-ink-2);
+}
+.logo-hunt {
+  color: #79cd58;
+  text-shadow:
+    0 4px 0 #3a9144,
+    4px 0 0 #3a9144,
+    4px 4px 0 #1e5b38,
+    -3px 0 0 #d7f28c,
+    0 -3px 0 #d7f28c,
+    7px 7px 0 var(--px-ink-2);
+}
+
+/* small pixel koi between the title words */
+.pixel-koi {
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 34px;
+  filter: drop-shadow(4px 4px 0 var(--px-ink-2));
+  transform: rotate(-5deg);
+}
+.pixel-koi i { position: absolute; display: block; }
+.fish-body {
+  left: 12px; top: 7px; width: 37px; height: 21px;
+  background:
+    linear-gradient(90deg, #fff1d0 0 22%, #ee6d2f 22% 42%, #fff1d0 42% 65%, #ee6d2f 65% 82%, #fff1d0 82%);
+  clip-path: polygon(10% 0, 80% 0, 100% 32%, 94% 72%, 72% 100%, 14% 90%, 0 58%, 0 28%);
+  border: 0;
+  box-shadow: inset 0 -5px 0 #c7b68d, inset 5px 0 0 rgba(255,255,255,.45);
+}
+.fish-tail {
+  left: 0; top: 9px; width: 17px; height: 20px;
+  background: #ee7b31;
+  clip-path: polygon(100% 48%, 0 0, 20% 50%, 0 100%);
+}
+.fish-fin {
+  left: 27px; top: 24px; width: 13px; height: 8px;
+  background: #fff1d0;
+  clip-path: polygon(0 0, 100% 0, 42% 100%);
+}
+.fish-eye {
+  right: 8px; top: 11px; width: 4px; height: 4px;
+  background: #102020;
+  box-shadow: 0 0 0 2px #fff7d7;
+}
+
+/* stepped 8-bit lily pads */
+.pixel-button,
+.small-button,
+.theme-card .small-button {
+  --pad-top: var(--px-green-1);
+  --pad-mid: var(--px-green-2);
+  --pad-bottom: var(--px-green-3);
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(
+    10px 0, calc(100% - 34px) 0,
+    calc(100% - 34px) 7px, calc(100% - 16px) 7px,
+    calc(100% - 16px) 14px, 100% 14px,
+    100% calc(100% - 14px), calc(100% - 8px) calc(100% - 14px),
+    calc(100% - 8px) calc(100% - 7px), calc(100% - 22px) calc(100% - 7px),
+    calc(100% - 22px) 100%, 10px 100%,
+    10px calc(100% - 5px), 0 calc(100% - 5px), 0 10px, 10px 10px
+  );
+  color: #fff5b8;
+  background:
+    linear-gradient(to bottom,
+      #bceb61 0 8px,
+      var(--pad-top) 8px 38%,
+      var(--pad-mid) 38% 72%,
+      var(--pad-bottom) 72% 100%);
+  box-shadow:
+    inset 0 -7px 0 #173d2d,
+    inset 0 5px 0 #d9f47d,
+    0 6px 0 #0b2b2a,
+    6px 9px 0 rgba(2,19,23,.5);
+  text-shadow: 3px 3px 0 #15372e;
+  letter-spacing: 2px;
+  transition: transform .08s steps(1), filter .08s steps(1);
+}
+.pixel-button::before,
+.small-button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 13px; right: 27px; top: 8px; height: 5px;
+  border: 0;
+  border-radius: 0;
+  background: rgba(232,255,140,.38);
+  transform: none;
+}
+.pixel-button::after,
+.small-button::after {
+  content: "";
+  position: absolute;
+  right: 9px;
+  top: -7px;
+  width: 20px;
+  height: 20px;
+  background:
+    linear-gradient(#ffd64a,#ffd64a) center/5px 5px no-repeat,
+    linear-gradient(#f7a9c7,#f7a9c7) 50% 0/6px 9px no-repeat,
+    linear-gradient(#f7a9c7,#f7a9c7) 50% 100%/6px 9px no-repeat,
+    linear-gradient(#f7a9c7,#f7a9c7) 0 50%/9px 6px no-repeat,
+    linear-gradient(#f7a9c7,#f7a9c7) 100% 50%/9px 6px no-repeat;
+  font-size: 0;
+  text-shadow: none;
+  transform: rotate(0);
+  filter: drop-shadow(2px 2px 0 #6f354d);
+}
+.pixel-button:hover,
+.small-button:hover {
+  filter: brightness(1.14) saturate(1.08);
+  transform: translateY(-2px);
+}
+.pixel-button:active,
+.small-button:active {
+  transform: translate(3px, 5px);
+  box-shadow: inset 0 -3px 0 #173d2d, inset 0 3px 0 #d9f47d, 0 2px 0 #0b2b2a;
+}
+.pixel-button.primary {
+  --pad-top: #b8e85c;
+  --pad-mid: #529d3e;
+  --pad-bottom: #245a34;
+}
+.pixel-button:not(.primary) {
+  color: #fff2b0;
+  --pad-top: #8dcc4f;
+  --pad-mid: #438443;
+  --pad-bottom: #1d5135;
+}
+
+.main-menu { gap: 17px; width: min(100%, 310px); }
+.main-menu .pixel-button {
+  min-height: 62px;
+  padding: 15px 38px 17px 24px;
+  font-size: 18px;
+  transform: none !important;
+}
+.main-menu .pixel-button:hover { transform: translateY(-2px) !important; }
+.main-menu .pixel-button:active { transform: translate(3px, 5px) !important; }
+
+.menu-icon {
+  width: 24px;
+  height: 20px;
+  color: #ffe877;
+  filter: drop-shadow(3px 3px 0 #17372b);
+}
+.icon-settings::before { border-style: solid; border-width: 4px; }
+.icon-credits::before { font-family: monospace; }
+
+/* all screen text gets readable, playful pixel treatment */
+.panel-heading h2,
+.overlay-panel h2 {
+  color: #ffd65b;
+  font-size: clamp(29px, 6vw, 45px);
+  letter-spacing: 3px;
+  text-shadow: 4px 4px 0 #8b4a24, 7px 7px 0 #102a2a;
+}
+.panel-heading p,
+.world-label,
+.theme-card h3,
+.scores strong,
+.credits-panel strong {
+  text-shadow: 2px 2px 0 #122d2c;
+}
+.theme-card h3 {
+  color: #ffe17a;
+  font-style: normal;
+  letter-spacing: 1px;
+}
+.theme-card p,
+.credits-panel p,
+.bottom-bar,
+.scores span,
+.unlock-note,
+.unlock-status {
+  letter-spacing: 1px !important;
+  line-height: 1.5;
+}
+
+/* pixel-card treatment for collection and settings */
+.theme-card,
+.setting-row,
+.overlay-panel,
+.safe-bar,
+.world-label,
+.bottom-bar {
+  border-radius: 0;
+  border-color: #173d39;
+  box-shadow: 5px 5px 0 #031c20;
+}
+.theme-card {
+  background: linear-gradient(#0c5654, #063b3d);
+  border-width: 5px;
+}
+.theme-card.selected {
+  border-color: #ffd34d;
+  box-shadow: 0 0 0 3px #8f5d21, 5px 5px 0 #031c20;
+}
+.theme-preview { border-width: 4px; }
+
+@media (max-width: 560px) {
+  .home-card { width: 84%; padding: 18px 12px 23px; }
+  .game-logo { gap: 5px !important; }
+  .logo-word { font-size: clamp(29px, 10vw, 43px); letter-spacing: -3px; }
+  .pixel-koi { width: 46px; transform: scale(.82) rotate(-5deg); transform-origin: center; }
+  .main-menu { width: min(100%, 280px); gap: 13px; }
+  .main-menu .pixel-button { min-height: 54px; font-size: 15px; padding-inline: 20px 34px; }
+}

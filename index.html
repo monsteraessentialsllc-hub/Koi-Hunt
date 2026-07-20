@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Koi Hunt</title>
-  <link rel="stylesheet" href="style.css?v=lilypad-art-1" />
+  <link rel="stylesheet" href="style.css?v=8bit-pond-1" />
 </head>
 <body>
   <main id="koi-hunt" class="game-app">
@@ -14,7 +14,11 @@
         <canvas id="menu-canvas" width="560" height="680" aria-hidden="true"></canvas>
 
         <div class="home-card">
-          <h1><span class="title-koi" aria-hidden="true">◆</span><span>KOI</span><span class="title-hunt">HUNT</span><span class="title-wave" aria-hidden="true">≈</span></h1>
+          <h1 class="game-logo" aria-label="Koi Hunt">
+            <span class="logo-word logo-koi">KOI</span>
+            <span class="pixel-koi" aria-hidden="true"><i class="fish-body"></i><i class="fish-tail"></i><i class="fish-fin"></i><i class="fish-eye"></i></span>
+            <span class="logo-word logo-hunt">HUNT</span>
+          </h1>
           <nav class="main-menu" aria-label="Game menu">
             <button id="play-button" class="pixel-button primary" type="button"><span class="menu-icon icon-play" aria-hidden="true"></span>PLAY</button>
             <button id="collection-button" class="pixel-button" type="button"><span class="menu-icon icon-collection" aria-hidden="true"></span>COLLECTION</button>
@@ -172,6 +176,6 @@
     </section>
   </main>
 
-  <script src="game.js?v=lilypad-art-1"></script>
+  <script src="game.js?v=8bit-pond-1"></script>
 </body>
 </html>
