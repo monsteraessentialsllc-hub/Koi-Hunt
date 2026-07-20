@@ -35,3 +35,13 @@ VISUAL REFRESH 2 — IMPLEMENTED
 - Green Tree Python world is dominated by a large moss-covered trunk with bugs.
 - Unlock scores: Bamboo 100, Green Tree 170, Rattlesnake 240, Deep Water 310.
 - Cache-busting query strings added so GitHub Pages/Squarespace load the new CSS and JS.
+
+
+LOCK FIX UPDATE
+- Removed the animated snake and koi from the main-menu background.
+- Collection progression now begins locked in this version.
+- Bamboo Ball Python unlocks at 100.
+- Green Tree Python unlocks at 170.
+- Rattlesnake Desert unlocks at 240.
+- Anaconda Deep Water unlocks at 310.
+- Unlock progress records the highest score earned after this update.

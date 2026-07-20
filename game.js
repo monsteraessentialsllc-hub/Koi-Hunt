@@ -144,12 +144,23 @@
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
+  // Versioned unlock progress. This update intentionally starts the collection
+  // progression from zero so worlds remain locked until a new qualifying score
+  // is earned in this version of the game.
+  const unlockResetKey = "koiHuntUnlockResetV3";
+  if (localStorage.getItem(unlockResetKey) !== "done") {
+    localStorage.setItem("koiHuntUnlockProgressV3", "0");
+    localStorage.setItem("koiHuntTheme", "anacondaPond");
+    localStorage.setItem(unlockResetKey, "done");
+  }
+  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV3")) || 0);
+
   function highestScore() {
-    return Math.max(0, ...Object.values(bestScores).map(v => Number(v) || 0));
+    return unlockProgress;
   }
 
   function currentTheme() { return themes[selectedThemeKey]; }
-  function themeUnlocked(key) { return highestScore() >= themes[key].unlockScore; }
+  function themeUnlocked(key) { return unlockProgress >= themes[key].unlockScore; }
 
   function ensureValidSelectedTheme() {
     if (!themeUnlocked(selectedThemeKey)) {
@@ -220,6 +231,10 @@
         bestScores[selectedThemeKey] = score;
         ui.best.textContent = score;
         localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
+      }
+      if (score > unlockProgress) {
+        unlockProgress = score;
+        localStorage.setItem("koiHuntUnlockProgressV3", String(unlockProgress));
       }
       placeTarget();
     } else snake.pop();
@@ -577,7 +592,8 @@
       c.beginPath(); c.moveTo(0,i*cell); c.lineTo(menuCanvas.width,i*cell); c.stroke();
     }
     drawMenuPondDecorations(frame);
-    drawMovingMenuSnake(frame);
+    // The main menu keeps the living pond/gameplay background, but no animated
+    // snake or koi circles around the title/menu.
     // gameplay-style score strip behind the title card
     c.fillStyle="rgba(3,43,51,.82)"; c.fillRect(0,0,menuCanvas.width,40);
     c.fillStyle="#f4d36e"; c.font="bold 15px monospace";
