@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Koi Hunt: Anaconda Pond Edition</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="koi-hunt" class="game-app">
+    <section id="home-screen" class="screen home-screen">
+      <div class="home-card">
+        <div class="pixel-koi" aria-hidden="true"></div>
+
+        <h1>KOI HUNT</h1>
+        <p class="subtitle">ANACONDA POND EDITION</p>
+
+        <button id="start-button" class="pixel-button" type="button">
+          START GAME
+        </button>
+
+        <div class="instructions">
+          <p><strong>ARROW KEYS</strong> OR <strong>WASD</strong> TO MOVE</p>
+          <p>EAT THE KOI TO GROW</p>
+          <p>THE POND EDGES WRAP AROUND</p>
+          <p>DON'T BITE YOURSELF</p>
+          <p><strong>SPACE</strong> TO PAUSE</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen game-screen hidden">
+      <div class="game-shell">
+        <header class="safe-bar">
+          <button id="menu-button" class="small-button" type="button">
+            MAIN MENU
+          </button>
+
+          <div class="scores" aria-live="polite">
+            <div>
+              <span>SCORE</span>
+              <strong id="score">0</strong>
+            </div>
+            <div>
+              <span>BEST</span>
+              <strong id="best-score">0</strong>
+            </div>
+          </div>
+
+          <button id="pause-button" class="small-button" type="button">
+            PAUSE
+          </button>
+        </header>
+
+        <div class="play-space">
+          <canvas
+            id="game-canvas"
+            width="480"
+            height="480"
+            aria-label="Koi Hunt game"
+          ></canvas>
+
+          <div id="overlay" class="overlay hidden">
+            <div class="overlay-panel">
+              <h2 id="overlay-title">PAUSED</h2>
+              <p id="overlay-text">Press Space to continue.</p>
+              <button id="overlay-button" class="pixel-button" type="button">
+                CONTINUE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="bottom-bar">
+          <span>MOVE: ARROWS / WASD</span>
+          <span>PAUSE: SPACE</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
