@@ -40,6 +40,8 @@
       name: "ANACONDA POND",
       targetName: "KOI",
       background: "pond",
+      snakeStyle: "anaconda",
+      unlockScore: 0,
       snake: {
         main: "#075a3f",
         alt: "#08684a",
@@ -54,17 +56,20 @@
         dark: "#d95e3f"
       }
     },
-    thornbackTrail: {
-      name: "THORNBACK TRAIL",
+    bambooBallPython: {
+      name: "BAMBOO BALL PYTHON",
       targetName: "GREY MOUSE",
       background: "grass",
+      snakeStyle: "bamboo",
+      unlockScore: 200,
       snake: {
-        main: "#727b79",
-        alt: "#858d89",
-        light: "#a5aaa6",
-        dark: "#3b2e29",
-        accent: "#4a342a",
-        eye: "#d6d6c8"
+        main: "#757c7b",
+        alt: "#8b918e",
+        light: "#b7bab5",
+        dark: "#49352e",
+        accent: "#5b4035",
+        white: "#eeeae1",
+        eye: "#172222"
       },
       target: {
         main: "#777b7d",
@@ -76,6 +81,7 @@
   };
 
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
+  if (selectedThemeKey === "thornbackTrail") selectedThemeKey = "anacondaPond";
   if (!themes[selectedThemeKey]) selectedThemeKey = "anacondaPond";
 
   let snake = [];
@@ -90,6 +96,28 @@
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
 
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
+  const BAMBOO_UNLOCK_SCORE = 200;
+
+  function highestScore() {
+    return Math.max(0, ...Object.values(bestScores).map(value => Number(value) || 0));
+  }
+
+  function bambooUnlocked() {
+    return highestScore() >= BAMBOO_UNLOCK_SCORE;
+  }
+
+  function ensureValidSelectedTheme() {
+    if (selectedThemeKey === "bambooBallPython" && !bambooUnlocked()) {
+      selectedThemeKey = "anacondaPond";
+      localStorage.setItem("koiHuntTheme", selectedThemeKey);
+    }
+  }
+
+  ensureValidSelectedTheme();
+  if (!themeUnlocked(selectedThemeKey)) {
+    selectedThemeKey = "anacondaPond";
+    localStorage.setItem("koiHuntTheme", selectedThemeKey);
+  }
 
   const pondDecorations = [
     { type: "weed", x: 1, y: 2 },
@@ -117,6 +145,14 @@
 
   function currentTheme() {
     return themes[selectedThemeKey];
+  }
+
+  function bambooUnlocked() {
+    return Number(bestScores.anacondaPond || 0) >= 200;
+  }
+
+  function themeUnlocked(key) {
+    return key === "anacondaPond" || bambooUnlocked();
   }
 
   function showScreen(name) {
@@ -203,6 +239,10 @@
         bestScores[selectedThemeKey] = score;
         bestElement.textContent = score;
         localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
+
+        if (score >= BAMBOO_UNLOCK_SCORE) {
+          drawThemePreviews();
+        }
       }
 
       placeTarget();
@@ -388,12 +428,19 @@
     context.fillRect(x + pad, y + cell * .08, cell - pad * 2, cell * .84);
 
     context.fillStyle = theme.snake.dark;
-    if (selectedThemeKey === "thornbackTrail") {
-      context.fillRect(x + cell * .42, y, cell * .15, cell);
-      context.fillRect(x + cell * .08, y + cell * .18, cell * .84, cell * .16);
+    if (theme.name === "BAMBOO BALL PYTHON") {
+      // Irregular dark-brown bamboo pattern over a silver-grey body.
+      context.fillRect(x + cell * .12, y + cell * .08, cell * .18, cell * .84);
+      context.fillRect(x + cell * .62, y + cell * .02, cell * .2, cell * .6);
+      context.fillRect(x + cell * .28, y + cell * .38, cell * .5, cell * .16);
       context.fillStyle = theme.snake.accent;
-      context.fillRect(x, y + cell * .08, cell * .18, cell * .18);
-      context.fillRect(x + cell * .82, y + cell * .7, cell * .18, cell * .18);
+      context.fillRect(x + cell * .04, y + cell * .18, cell * .25, cell * .18);
+      context.fillRect(x + cell * .74, y + cell * .66, cell * .24, cell * .2);
+      if (index % 2 === 0) {
+        context.fillRect(x + cell * .42, y + cell * .04, cell * .16, cell * .28);
+      } else {
+        context.fillRect(x + cell * .35, y + cell * .62, cell * .16, cell * .3);
+      }
     } else {
       if (index % 3 === 0) {
         context.fillRect(x + cell * .12, y + cell * .16, cell * .32, cell * .68);
@@ -418,10 +465,17 @@
     context.fillRect(x + cell * .16, y + cell * .16, cell * .68, cell * .68);
     context.fillStyle = theme.snake.dark;
 
-    if (selectedThemeKey === "thornbackTrail") {
-      context.fillRect(x + cell * .3, y + cell * .1, cell * .4, cell * .8);
-      context.fillStyle = "#ecebdc";
-      context.fillRect(x + cell * .2, y + cell * .25, cell * .6, cell * .22);
+    if (theme.name === "BAMBOO BALL PYTHON") {
+      // White-edged, dark-centered head based on the bamboo ball python painting.
+      context.fillStyle = theme.snake.headWhite;
+      context.fillRect(x + cell * .08, y + cell * .16, cell * .84, cell * .68);
+      context.fillStyle = theme.snake.headBlack;
+      context.fillRect(x + cell * .2, y + cell * .24, cell * .62, cell * .52);
+      context.fillStyle = theme.snake.main;
+      context.fillRect(x + cell * .38, y + cell * .3, cell * .28, cell * .4);
+      context.fillStyle = theme.snake.headWhite;
+      context.fillRect(x + cell * .14, y + cell * .38, cell * .18, cell * .2);
+      context.fillRect(x + cell * .7, y + cell * .38, cell * .18, cell * .2);
     } else {
       context.fillRect(x + cell * .28, y + cell * .28, cell * .25, cell * .25);
       context.fillRect(x + cell * .58, y + cell * .58, cell * .25, cell * .2);
@@ -498,50 +552,62 @@
 
   function drawMenuSnakeBorder() {
     const c = menuCtx;
-    const left = 105;
-    const top = 92;
-    const right = 455;
-    const bottom = 555;
-    const step = 20;
+    const left = 92;
+    const top = 82;
+    const right = 468;
+    const bottom = 575;
+    const step = 25;
     const path = [];
 
-    // Tail begins just left of the koi at the top center.
+    // A thick, gameplay-sized anaconda wraps around the inner menu panel.
+    // Its tapered tail points toward the koi; its large head follows behind it.
     for (let x = 250; x >= left; x -= step) path.push({x, y: top});
     for (let y = top + step; y <= bottom; y += step) path.push({x: left, y});
     for (let x = left + step; x <= right; x += step) path.push({x, y: bottom});
     for (let y = bottom - step; y >= top; y -= step) path.push({x: right, y});
-    for (let x = right - step; x >= 330; x -= step) path.push({x, y: top});
+    for (let x = right - step; x >= 352; x -= step) path.push({x, y: top});
 
     path.forEach((p, index) => {
-      const size = index < 3 ? 12 + index * 2 : 19;
-      c.fillStyle = index % 2 === 0 ? "#075a3f" : "#08684a";
-      c.fillRect(p.x - size/2, p.y - size/2, size, size);
-      c.fillStyle = "#102e31";
-      c.fillRect(p.x - size*.25, p.y - size*.22, size*.5, size*.44);
+      const size = index < 4 ? 13 + index * 4 : 28;
+      c.fillStyle = index % 2 === 0 ? themes.anacondaPond.snake.main : themes.anacondaPond.snake.alt;
+      c.fillRect(Math.round(p.x - size / 2), Math.round(p.y - size / 2), size, size);
+
+      c.fillStyle = themes.anacondaPond.snake.dark;
       if (index % 3 === 0) {
-        c.fillStyle = "#a99a55";
-        c.fillRect(p.x - 3, p.y - 7, 6, 6);
+        c.fillRect(p.x - size * .32, p.y - size * .22, size * .42, size * .5);
+        c.fillRect(p.x + size * .08, p.y - size * .34, size * .28, size * .45);
+      } else {
+        c.fillRect(p.x - size * .28, p.y - size * .12, size * .58, size * .28);
       }
+
+      c.fillStyle = themes.anacondaPond.snake.accent;
+      c.fillRect(p.x - size * .31, p.y - size * .32, size * .2, size * .2);
+      c.fillRect(p.x + size * .12, p.y + size * .1, size * .2, size * .2);
     });
 
-    // Koi sits between tail and head.
-    drawTarget(c, 276, 77, themes.anacondaPond, 40);
+    // Large koi between the approaching tail and hunting head.
+    drawTarget(c, 267, 55, themes.anacondaPond, 52);
 
-    // Large head immediately behind the koi.
-    const hx = 330;
-    const hy = 74;
-    c.fillStyle = "#07563d";
-    c.fillRect(hx, hy, 42, 36);
-    c.fillStyle = "#08724e";
-    c.fillRect(hx + 6, hy + 6, 30, 24);
-    c.fillStyle = "#102e31";
-    c.fillRect(hx + 20, hy + 8, 10, 10);
-    c.fillStyle = "#c3b262";
-    c.fillRect(hx + 30, hy + 7, 6, 6);
-    c.fillRect(hx + 30, hy + 23, 6, 6);
+    // Large anaconda head, matching the scale used during gameplay.
+    const hx = 350;
+    const hy = 56;
+    const hs = 54;
+    c.fillStyle = themes.anacondaPond.snake.main;
+    c.fillRect(hx, hy, hs, hs - 8);
+    c.fillStyle = themes.anacondaPond.snake.light;
+    c.fillRect(hx + 7, hy + 7, hs - 14, hs - 22);
+    c.fillStyle = themes.anacondaPond.snake.dark;
+    c.fillRect(hx + 15, hy + 13, 15, 14);
+    c.fillRect(hx + 30, hy + 25, 14, 11);
+    c.fillStyle = themes.anacondaPond.snake.accent;
+    c.fillRect(hx + 7, hy + 7, 9, 9);
+    c.fillRect(hx + 25, hy + 31, 9, 9);
+    c.fillStyle = themes.anacondaPond.snake.eye;
+    c.fillRect(hx + 43, hy + 10, 7, 7);
+    c.fillRect(hx + 43, hy + 31, 7, 7);
     c.fillStyle = "#111d1d";
-    c.fillRect(hx + 33, hy + 9, 2, 3);
-    c.fillRect(hx + 33, hy + 25, 2, 3);
+    c.fillRect(hx + 46, hy + 12, 2, 4);
+    c.fillRect(hx + 46, hy + 33, 2, 4);
   }
 
   function drawThemePreviews() {
@@ -565,13 +631,27 @@
       drawTarget(pctx, 14 * cell, 7 * cell, theme, cell);
       selectedThemeKey = previousTheme;
 
-      card.classList.toggle("selected", key === selectedThemeKey);
+      const unlocked = themeUnlocked(key);
+      const selected = key === selectedThemeKey;
+      card.classList.toggle("selected", selected);
+      card.classList.toggle("locked", !unlocked);
+      card.classList.toggle("unlocked", unlocked);
+
       const button = card.querySelector(".theme-select");
-      button.textContent = key === selectedThemeKey ? "EQUIPPED" : "SELECT";
+      button.disabled = !unlocked;
+      button.textContent = selected ? "EQUIPPED" : unlocked ? "SELECT" : "LOCKED · 200";
+
+      const note = card.querySelector("[data-unlock-note]");
+      if (note) {
+        note.textContent = unlocked
+          ? "UNLOCKED — CHASE THE GREY MOUSE"
+          : `${Math.min(Number(bestScores.anacondaPond || 0), 200)} / 200 POINTS IN ANACONDA POND`;
+      }
     });
   }
 
   function selectTheme(key) {
+    if (!themeUnlocked(key)) return;
     selectedThemeKey = key;
     localStorage.setItem("koiHuntTheme", key);
     drawThemePreviews();
@@ -591,6 +671,7 @@
 
   document.querySelectorAll(".theme-select").forEach(button => {
     button.addEventListener("click", () => {
+      if (button.disabled) return;
       selectTheme(button.closest(".theme-card").dataset.theme);
     });
   });

@@ -81,10 +81,10 @@ button { cursor: pointer; }
   position: absolute;
   z-index: 2;
   left: 50%;
-  top: 51%;
+  top: 52%;
   transform: translate(-50%, -50%);
-  width: min(72%, 420px);
-  padding: 34px 22px 24px;
+  width: min(69%, 400px);
+  padding: 28px 22px 24px;
   text-align: center;
   background: rgba(4, 62, 74, .88);
   border: 5px solid #123f41;
@@ -113,7 +113,7 @@ button { cursor: pointer; }
 }
 
 .subtitle {
-  margin: 14px 0 22px;
+  margin: 10px 0 18px;
   color: #b5c663;
   font-weight: 900;
   font-size: clamp(12px, 2.7vw, 18px);
@@ -163,21 +163,6 @@ button { cursor: pointer; }
   box-shadow: 2px 2px 0 #102825;
 }
 
-.new-theme-banner {
-  display: grid;
-  gap: 3px;
-  margin: 18px auto 0;
-  padding: 9px 10px;
-  color: #d9e5a0;
-  background: #0a362d;
-  border: 3px solid #9d8c49;
-  font-size: 9px;
-  line-height: 1.35;
-  letter-spacing: 1px;
-}
-
-.new-theme-banner .banner-kicker { color: #e6c75f; }
-.new-theme-banner strong { color: #f2e7b6; font-size: 12px; }
 
 /* PANELS */
 .panel-shell,
@@ -232,6 +217,32 @@ button { cursor: pointer; }
 .theme-card h3 { margin: 10px 0 5px; color: #efd373; font-size: 15px; letter-spacing: 1px; }
 .theme-card p { min-height: 42px; margin: 0 0 10px; color: #b9c795; font-size: 9px; line-height: 1.45; }
 .theme-card .small-button { width: 100%; }
+
+.theme-card.locked {
+  border-color: #5b624f;
+  filter: saturate(.72);
+}
+
+.theme-card.locked .theme-preview {
+  opacity: .72;
+}
+
+.theme-card.locked .small-button {
+  color: #a8aa91;
+  background: #343b32;
+  border-color: #606754;
+  cursor: not-allowed;
+}
+
+.unlock-status {
+  min-height: 28px;
+  margin: 0 0 8px;
+  color: #e3cf76;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1.35;
+  letter-spacing: 1px;
+}
 
 .back-button { display: block; margin: 24px auto 0; }
 .simple-panel { display: grid; align-content: start; gap: 18px; }
@@ -325,4 +336,29 @@ button { cursor: pointer; }
   .small-button { padding: 9px 5px; font-size: 9px; }
   .scores { gap: 10px; }
   .scores strong { font-size: 16px; }
+}
+
+
+/* LOCKED COLLECTION WORLD */
+.theme-card.locked {
+  border-color: #4d5448;
+  filter: saturate(.55);
+}
+.theme-card.locked .theme-preview {
+  opacity: .58;
+}
+.theme-card.locked .theme-select {
+  color: #b9b9a3;
+  background: #343a34;
+  border-color: #555e54;
+  cursor: not-allowed;
+}
+.unlock-note {
+  min-height: 0 !important;
+  margin-top: -4px !important;
+  color: #e0c86e !important;
+  font-size: 8px !important;
+}
+.theme-card.unlocked .unlock-note {
+  color: #8fc66c !important;
 }
