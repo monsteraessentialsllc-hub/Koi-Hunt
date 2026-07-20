@@ -81,6 +81,162 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 .pixel-button:hover:not(:disabled),.small-button:hover:not(:disabled){transform:translate(-2px,-2px)!important;filter:brightness(1.15)}
 .pixel-button:active:not(:disabled),.small-button:active:not(:disabled){transform:translate(5px,5px)!important;box-shadow:inset 0 5px 0 rgba(255,255,255,.1),inset 0 -5px 0 rgba(0,0,0,.3),2px 2px 0 #031317!important}
 .panel-heading h2,.theme-card h3,.scores strong,.overlay-card h2{font-family:"Courier New",monospace!important;font-weight:900!important;text-shadow:3px 3px 0 #071a20!important}
+
+/* =====================================================================
+   KOI HUNT — BRIGHT GARDEN MENU RESKIN
+   Visual-only layer inspired by the approved colorful pixel-art mockup.
+   Gameplay rules and JavaScript remain unchanged.
+   ===================================================================== */
+:root{
+  --sky:#8ee0ec; --pond:#23a9c7; --pond-deep:#167eaa;
+  --bamboo:#4f9c49; --bamboo-light:#9bd064; --bamboo-dark:#255c31;
+  --paper:#fff1b9; --paper-hi:#fff8d9; --paper-low:#e3c77e;
+  --ink:#244a37; --brown:#6b3d21; --brown-dark:#382314;
+  --leaf:#65b94d; --leaf-light:#a9dc66; --leaf-dark:#2f7438;
+  --orange:#f47b32; --gold:#ffd86a; --pink:#f29bb7;
+}
+html,body{background:#9adfe5;color:var(--ink)}
+body{padding:14px;background:
+  radial-gradient(circle at 8% 12%,rgba(255,255,255,.45) 0 2px,transparent 3px),
+  linear-gradient(#9ce5ef 0 48%,#4cb7ca 48% 100%)}
+.game-app{width:min(96vw,760px);font-family:"Courier New",monospace;font-weight:900;letter-spacing:1px}
+
+/* shared bright frames */
+.home-screen,.panel-shell,.game-shell{
+  border:8px solid var(--brown-dark);outline:5px solid #b9853f;
+  box-shadow:0 0 0 5px #f4d875,10px 10px 0 rgba(65,42,25,.45);
+  background:#69c8d4;
+}
+.panel-shell,.game-shell{
+  position:relative;overflow:hidden;padding:18px;min-height:640px;
+  background:
+    linear-gradient(rgba(255,247,199,.90),rgba(255,238,174,.92)),
+    repeating-linear-gradient(90deg,#e4c883 0 18px,#efd999 18px 36px);
+}
+.panel-shell::before,.game-shell::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.30;
+  background:repeating-linear-gradient(0deg,transparent 0 24px,rgba(110,72,29,.15) 24px 27px);
+}
+.panel-shell>* ,.game-shell>*{position:relative;z-index:1}
+
+/* main menu: keep animated pond canvas, brighten overlay and add garden frame */
+.home-screen{background:#52bfd2}.menu-stage{min-height:680px}
+.home-card{
+  width:min(78%,500px);top:52%;padding:18px 26px 28px;
+  background:rgba(255,246,202,.88);border:7px solid var(--brown-dark);
+  box-shadow:0 0 0 5px #e5bd62,9px 9px 0 rgba(57,37,18,.55);
+}
+.home-card::before,.home-card::after{
+  content:"";position:absolute;top:-28px;bottom:-28px;width:25px;
+  background:repeating-linear-gradient(180deg,#6fb65d 0 28px,#9bd16d 28px 33px,#4a8e42 33px 58px);
+  border:4px solid #2c6337;z-index:-1;
+}
+.home-card::before{left:-34px}.home-card::after{right:-34px}
+
+/* chunky orange-green title with visible orange koi */
+.game-logo{margin:0 0 18px;filter:drop-shadow(5px 6px 0 #3e2616)}
+.logo-row{gap:8px;line-height:.82}
+.logo-koi,.logo-hunt{
+  font-family:"Courier New",monospace;font-size:clamp(52px,10vw,82px);font-weight:900;
+  letter-spacing:-5px;-webkit-text-stroke:0;text-shadow:
+    -4px 0 var(--brown-dark),4px 0 var(--brown-dark),0 -4px var(--brown-dark),0 4px var(--brown-dark),
+    4px 4px #a8612d,8px 8px #2c1a10;
+  image-rendering:pixelated;
+}
+.logo-koi{color:#f69a42}.logo-hunt{color:#77c957}
+.logo-fish{width:clamp(120px,24vw,175px);margin-top:3px;filter:drop-shadow(4px 4px 0 #55301e)}
+.logo-sub{color:#337b67;background:#fff0ad;border:3px solid #76502d;padding:5px 10px;letter-spacing:3px;text-shadow:none}
+
+/* bright pixel-garden buttons */
+.main-menu{gap:12px;width:min(100%,360px)}
+.pixel-button,.small-button{
+  font-family:"Courier New",monospace;font-weight:900;color:#fff7ce;text-shadow:2px 2px 0 #375c2a;
+  letter-spacing:2px;border-radius:0;
+}
+.pixel-button{min-height:62px;padding:12px 46px;font-size:18px}
+.pixel-button::before,.small-button::before{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  background:#234e2d;border:0;transform:translate(7px,8px);
+}
+.pixel-button::after,.small-button::after{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  border:0;background:linear-gradient(#9ddd67 0 23%,#69b94c 24% 72%,#3b813e 73%);
+  box-shadow:inset 0 6px 0 rgba(242,255,183,.42),inset -7px -8px 0 rgba(31,96,45,.35);
+}
+.main-menu .pixel-button:nth-child(odd)::after,.main-menu .pixel-button:nth-child(even)::after{transform:none}
+.main-menu .pixel-button:nth-child(odd)::before,.main-menu .pixel-button:nth-child(even)::before{transform:translate(7px,8px)}
+.pixel-button:hover::after,.small-button:hover::after{filter:brightness(1.12);transform:translateY(-3px)}
+.pixel-button:active,.small-button:active{transform:translate(5px,6px)}
+.main-menu .pixel-button .menu-icon::after{content:"✿";left:260px;top:-6px;color:#f7a3bd;font-size:23px;text-shadow:2px 2px #7e4560}
+.pixel-button.primary::after{background:linear-gradient(#bdea75 0 23%,#7ccc53 24% 72%,#4c9544 73%)}
+
+/* parchment headers */
+.panel-heading{margin:5px auto 22px;padding:12px 18px;width:min(94%,520px);background:var(--paper-hi);border:5px solid var(--brown);box-shadow:inset 0 4px #fff9df,6px 6px 0 #8c6337}
+.panel-heading h2,.overlay-panel h2{
+  color:#3e7f45;font-family:"Courier New",monospace;font-weight:900;font-size:clamp(32px,6.5vw,54px);
+  letter-spacing:-2px;-webkit-text-stroke:0;text-shadow:3px 0 #f7d56f,0 3px #f7d56f,4px 4px #744828;
+}
+.panel-heading p{color:#9a642e;font-size:12px;letter-spacing:3px}
+
+/* collection: colorful kid-drawn cards */
+.collection-shell{background:
+  linear-gradient(rgba(205,238,151,.88),rgba(171,221,123,.92)),
+  repeating-linear-gradient(90deg,#8bc363 0 24px,#9dd172 24px 48px)}
+.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.theme-card{
+  padding:10px 10px 15px;background:#fff0b5;border:6px solid #70431f;
+  box-shadow:0 0 0 4px #d99a49,8px 8px 0 rgba(83,54,29,.5);transform:rotate(-.35deg)
+}
+.theme-card:nth-child(even){transform:rotate(.35deg)}
+.theme-card:hover{transform:translateY(-4px) rotate(0)}
+.theme-card.selected{box-shadow:0 0 0 5px #ffe46b,8px 8px 0 rgba(83,54,29,.5)}
+.theme-preview{border:5px solid #4e311c;background:#70c9d7}
+.theme-card h3{color:#3f7e43;font-size:15px;text-shadow:2px 2px #f5cf65}
+.theme-card p{color:#76502c;font-size:9px;line-height:1.45}
+.unlock-note,.unlock-status{color:#9c5b28!important;background:#ffe095;padding:6px;border:3px dashed #b97835}
+.theme-card.locked{filter:none;background:#e7ddad}
+.theme-card.locked .theme-preview{filter:saturate(.35) brightness(.85);opacity:.72}
+.theme-card.locked::after{content:"🔒 LOCKED";top:16px;right:12px;color:#fff3c1;background:#8b5631;border:4px solid #3b2516;font-size:10px;transform:rotate(2deg)}
+.small-button::after{background:linear-gradient(#8ad4e8 0 23%,#4ca9c8 24% 72%,#29799e 73%)}
+.small-button::before{background:#24506b}
+
+/* settings + credits as bamboo parchment */
+.simple-panel{background:
+  linear-gradient(rgba(221,239,161,.86),rgba(188,222,133,.9)),
+  repeating-linear-gradient(90deg,#7aae5c 0 24px,#8dc36a 24px 48px)}
+.setting-row,.credits-panel>p,.credits-panel>strong{
+  background:#fff0b7;border:5px solid #784b25;box-shadow:inset 0 4px #fff8d8,6px 6px #8d6337;
+}
+.setting-row{padding:16px 18px;color:#4e6338;font-size:12px}
+.setting-row input[type=checkbox]{width:26px;height:26px;accent-color:#62b04e}
+.setting-row input[type=range]{accent-color:#62b04e}
+.credits-panel>p{margin:12px auto 0;padding:8px 14px;width:min(90%,440px);color:#8d6332;font-size:10px;border-bottom:0;box-shadow:none}
+.credits-panel>strong{display:block;margin:0 auto 8px;padding:10px 14px;width:min(90%,440px);color:#3f7e44;font-size:16px;border-top:0;box-shadow:6px 6px #8d6337}
+
+/* gameplay HUD reskin only — mechanics untouched */
+.game-shell{background:linear-gradient(#d6eda5,#b2d87f)}
+.safe-bar{
+  background:linear-gradient(#fff0b2,#dfbe74);border:6px solid #5e391d;
+  box-shadow:inset 0 5px #fff8da,6px 6px #8d6337;padding:10px;
+}
+.scores div{background:#fff6c9;border:4px solid #6d4626;box-shadow:inset 0 3px #fffdf0}
+.scores span{color:#5b7a47}.scores strong{color:#e26d2d;text-shadow:2px 2px #f5d06d}
+.world-label{color:#4b733f;background:#fff0b3;border:5px solid #6c4626;box-shadow:inset 0 4px #fff8d8,5px 5px #8d6337}
+.play-space{border:7px solid #5e391d;outline:4px solid #c79449}
+.bottom-bar{color:#5c6339;background:#fff0b3;border:5px solid #6d4626}
+.overlay{background:rgba(50,100,92,.68)}
+.overlay-panel{background:#fff0b7;border:6px solid #6d4626;box-shadow:8px 8px #8d6337}
+.overlay-panel p{color:#6f552f}
+
+@media(max-width:560px){
+  .menu-stage{min-height:610px}.home-card{width:86%;padding-inline:14px}
+  .home-card::before,.home-card::after{display:none}
+  .logo-koi,.logo-hunt{font-size:clamp(46px,14vw,68px)}
+  .main-menu .pixel-button .menu-icon::after{left:220px}
+  .theme-grid{grid-template-columns:1fr}
+  .panel-shell,.game-shell{padding:11px}
+}
+
 </style>
 </head>
 <body>
