@@ -71,6 +71,16 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 
 @media(max-width:560px){body{padding:7px}.game-app{width:97vw}.menu-stage{min-height:570px}.home-card{width:88%;padding-inline:13px}.logo-koi,.logo-hunt{font-size:clamp(48px,15vw,72px)}.main-menu{width:90%}.pixel-button{font-size:15px;min-height:57px}.main-menu .pixel-button .menu-icon::after{left:215px}.theme-grid{grid-template-columns:1fr}.safe-bar{grid-template-columns:1fr auto 1fr;gap:5px}.small-button{font-size:8px;padding:7px}.scores{gap:7px}.scores strong{font-size:17px}.bottom-bar{font-size:8px}}
 
+
+/* V4 RETRO HARD-PIXEL UI */
+.game-logo{filter:drop-shadow(8px 8px 0 #031317)}
+.logo-koi,.logo-hunt{font-family:"Courier New",monospace!important;font-weight:900!important;letter-spacing:-4px!important;-webkit-text-stroke:0!important;text-shadow:6px 0 #071a20,-6px 0 #071a20,0 6px #071a20,0 -6px #071a20,6px 6px #071a20!important;image-rendering:pixelated}
+.logo-row{gap:14px;transform:scaleY(1.08)}
+.logo-fish{width:clamp(110px,23vw,165px);filter:drop-shadow(5px 5px 0 #071a20)}
+.pixel-button,.small-button{border-radius:0!important;font-family:"Courier New",monospace!important;font-weight:900!important;letter-spacing:1px!important;clip-path:polygon(10% 0,90% 0,90% 7%,97% 7%,97% 18%,100% 18%,100% 82%,97% 82%,97% 93%,90% 93%,90% 100%,10% 100%,10% 93%,3% 93%,3% 82%,0 82%,0 18%,3% 18%,3% 7%,10% 7%)!important;box-shadow:inset 0 7px 0 rgba(255,255,255,.16),inset 0 -8px 0 rgba(0,0,0,.28),7px 7px 0 #031317!important}
+.pixel-button:hover:not(:disabled),.small-button:hover:not(:disabled){transform:translate(-2px,-2px)!important;filter:brightness(1.15)}
+.pixel-button:active:not(:disabled),.small-button:active:not(:disabled){transform:translate(5px,5px)!important;box-shadow:inset 0 5px 0 rgba(255,255,255,.1),inset 0 -5px 0 rgba(0,0,0,.3),2px 2px 0 #031317!important}
+.panel-heading h2,.theme-card h3,.scores strong,.overlay-card h2{font-family:"Courier New",monospace!important;font-weight:900!important;text-shadow:3px 3px 0 #071a20!important}
 </style>
 </head>
 <body>
@@ -85,10 +95,10 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
             <span class="logo-row"><span class="logo-koi">KOI</span><span class="logo-hunt">HUNT</span></span>
             <svg class="logo-fish" viewBox="0 0 96 36" role="img" aria-label="Pixel koi fish">
               <g shape-rendering="crispEdges">
-                <path fill="#eef4e7" d="M8 13h10V8h11V5h29v3h12v5h10v10H70v5H58v3H29v-3H18v-5H8z"/>
-                <path fill="#ef6b32" d="M23 9h14v8H23zM45 6h13v8H45zM54 20h12v7H54zM30 21h13v7H30z"/>
+                <path fill="#f47b32" d="M8 13h10V8h11V5h29v3h12v5h10v10H70v5H58v3H29v-3H18v-5H8z"/>
+                <path fill="#ffd36d" d="M23 9h14v8H23zM45 6h13v8H45zM54 20h12v7H54zM30 21h13v7H30z"/>
                 <path fill="#d95427" d="M18 13h10v10H18zM64 12h10v11H64z"/>
-                <path fill="#d9e6df" d="M2 8h8v7h8v6h-8v7H2l5-10zM38 1h13v5H38zM38 30h13v5H38z"/>
+                <path fill="#ff9d45" d="M2 8h8v7h8v6h-8v7H2l5-10zM38 1h13v5H38zM38 30h13v5H38z"/>
                 <rect fill="#071a20" x="71" y="14" width="4" height="4"/>
               </g>
             </svg>
@@ -146,10 +156,10 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
 
-          <article class="theme-card" data-theme="anacondaSwimmer">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Anaconda Deep Water preview"></canvas>
-            <h3>ANACONDA DEEP WATER</h3>
-            <p>ORIGINAL ANACONDA · SWIMMER · DEEP BLUE WATER</p>
+          <article class="theme-card" data-theme="giantSeaSnake">
+            <canvas class="theme-preview" width="240" height="150" aria-label="Giant Sea Snake preview"></canvas>
+            <h3>GIANT SEA SNAKE</h3>
+            <p>GIANT SEA SNAKE · SWIMMER · OPEN OCEAN</p>
             <p class="unlock-note" data-unlock-note>UNLOCK AT 310 POINTS</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
@@ -297,7 +307,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     bambooBallPython: "audio/tts2.mp3",
     greenTreePython: "audio/gasoline-takes.mp3",
     rattlesnakeDesert: "audio/loop-demona-finished.mp3",
-    anacondaSwimmer: "audio/goldie-complete.mp3"
+    giantSeaSnake: "audio/goldie-complete.mp3"
   };
   const music = new Audio();
   music.loop = true;
@@ -372,19 +382,20 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       snake: { main: "#bd9a58", alt: "#d4b86f", light: "#ead58c", dark: "#5c472e", accent: "#2e2b22", eye: "#f4ca52" },
       target: { main: "#6da34b", light: "#a8d16f", dark: "#34512c", pink: "#df805c" }
     },
-    anacondaSwimmer: {
-      name: "ANACONDA DEEP WATER",
+    giantSeaSnake: {
+      name: "GIANT SEA SNAKE",
       targetName: "SWIMMER",
-      background: "deepPond",
-      snakeStyle: "anaconda",
+      background: "openOcean",
+      snakeStyle: "seaSnake",
       unlockScore: 310,
       unlockText: "UNLOCK AT 310 POINTS",
-      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" },
-      target: { skin: "#9a5d3c", suit: "#2e83d0", hair: "#251b18", foam: "#d7f4ff" }
+      snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" },
+      target: { skin: "#9a5d3c", suit: "#f06d3d", hair: "#251b18", foam: "#d7f4ff" }
     }
   };
 
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
+  if (selectedThemeKey === "anacondaSwimmer") selectedThemeKey = "giantSeaSnake";
   if (!themes[selectedThemeKey]) selectedThemeKey = "anacondaPond";
   let snake = [];
   let target = { x: 14, y: 10 };
@@ -402,13 +413,13 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
   // Versioned unlock progress. This update intentionally starts the collection
   // progression from zero so worlds remain locked until a new qualifying score
   // is earned in this version of the game.
-  const unlockResetKey = "koiHuntUnlockResetV3";
+  const unlockResetKey = "koiHuntUnlockResetV4SeaSnake";
   if (localStorage.getItem(unlockResetKey) !== "done") {
-    localStorage.setItem("koiHuntUnlockProgressV3", "0");
+    localStorage.setItem("koiHuntUnlockProgressV4", "0");
     localStorage.setItem("koiHuntTheme", "anacondaPond");
     localStorage.setItem(unlockResetKey, "done");
   }
-  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV3")) || 0);
+  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV4")) || 0);
 
   function highestScore() {
     return unlockProgress;
@@ -489,7 +500,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       }
       if (score > unlockProgress) {
         unlockProgress = score;
-        localStorage.setItem("koiHuntUnlockProgressV3", String(unlockProgress));
+        localStorage.setItem("koiHuntUnlockProgressV4", String(unlockProgress));
       }
       placeTarget();
     } else snake.pop();
@@ -554,6 +565,9 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     ],
     deepPond: [
       ["weed",1,2],["weed",17,16],["lily",16,2],["lily",3,17],["bubble",5,5],["bubble",14,12],["shadow",9,16]
+    ],
+    openOcean: [
+      ["coral",2,16],["coral",16,3],["seaweed",1,4],["seaweed",18,14],["bubble",5,5],["bubble",14,12],["rock",9,17]
     ]
   };
 
@@ -571,7 +585,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     drawWorldDecorations(ctx, theme.background, tileSize);
     drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
     drawSnake(ctx, snake, theme, tileSize, direction);
-    ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" ? "#16443a" : "#493c27";
+    ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" || theme.background === "openOcean" ? "#16443a" : "#493c27";
     ctx.lineWidth = 8;
     ctx.strokeRect(4, 4, gameCanvas.width - 8, gameCanvas.height - 8);
   }
@@ -581,6 +595,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     const palettes = {
       pond: ["#078cc4","#0879aa","#0b96c5","#087fae"],
       deepPond: ["#075f88","#084e72","#0a7397","#086488"],
+      openOcean: ["#064f78","#075f8e","#08709c","#0a5a83"],
       brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
       canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
       desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"]
@@ -592,7 +607,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillStyle = palette[(x * 5 + y * 7) % palette.length];
       c.fillRect(x * cell, y * cell, cell, cell);
     }
-    if (kind === "pond" || kind === "deepPond") {
+    if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
       c.fillStyle = "rgba(220,250,255,.18)";
       for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
     } else if (kind === "brightGrass") {
@@ -653,6 +668,11 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
         c.fillStyle="#8a7a3a"; c.fillRect(x+cell*.1,y+cell*.5,cell*.8,cell*.25);
       } else if (type === "bubble") {
         c.strokeStyle="rgba(215,248,255,.7)"; c.lineWidth=Math.max(2,cell*.08); c.strokeRect(x+cell*.3,y+cell*.3,cell*.35,cell*.35);
+      } else if (type === "coral") {
+        c.fillStyle="#ef765d"; c.fillRect(x+cell*.42,y+cell*.18,cell*.18,cell*.76); c.fillRect(x+cell*.18,y+cell*.38,cell*.28,cell*.18); c.fillRect(x+cell*.56,y+cell*.52,cell*.28,cell*.18);
+        c.fillStyle="#ffb06f"; c.fillRect(x+cell*.36,y+cell*.12,cell*.30,cell*.18);
+      } else if (type === "seaweed") {
+        c.fillStyle="#1f8b62"; c.fillRect(x+cell*.15,y+cell*.25,cell*.16,cell*.72); c.fillRect(x+cell*.42,y+cell*.08,cell*.16,cell*.89); c.fillRect(x+cell*.70,y+cell*.34,cell*.16,cell*.63);
       }
     });
   }
@@ -685,6 +705,9 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     } else if (theme.snakeStyle === "rattlesnake") {
       c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.28,size*.28);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.45,oy,size*.12,size);
+    } else if (theme.snakeStyle === "seaSnake") {
+      c.fillRect(ox+size*.08,oy+size*.38,size*.84,size*.24);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.18,oy+size*.12,size*.18,size*.18); c.fillRect(ox+size*.62,oy+size*.70,size*.18,size*.18);
     } else {
       c.fillRect(ox+size*.15,oy+size*.18,size*.34,size*.48); c.fillRect(ox+size*.55,oy+size*.44,size*.28,size*.35);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.08,oy+size*.08,size*.18,size*.18);
@@ -701,6 +724,9 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillRect(x+cell*.35,y+cell*.12,cell*.22,cell*.68); c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.1,y+cell*.38,cell*.22,cell*.18);
     } else if (theme.snakeStyle === "rattlesnake") {
       c.fillRect(x+cell*.18,y+cell*.18,cell*.28,cell*.28); c.fillRect(x+cell*.55,y+cell*.5,cell*.25,cell*.25);
+    } else if (theme.snakeStyle === "seaSnake") {
+      c.fillRect(x+cell*.12,y+cell*.38,cell*.76,cell*.22);
+      c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.18,y+cell*.15,cell*.18,cell*.18); c.fillRect(x+cell*.64,y+cell*.66,cell*.18,cell*.18);
     } else {
       c.fillRect(x+cell*.24,y+cell*.25,cell*.25,cell*.25); c.fillRect(x+cell*.55,y+cell*.55,cell*.24,cell*.2);
     }
@@ -849,11 +875,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     drawMenuPondDecorations(frame);
     // The main menu keeps the living pond/gameplay background, but no animated
     // snake or koi circles around the title/menu.
-    // gameplay-style score strip behind the title card
-    c.fillStyle="rgba(3,43,51,.82)"; c.fillRect(0,0,menuCanvas.width,40);
-    c.fillStyle="#f4d36e"; c.font="bold 15px monospace";
-    c.fillText("WORLD 01  •  ANACONDA POND",14,25);
-    c.textAlign="right"; c.fillText("KOI: 01",menuCanvas.width-14,25); c.textAlign="left";
+
   }
 
   function drawMenuPondDecorations(frame) {
@@ -862,14 +884,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       const bob=Math.sin(frame*.03+i)*3; c.fillStyle="#285d2b"; c.fillRect(x,y+bob,s,s*.65); c.fillStyle="#477b34"; c.fillRect(x+s*.2,y-s*.12+bob,s*.62,s*.62);
     });
     [[18,165],[510,150],[16,370],[520,350]].forEach(([x,y],i)=>{const sway=Math.sin(frame*.04+i)*4;c.fillStyle="#126650";c.fillRect(x+sway,y+20,8,55);c.fillRect(x+12,y,8,75);c.fillRect(x+24-sway,y+12,8,63);});
-    // extra moving koi silhouettes like real gameplay
-    for (let i=0;i<3;i++) {
-      const fx=((frame*(1.1+i*.25)+i*190)%650)-50;
-      const fy=110+i*170+Math.sin(frame*.025+i)*20;
-      menuCtx.globalAlpha=.55;
-      drawTarget(c,fx,fy,themes.anacondaPond,34,{x:1,y:0});
-      menuCtx.globalAlpha=1;
-    }
+
   }
 
   function drawMovingMenuSnake(frame) {

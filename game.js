@@ -42,7 +42,7 @@
     bambooBallPython: "audio/tts2.mp3",
     greenTreePython: "audio/gasoline-takes.mp3",
     rattlesnakeDesert: "audio/loop-demona-finished.mp3",
-    anacondaSwimmer: "audio/goldie-complete.mp3"
+    giantSeaSnake: "audio/goldie-complete.mp3"
   };
   const music = new Audio();
   music.loop = true;
@@ -117,19 +117,20 @@
       snake: { main: "#bd9a58", alt: "#d4b86f", light: "#ead58c", dark: "#5c472e", accent: "#2e2b22", eye: "#f4ca52" },
       target: { main: "#6da34b", light: "#a8d16f", dark: "#34512c", pink: "#df805c" }
     },
-    anacondaSwimmer: {
-      name: "ANACONDA DEEP WATER",
+    giantSeaSnake: {
+      name: "GIANT SEA SNAKE",
       targetName: "SWIMMER",
-      background: "deepPond",
-      snakeStyle: "anaconda",
+      background: "openOcean",
+      snakeStyle: "seaSnake",
       unlockScore: 310,
       unlockText: "UNLOCK AT 310 POINTS",
-      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" },
-      target: { skin: "#9a5d3c", suit: "#2e83d0", hair: "#251b18", foam: "#d7f4ff" }
+      snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" },
+      target: { skin: "#9a5d3c", suit: "#f06d3d", hair: "#251b18", foam: "#d7f4ff" }
     }
   };
 
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
+  if (selectedThemeKey === "anacondaSwimmer") selectedThemeKey = "giantSeaSnake";
   if (!themes[selectedThemeKey]) selectedThemeKey = "anacondaPond";
   let snake = [];
   let target = { x: 14, y: 10 };
@@ -147,13 +148,13 @@
   // Versioned unlock progress. This update intentionally starts the collection
   // progression from zero so worlds remain locked until a new qualifying score
   // is earned in this version of the game.
-  const unlockResetKey = "koiHuntUnlockResetV3";
+  const unlockResetKey = "koiHuntUnlockResetV4SeaSnake";
   if (localStorage.getItem(unlockResetKey) !== "done") {
-    localStorage.setItem("koiHuntUnlockProgressV3", "0");
+    localStorage.setItem("koiHuntUnlockProgressV4", "0");
     localStorage.setItem("koiHuntTheme", "anacondaPond");
     localStorage.setItem(unlockResetKey, "done");
   }
-  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV3")) || 0);
+  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV4")) || 0);
 
   function highestScore() {
     return unlockProgress;
@@ -234,7 +235,7 @@
       }
       if (score > unlockProgress) {
         unlockProgress = score;
-        localStorage.setItem("koiHuntUnlockProgressV3", String(unlockProgress));
+        localStorage.setItem("koiHuntUnlockProgressV4", String(unlockProgress));
       }
       placeTarget();
     } else snake.pop();
@@ -299,6 +300,9 @@
     ],
     deepPond: [
       ["weed",1,2],["weed",17,16],["lily",16,2],["lily",3,17],["bubble",5,5],["bubble",14,12],["shadow",9,16]
+    ],
+    openOcean: [
+      ["coral",2,16],["coral",16,3],["seaweed",1,4],["seaweed",18,14],["bubble",5,5],["bubble",14,12],["rock",9,17]
     ]
   };
 
@@ -316,7 +320,7 @@
     drawWorldDecorations(ctx, theme.background, tileSize);
     drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
     drawSnake(ctx, snake, theme, tileSize, direction);
-    ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" ? "#16443a" : "#493c27";
+    ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" || theme.background === "openOcean" ? "#16443a" : "#493c27";
     ctx.lineWidth = 8;
     ctx.strokeRect(4, 4, gameCanvas.width - 8, gameCanvas.height - 8);
   }
@@ -326,6 +330,7 @@
     const palettes = {
       pond: ["#078cc4","#0879aa","#0b96c5","#087fae"],
       deepPond: ["#075f88","#084e72","#0a7397","#086488"],
+      openOcean: ["#064f78","#075f8e","#08709c","#0a5a83"],
       brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
       canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
       desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"]
@@ -337,7 +342,7 @@
       c.fillStyle = palette[(x * 5 + y * 7) % palette.length];
       c.fillRect(x * cell, y * cell, cell, cell);
     }
-    if (kind === "pond" || kind === "deepPond") {
+    if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
       c.fillStyle = "rgba(220,250,255,.18)";
       for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
     } else if (kind === "brightGrass") {
@@ -398,6 +403,11 @@
         c.fillStyle="#8a7a3a"; c.fillRect(x+cell*.1,y+cell*.5,cell*.8,cell*.25);
       } else if (type === "bubble") {
         c.strokeStyle="rgba(215,248,255,.7)"; c.lineWidth=Math.max(2,cell*.08); c.strokeRect(x+cell*.3,y+cell*.3,cell*.35,cell*.35);
+      } else if (type === "coral") {
+        c.fillStyle="#ef765d"; c.fillRect(x+cell*.42,y+cell*.18,cell*.18,cell*.76); c.fillRect(x+cell*.18,y+cell*.38,cell*.28,cell*.18); c.fillRect(x+cell*.56,y+cell*.52,cell*.28,cell*.18);
+        c.fillStyle="#ffb06f"; c.fillRect(x+cell*.36,y+cell*.12,cell*.30,cell*.18);
+      } else if (type === "seaweed") {
+        c.fillStyle="#1f8b62"; c.fillRect(x+cell*.15,y+cell*.25,cell*.16,cell*.72); c.fillRect(x+cell*.42,y+cell*.08,cell*.16,cell*.89); c.fillRect(x+cell*.70,y+cell*.34,cell*.16,cell*.63);
       }
     });
   }
@@ -430,6 +440,9 @@
     } else if (theme.snakeStyle === "rattlesnake") {
       c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.28,size*.28);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.45,oy,size*.12,size);
+    } else if (theme.snakeStyle === "seaSnake") {
+      c.fillRect(ox+size*.08,oy+size*.38,size*.84,size*.24);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.18,oy+size*.12,size*.18,size*.18); c.fillRect(ox+size*.62,oy+size*.70,size*.18,size*.18);
     } else {
       c.fillRect(ox+size*.15,oy+size*.18,size*.34,size*.48); c.fillRect(ox+size*.55,oy+size*.44,size*.28,size*.35);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.08,oy+size*.08,size*.18,size*.18);
@@ -446,6 +459,9 @@
       c.fillRect(x+cell*.35,y+cell*.12,cell*.22,cell*.68); c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.1,y+cell*.38,cell*.22,cell*.18);
     } else if (theme.snakeStyle === "rattlesnake") {
       c.fillRect(x+cell*.18,y+cell*.18,cell*.28,cell*.28); c.fillRect(x+cell*.55,y+cell*.5,cell*.25,cell*.25);
+    } else if (theme.snakeStyle === "seaSnake") {
+      c.fillRect(x+cell*.12,y+cell*.38,cell*.76,cell*.22);
+      c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.18,y+cell*.15,cell*.18,cell*.18); c.fillRect(x+cell*.64,y+cell*.66,cell*.18,cell*.18);
     } else {
       c.fillRect(x+cell*.24,y+cell*.25,cell*.25,cell*.25); c.fillRect(x+cell*.55,y+cell*.55,cell*.24,cell*.2);
     }
@@ -594,11 +610,7 @@
     drawMenuPondDecorations(frame);
     // The main menu keeps the living pond/gameplay background, but no animated
     // snake or koi circles around the title/menu.
-    // gameplay-style score strip behind the title card
-    c.fillStyle="rgba(3,43,51,.82)"; c.fillRect(0,0,menuCanvas.width,40);
-    c.fillStyle="#f4d36e"; c.font="bold 15px monospace";
-    c.fillText("WORLD 01  •  ANACONDA POND",14,25);
-    c.textAlign="right"; c.fillText("KOI: 01",menuCanvas.width-14,25); c.textAlign="left";
+
   }
 
   function drawMenuPondDecorations(frame) {
@@ -607,14 +619,7 @@
       const bob=Math.sin(frame*.03+i)*3; c.fillStyle="#285d2b"; c.fillRect(x,y+bob,s,s*.65); c.fillStyle="#477b34"; c.fillRect(x+s*.2,y-s*.12+bob,s*.62,s*.62);
     });
     [[18,165],[510,150],[16,370],[520,350]].forEach(([x,y],i)=>{const sway=Math.sin(frame*.04+i)*4;c.fillStyle="#126650";c.fillRect(x+sway,y+20,8,55);c.fillRect(x+12,y,8,75);c.fillRect(x+24-sway,y+12,8,63);});
-    // extra moving koi silhouettes like real gameplay
-    for (let i=0;i<3;i++) {
-      const fx=((frame*(1.1+i*.25)+i*190)%650)-50;
-      const fy=110+i*170+Math.sin(frame*.025+i)*20;
-      menuCtx.globalAlpha=.55;
-      drawTarget(c,fx,fy,themes.anacondaPond,34,{x:1,y:0});
-      menuCtx.globalAlpha=1;
-    }
+
   }
 
   function drawMovingMenuSnake(frame) {

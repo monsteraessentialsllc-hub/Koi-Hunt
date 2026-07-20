@@ -50,3 +50,11 @@ VERSION 3 UI REBUILD
 - index.html now contains the full CSS and JavaScript inline so GitHub Pages cannot display an unstyled white page if style.css or game.js is missed during upload.
 - Keep the audio folder beside index.html.
 - Game rules preserved: keyboard controls, wall wrapping, score +10 per target, and game over only on self-collision.
+
+V4 RETRO + LOCK UPDATE
+- Orange title koi matching the gameplay koi.
+- Hard-edged 8-bit title and button styling.
+- Removed WORLD 01 / KOI 01 labels from the title screen.
+- Collection progression reset for this version so locked snakes stay locked.
+- Unlocks: Bamboo 100, Green Tree 170, Rattlesnake 240, Giant Sea Snake 310.
+- Giant Sea Snake replaces Anaconda Deep Water and keeps the Goldie music track.
