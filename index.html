@@ -132,7 +132,8 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 @media(max-width:650px){.collection-carousel{grid-template-columns:40px minmax(0,1fr) 40px}.collection-arrow{width:38px}.collection-window .theme-card{flex-basis:calc(50% - 7px)}}
 
 /* Dedicated clickable secret koi, independent of the menu buttons/canvas */
-#secret-golden-koi{position:absolute;z-index:6;left:-120px;top:18%;width:88px;height:46px;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 0 10px #ffe45d);animation:secretKoiSwim 13s linear infinite;touch-action:manipulation}
+#secret-golden-koi{position:absolute;z-index:6;left:-120px;top:18%;width:88px;height:46px;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 0 10px #ffe45d);touch-action:manipulation;display:none}
+#secret-golden-koi.golden-koi-active{display:block;animation:secretKoiSwim 12s linear 1}
 #secret-golden-koi svg{display:block;width:100%;height:100%;image-rendering:pixelated;animation:secretKoiBob 1.2s steps(4,end) infinite}
 #secret-golden-koi:focus-visible{outline:4px solid #fff3a1;outline-offset:5px}
 @keyframes secretKoiSwim{0%{left:-120px;top:17%;transform:scaleX(1)}46%{left:calc(100% + 20px);top:29%;transform:scaleX(1)}47%{left:calc(100% + 20px);top:29%;transform:scaleX(-1)}96%{left:-120px;top:43%;transform:scaleX(-1)}100%{left:-120px;top:17%;transform:scaleX(1)}}
@@ -384,6 +385,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
   const gameCanvas = document.getElementById("game-canvas");
   const ctx = gameCanvas.getContext("2d");
   const menuCanvas = document.getElementById("menu-canvas");
+  const secretGoldenKoiButton = document.getElementById("secret-golden-koi");
   const menuCtx = menuCanvas.getContext("2d");
   ctx.imageSmoothingEnabled = false;
   menuCtx.imageSmoothingEnabled = false;
@@ -435,11 +437,11 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     anacondaPond: {
       name: "ANACONDA POND", targetName: "POND FISH", background: "pond",
       snakeStyle: "anaconda", unlockScore: 0, unlockText: "AVAILABLE FROM THE START",
-      preyUnlocks: [0,50,100], preyNames:["SILVER FISH","ORANGE FISH","WHITE FISH"],
+      preyUnlocks: [0,50,100], preyNames:["KOHAKU KOI","SHOWA KOI","YAMABUKI KOI"],
       preyPalettes:[
-        {main:"#b8c8cf",light:"#eef7f7",dark:"#65757e"},
-        {main:"#f38550",light:"#ffc06f",dark:"#cf4f36"},
-        {main:"#f5f0df",light:"#ffffff",dark:"#c7bfa7"}
+        {main:"#f7f2df",light:"#ffffff",dark:"#d53d2f",spot:"#d53d2f"},
+        {main:"#f4efe2",light:"#ffffff",dark:"#171a1d",spot:"#d34232",spot2:"#171a1d"},
+        {main:"#e9bd35",light:"#fff08a",dark:"#8f6816",spot:"#f6d75a"}
       ],
       goldenName:"GOLDEN KOI",
       snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" }
@@ -534,7 +536,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
   let menuFish = [];
   let goldenKoiAvailable = false;
   let goldenKoiVisibleUntil = 0;
-  let nextGoldenKoiAt = performance.now() + 45000 + Math.random() * 45000;
+  let nextGoldenKoiAt = performance.now() + 120000 + Math.random() * 120000;
   let secretDragonSession = false;
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
@@ -649,7 +651,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       secretDragonSession=false;
       selectedThemeKey="anacondaPond";
       localStorage.setItem("koiHuntTheme",selectedThemeKey);
-      scheduleNextGoldenKoi(45000,90000);
+      scheduleNextGoldenKoi(120000,240000);
       ui.overlayText.textContent = `THE DRAGON LOST THE HOARD. SCORE: ${score} · WAIT FOR THE GOLDEN KOI TO RETURN.`;
       ui.overlayButton.textContent = "RETURN TO MENU";
       ui.overlayButton.dataset.action = "home";
@@ -692,7 +694,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     } while (snake.some(s => s.x === target.x && s.y === target.y));
     const choices=availablePreyVariants(theme);
     target.variant=choices[Math.floor(Math.random()*choices.length)] || 0;
-    target.golden=Math.random()<0.02;
+    target.golden=Math.random()<0.006;
     target.value=target.golden?100:10;
   }
 
@@ -1038,9 +1040,12 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     if(target.golden) pal={main:"#f2c83f",light:"#fff29a",dark:"#9b6b12",pink:"#ffd65c",beak:"#fff0a0",skin:"#e5b94f",suit:"#fff08a",hair:"#8a611c",foam:"#fff8bd",kind:theme.targetName==="SEA PREY"?"mermaid":pal.kind};
 
     if(theme.targetName==="POND FISH"){
-      c.fillStyle=pal.light;c.fillRect(cell*.03,cell*.34,cell*.25,cell*.32);c.fillRect(cell*.02,cell*.18,cell*.16,cell*.24);c.fillRect(cell*.02,cell*.58,cell*.16,cell*.24);
-      c.fillStyle=pal.main;c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);c.fillRect(cell*.70,cell*.30,cell*.23,cell*.40);
-      c.fillStyle=pal.dark;c.fillRect(cell*.42,cell*.34,cell*.16,cell*.16);c.fillRect(cell*.62,cell*.52,cell*.12,cell*.12);
+      // True bird's-eye koi: symmetrical fins, tapered body and dorsal markings.
+      c.fillStyle=pal.light;c.fillRect(cell*.03,cell*.37,cell*.22,cell*.26);c.fillRect(cell*.04,cell*.20,cell*.14,cell*.20);c.fillRect(cell*.04,cell*.60,cell*.14,cell*.20);
+      c.fillStyle=pal.main;c.fillRect(cell*.20,cell*.25,cell*.58,cell*.50);c.fillRect(cell*.70,cell*.32,cell*.22,cell*.36);
+      c.fillStyle=pal.spot||pal.dark;c.fillRect(cell*.31,cell*.29,cell*.18,cell*.18);c.fillRect(cell*.55,cell*.51,cell*.16,cell*.16);
+      if(pal.spot2){c.fillStyle=pal.spot2;c.fillRect(cell*.46,cell*.39,cell*.15,cell*.14);c.fillRect(cell*.69,cell*.34,cell*.10,cell*.12);}
+      c.fillStyle=pal.dark;c.fillRect(cell*.80,cell*.39,cell*.05,cell*.05);c.fillRect(cell*.80,cell*.56,cell*.05,cell*.05);
     } else if(theme.targetName==="MOUSE"){
       c.fillStyle=pal.pink;c.fillRect(cell*.02,cell*.46,cell*.27,cell*.09);
       c.fillStyle=pal.main;c.fillRect(cell*.24,cell*.28,cell*.49,cell*.44);c.fillRect(cell*.68,cell*.35,cell*.22,cell*.30);
@@ -1051,11 +1056,13 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillStyle=pal.main;c.fillRect(cell*.25,cell*.23,cell*.52,cell*.54);c.fillRect(cell*.60,cell*.18,cell*.25,cell*.25);c.fillRect(cell*.60,cell*.58,cell*.25,cell*.25);
       c.fillStyle=pal.light;c.fillRect(cell*.34,cell*.30,cell*.26,cell*.40);
     } else if(theme.targetName==="CARDINAL"){
-      c.fillStyle=pal.dark;c.fillRect(cell*.12,cell*.42,cell*.28,cell*.16);c.fillRect(cell*.30,cell*.25,cell*.45,cell*.50);
-      c.fillStyle=pal.main;c.fillRect(cell*.38,cell*.24,cell*.38,cell*.52);c.fillRect(cell*.62,cell*.31,cell*.22,cell*.36);
-      c.fillStyle=pal.light;c.fillRect(cell*.42,cell*.31,cell*.18,cell*.18);
-      c.fillStyle=pal.beak;c.fillRect(cell*.82,cell*.43,cell*.14,cell*.14);
-      c.fillStyle="#111";c.fillRect(cell*.72,cell*.35,cell*.06,cell*.06);
+      // Bird's-eye bird with wings spread evenly from the body.
+      c.fillStyle=pal.dark;c.fillRect(cell*.08,cell*.22,cell*.30,cell*.20);c.fillRect(cell*.08,cell*.58,cell*.30,cell*.20);
+      c.fillRect(cell*.28,cell*.16,cell*.20,cell*.18);c.fillRect(cell*.28,cell*.66,cell*.20,cell*.18);
+      c.fillStyle=pal.main;c.fillRect(cell*.30,cell*.25,cell*.46,cell*.50);c.fillRect(cell*.66,cell*.34,cell*.20,cell*.32);
+      c.fillStyle=pal.light;c.fillRect(cell*.39,cell*.34,cell*.18,cell*.32);
+      c.fillStyle=pal.beak;c.fillRect(cell*.84,cell*.44,cell*.12,cell*.12);
+      c.fillStyle="#111";c.fillRect(cell*.73,cell*.34,cell*.05,cell*.05);c.fillRect(cell*.73,cell*.61,cell*.05,cell*.05);
     } else if(theme.targetName==="DESERT LIZARD"){
       c.fillStyle=pal.dark;c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
       c.fillStyle=pal.main;c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
@@ -1162,22 +1169,43 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     drawMenuFish(frame);
   }
 
-  function scheduleNextGoldenKoi(delayMin=45000, delayMax=90000){
+  function scheduleNextGoldenKoi(delayMin=120000, delayMax=240000){
     goldenKoiAvailable=false;
     goldenKoiVisibleUntil=0;
     nextGoldenKoiAt=performance.now()+delayMin+Math.random()*(delayMax-delayMin);
+    if(secretGoldenKoiButton){
+      secretGoldenKoiButton.classList.remove("golden-koi-active");
+      secretGoldenKoiButton.style.display="none";
+    }
+  }
+  function launchDragonHoardFromGoldenKoi(event){
+    if(event){event.preventDefault();event.stopPropagation();}
+    if(!goldenKoiAvailable) return;
+    goldenKoiAvailable=false;
+    goldenKoiVisibleUntil=0;
+    if(secretGoldenKoiButton){secretGoldenKoiButton.classList.remove("golden-koi-active");secretGoldenKoiButton.style.display="none";}
+    secretDragonSession=true;
+    selectedThemeKey="dragonHoard";
+    localStorage.setItem("koiHuntTheme",selectedThemeKey);
+    startGame();
   }
   function initMenuFish(){
     if(menuFish.length) return;
     for(let i=0;i<12;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:false,phase:Math.random()*20});
-    menuFish.push({x:-60,y:120,speed:.55,size:27,golden:true,phase:Math.random()*20});
+    
   }
   function drawMenuFish(frame){
     initMenuFish(); const c=menuCtx, now=performance.now();
     if(!goldenKoiAvailable && now>=nextGoldenKoiAt){
       goldenKoiAvailable=true;
-      goldenKoiVisibleUntil=now+9000;
-      const gold=menuFish.find(f=>f.golden); if(gold){gold.x=-45;gold.y=70+Math.random()*570;}
+      goldenKoiVisibleUntil=now+12000;
+      if(secretGoldenKoiButton){
+        secretGoldenKoiButton.style.top=(12+Math.random()*48)+"%";
+        secretGoldenKoiButton.style.display="block";
+        secretGoldenKoiButton.classList.remove("golden-koi-active");
+        void secretGoldenKoiButton.offsetWidth;
+        secretGoldenKoiButton.classList.add("golden-koi-active");
+      }
     }
     if(goldenKoiAvailable && now>goldenKoiVisibleUntil) scheduleNextGoldenKoi();
     menuFish.forEach((f,i)=>{
@@ -1213,6 +1241,11 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       startGame();
     }
   }, true);
+  if(secretGoldenKoiButton){
+    secretGoldenKoiButton.addEventListener("pointerdown",launchDragonHoardFromGoldenKoi,true);
+    secretGoldenKoiButton.addEventListener("click",launchDragonHoardFromGoldenKoi,true);
+    secretGoldenKoiButton.addEventListener("animationend",()=>{if(goldenKoiAvailable)scheduleNextGoldenKoi();});
+  }
 
   function drawMenuPondDecorations(frame) {
     const c=menuCtx;
