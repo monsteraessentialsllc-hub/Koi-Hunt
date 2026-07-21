@@ -106,6 +106,37 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 .main-menu .pixel-button .menu-icon::after{content:"✿";left:260px;top:-6px;color:#f7a3bd;font-size:23px;text-shadow:2px 2px #7e4560}
 .pixel-button.primary::after{background:linear-gradient(#bdea75 0 23%,#7ccc53 24% 72%,#4c9544 73%)}
 
+
+
+/* v9.2 repair: exact angular v8 pixel-garden menu buttons */
+.main-menu .pixel-button{
+  border-radius:0!important;
+  clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%)!important;
+  background:#69b94c!important;
+  box-shadow:inset 0 6px 0 rgba(242,255,183,.42),inset -7px -8px 0 rgba(31,96,45,.35),7px 8px 0 #234e2d!important;
+  overflow:hidden!important;
+}
+.main-menu .pixel-button::before,.main-menu .pixel-button::after{display:none!important}
+.main-menu .pixel-button.primary{background:#7ccc53!important}
+.main-menu .pixel-button:hover:not(:disabled){transform:translate(-2px,-2px)!important;filter:brightness(1.12)}
+.main-menu .pixel-button:active:not(:disabled){transform:translate(5px,6px)!important;box-shadow:inset 0 4px rgba(242,255,183,.32),2px 2px 0 #234e2d!important}
+
+/* Restored two-card collection carousel */
+.collection-carousel{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;gap:10px}
+.collection-window{overflow:hidden;padding:8px;min-width:0}
+.collection-window .theme-grid{display:flex!important;grid-template-columns:none!important;gap:14px!important;transition:transform .25s steps(4,end);will-change:transform;width:100%}
+.collection-window .theme-card{flex:0 0 calc(50% - 7px);min-width:0;box-sizing:border-box}
+.collection-arrow{width:48px;height:64px;border:4px solid #3b2516;background:#f4c95d;color:#315b36;font:900 24px/1 monospace;box-shadow:4px 4px 0 #6d4728;cursor:pointer}
+.collection-arrow:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:650px){.collection-carousel{grid-template-columns:40px minmax(0,1fr) 40px}.collection-arrow{width:38px}.collection-window .theme-card{flex-basis:calc(50% - 7px)}}
+
+/* Dedicated clickable secret koi, independent of the menu buttons/canvas */
+#secret-golden-koi{position:absolute;z-index:6;left:-120px;top:18%;width:88px;height:46px;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 0 10px #ffe45d);animation:secretKoiSwim 13s linear infinite;touch-action:manipulation}
+#secret-golden-koi svg{display:block;width:100%;height:100%;image-rendering:pixelated;animation:secretKoiBob 1.2s steps(4,end) infinite}
+#secret-golden-koi:focus-visible{outline:4px solid #fff3a1;outline-offset:5px}
+@keyframes secretKoiSwim{0%{left:-120px;top:17%;transform:scaleX(1)}46%{left:calc(100% + 20px);top:29%;transform:scaleX(1)}47%{left:calc(100% + 20px);top:29%;transform:scaleX(-1)}96%{left:-120px;top:43%;transform:scaleX(-1)}100%{left:-120px;top:17%;transform:scaleX(1)}}
+@keyframes secretKoiBob{0%,100%{translate:0 0}50%{translate:0 5px}}
+
 </style>
 </head>
 <body>
@@ -114,6 +145,16 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     <section id="home-screen" class="screen home-screen">
       <div class="menu-stage">
         <canvas id="menu-canvas" width="560" height="680" aria-hidden="true"></canvas>
+
+        <button id="secret-golden-koi" type="button" aria-label="Enter the secret Dragon's Hoard level" title="A mysterious golden koi...">
+          <svg viewBox="0 0 96 48" aria-hidden="true"><g shape-rendering="crispEdges">
+            <path fill="#f7cf3e" d="M8 16h12v-6h12V6h36v4h12v6h10v16H80v6H68v4H32v-4H20v-6H8z"/>
+            <path fill="#fff08a" d="M26 11h18v10H26zM48 8h18v9H48zM55 27h17v9H55z"/>
+            <path fill="#d9921e" d="M19 16h12v16H19zM68 15h12v17H68z"/>
+            <path fill="#ffd85c" d="M0 9h10v9h10v12H10v9H0l7-15zM42 0h16v7H42zM42 41h16v7H42z"/>
+            <rect fill="#21170a" x="78" y="19" width="5" height="5"/>
+          </g></svg>
+        </button>
 
         <div class="home-card">
           <h1 class="game-logo" aria-label="Koi Hunt">
@@ -368,7 +409,8 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     resetProgress: document.getElementById("reset-progress-button"),
     unlockAll: document.getElementById("unlock-all-button"),
     collectionPrev: document.getElementById("collection-prev"),
-    collectionNext: document.getElementById("collection-next")
+    collectionNext: document.getElementById("collection-next"),
+    secretGoldenKoi: document.getElementById("secret-golden-koi")
   };
 
   const gameCanvas = document.getElementById("game-canvas");
@@ -1115,6 +1157,17 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillStyle="#111";c.fillRect(f.size*.3,-f.size*.1,3,3); c.restore();
     });
   }
+  function launchDragonHoard(){
+    secretDragonSession = true;
+    selectedThemeKey = "dragonHoard";
+    startGame();
+  }
+  ui.secretGoldenKoi?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    launchDragonHoard();
+  });
+
   const menuStage = document.querySelector(".menu-stage");
   menuStage.addEventListener("pointerdown",event=>{
     if(screens.home.classList.contains("hidden")) return;
@@ -1125,9 +1178,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     if(gold){
       event.preventDefault();
       event.stopPropagation();
-      secretDragonSession=true;
-      selectedThemeKey="dragonHoard";
-      startGame();
+      launchDragonHoard();
     }
   }, true);
 
@@ -1198,7 +1249,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     const cards=[...document.querySelectorAll(".theme-card:not(.secret-hidden)")];
     const maxPage=Math.max(0,Math.ceil(cards.length/2)-1);
     collectionPage=Math.max(0,Math.min(collectionPage,maxPage));
-    if(grid) grid.style.transform=`translateX(-${collectionPage*100}%)`;
+    if(grid) grid.style.transform=`translateX(calc(-${collectionPage * 100}% - ${collectionPage * 14}px))`;
     if(ui.collectionPrev) ui.collectionPrev.disabled=collectionPage===0;
     if(ui.collectionNext) ui.collectionNext.disabled=collectionPage===maxPage;
   }
