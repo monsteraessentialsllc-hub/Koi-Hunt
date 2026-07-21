@@ -487,12 +487,35 @@
       c.fillRect(x * cell, y * cell, cell, cell);
     }
     if (kind === "dragonCave") {
-      c.fillStyle="#6b431d"; for(let i=0;i<38;i++){const x=(i*97)%width,y=(i*61)%height;c.fillRect(x,y,cell*.8,cell*.45);}
-      c.fillStyle="#e5b83f"; for(let i=0;i<24;i++){const x=(i*73+40)%width,y=(i*109+90)%height;c.fillRect(x,y,cell*.42,cell*.3);}
-      // Huge resting dragon, seen from above on the treasure bed.
-      c.fillStyle="#6e171d";c.fillRect(width*.18,height*.12,width*.62,height*.19);c.fillRect(width*.58,height*.22,width*.18,height*.44);
-      c.fillStyle="#b72d25";c.fillRect(width*.12,height*.16,width*.22,height*.14);c.fillRect(width*.72,height*.14,width*.15,height*.12);
-      c.fillStyle="#efb83b";c.fillRect(width*.18,height*.18,width*.08,height*.04);
+      // The entire floor is a dense treasure hoard: coins, swords and chests.
+      c.fillStyle="#4b2a20"; c.fillRect(0,0,width,height);
+      for(let i=0;i<150;i++){
+        const x=(i*67+31)%width, y=(i*101+17)%height;
+        c.fillStyle=i%3===0?"#ffd65a":i%3===1?"#e5ad2f":"#b97d1d";
+        c.fillRect(x,y,cell*.24,cell*.18);
+        c.fillStyle="rgba(255,245,150,.8)";
+        c.fillRect(x+cell*.06,y+cell*.03,cell*.08,cell*.05);
+      }
+      // Treasure chests.
+      for(let i=0;i<18;i++){
+        const x=(i*149+55)%width, y=(i*83+92)%height;
+        c.fillStyle="#6f351d"; c.fillRect(x,y,cell*.9,cell*.62);
+        c.fillStyle="#9c5127"; c.fillRect(x+cell*.08,y-cell*.16,cell*.74,cell*.28);
+        c.fillStyle="#f2c14d"; c.fillRect(x+cell*.39,y+cell*.18,cell*.14,cell*.25);
+        c.fillStyle="#d89d32"; c.fillRect(x,y+cell*.08,cell*.9,cell*.09);
+      }
+      // Crossed swords scattered through the gold.
+      c.save();
+      for(let i=0;i<24;i++){
+        const x=(i*113+25)%width, y=(i*157+48)%height;
+        c.save(); c.translate(x,y); c.rotate((i%4)*Math.PI/4);
+        c.fillStyle="#dfe7ea"; c.fillRect(-cell*.05,-cell*.65,cell*.10,cell*1.05);
+        c.fillStyle="#ffffff"; c.fillRect(-cell*.02,-cell*.62,cell*.035,cell*.72);
+        c.fillStyle="#8b5a2b"; c.fillRect(-cell*.10,cell*.34,cell*.20,cell*.30);
+        c.fillStyle="#f0c14b"; c.fillRect(-cell*.26,cell*.27,cell*.52,cell*.10);
+        c.restore();
+      }
+      c.restore();
     } else if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
       c.fillStyle = "rgba(220,250,255,.18)";
       for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
@@ -588,7 +611,14 @@
     c.fillStyle=index%2?theme.snake.main:theme.snake.alt;
     c.fillRect(ox,oy,size,size);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "leucistic") {
+    if (theme.snakeStyle === "dragon") {
+      // Armored dragon body viewed from above: ridge, scales and side spikes.
+      c.fillStyle=index%2?"#a92226":"#c43b2f"; c.fillRect(ox,oy,size,size);
+      c.fillStyle="#6b1119"; c.fillRect(ox+size*.42,oy,size*.16,size);
+      c.fillStyle="#ef9a34"; c.fillRect(ox+size*.15,oy+size*.20,size*.22,size*.22); c.fillRect(ox+size*.62,oy+size*.58,size*.20,size*.20);
+      c.fillStyle="#e7c05d";
+      c.fillRect(ox-size*.10,oy+size*.22,size*.16,size*.18); c.fillRect(ox+size*.94,oy+size*.58,size*.16,size*.18);
+    } else if (theme.snakeStyle === "leucistic") {
       c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
     } else if (theme.snakeStyle === "bamboo") {
@@ -612,7 +642,14 @@
     c.fillStyle=theme.snake.main; c.fillRect(x+cell*.08,y+cell*.08,cell*.84,cell*.84);
     c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "leucistic") {
+    if (theme.snakeStyle === "dragon") {
+      // Large horned dragon head with a gold brow and fiery nostrils.
+      c.fillStyle="#b62b2d"; c.fillRect(x+cell*.04,y+cell*.10,cell*.92,cell*.78);
+      c.fillStyle="#e45a32"; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.54);
+      c.fillStyle="#f2c552"; c.fillRect(x+cell*.12,y+cell*.02,cell*.18,cell*.30); c.fillRect(x+cell*.70,y+cell*.02,cell*.18,cell*.30);
+      c.fillStyle="#6d1117"; c.fillRect(x+cell*.30,y+cell*.52,cell*.14,cell*.14); c.fillRect(x+cell*.58,y+cell*.52,cell*.14,cell*.14);
+      c.fillStyle="#ff8a2a"; c.fillRect(x+cell*.34,y+cell*.56,cell*.06,cell*.06); c.fillRect(x+cell*.62,y+cell*.56,cell*.06,cell*.06);
+    } else if (theme.snakeStyle === "leucistic") {
       c.fillStyle=theme.snake.accent;
       c.fillRect(x+cell*.18,y+cell*.20,cell*.24,cell*.24);
       c.fillRect(x+cell*.58,y+cell*.54,cell*.22,cell*.22);
@@ -670,11 +707,16 @@
         c.fillStyle="#f6d85e";c.fillRect(cell*.32,cell*.22,cell*.38,cell*.48);c.fillStyle="#fff4aa";c.fillRect(cell*.38,cell*.08,cell*.26,cell*.22);
         c.fillStyle="#9b6b12";c.fillRect(cell*.18,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.68,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.33,cell*.68,cell*.13,cell*.24);c.fillRect(cell*.56,cell*.68,cell*.13,cell*.24);
       } else {
-        c.fillStyle=pal.skin;c.fillRect(cell*.38,cell*.10,cell*.25,cell*.23);
-        c.fillStyle=pal.hair;c.fillRect(cell*.36,cell*.07,cell*.29,cell*.09);
-        c.fillStyle=pal.shirt;c.fillRect(cell*.31,cell*.31,cell*.40,cell*.34);
-        c.fillStyle=pal.skin;c.fillRect(cell*.10,cell*.36,cell*.24,cell*.12);c.fillRect(cell*.68,cell*.49,cell*.24,cell*.12);
-        c.fillStyle=pal.pants;c.fillRect(cell*.34,cell*.63,cell*.14,cell*.29);c.fillRect(cell*.56,cell*.63,cell*.14,cell*.29);
+        // High-contrast running adventurer, readable at a glance from above.
+        c.fillStyle="rgba(0,0,0,.55)"; c.fillRect(cell*.16,cell*.10,cell*.70,cell*.82);
+        c.fillStyle=pal.skin;c.fillRect(cell*.38,cell*.08,cell*.27,cell*.24);
+        c.fillStyle=pal.hair;c.fillRect(cell*.34,cell*.04,cell*.35,cell*.10);
+        c.fillStyle="#f3e25a"; c.fillRect(cell*.29,cell*.30,cell*.44,cell*.34);
+        c.fillStyle="#d94132"; c.fillRect(cell*.29,cell*.30,cell*.12,cell*.34); c.fillRect(cell*.61,cell*.30,cell*.12,cell*.34);
+        c.fillStyle="#4b2d1d"; c.fillRect(cell*.40,cell*.34,cell*.22,cell*.25); // backpack
+        c.fillStyle=pal.skin;c.fillRect(cell*.08,cell*.34,cell*.27,cell*.13);c.fillRect(cell*.67,cell*.51,cell*.27,cell*.13);
+        c.fillStyle="#2957a4";c.fillRect(cell*.31,cell*.62,cell*.17,cell*.29);c.fillRect(cell*.55,cell*.62,cell*.17,cell*.29);
+        c.fillStyle="#f6f0db"; c.fillRect(cell*.30,cell*.86,cell*.20,cell*.09); c.fillRect(cell*.54,cell*.86,cell*.20,cell*.09);
       }
     } else {
       const kind=pal.kind||"swimmer";
