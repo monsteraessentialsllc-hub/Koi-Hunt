@@ -51,7 +51,8 @@
     greenTreePython: "audio/gasoline-takes.mp3",
     leucisticCherry: "audio/ipayforu.m4a",
     rattlesnakeDesert: "audio/loop-demona-finished.mp3",
-    giantSeaSnake: "audio/goldie-complete.mp3"
+    giantSeaSnake: "audio/goldie-complete.mp3",
+    dragonHoard: "audio/body.wav"
   };
   const music = new Audio();
   music.loop = true;
@@ -175,12 +176,14 @@
   let ambientType = 0;
   let lunarMode = false;
   let menuAnimationId = null;
+  let menuFish = [];
+  let secretDragonSession = false;
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
-  // Sequential world progression. Each new world opens after scoring 100 points
-  // in the world immediately before it. A password can also unlock everything.
+  // Progressive world unlocks. Pond starts open; each later world uses a higher score in the previous world.
   const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","leucisticCherry","rattlesnakeDesert","giantSeaSnake"];
+  const completionScores = {anacondaPond:100,bambooBallPython:180,greenTreePython:260,leucisticCherry:340,rattlesnakeDesert:420,giantSeaSnake:500};
   let allLevelsUnlocked = localStorage.getItem("koiHuntUnlockAll") === "true";
 
   function highestScore() {
@@ -188,11 +191,14 @@
   }
 
   function currentTheme() { return themes[selectedThemeKey]; }
+  function dragonPermanentlyUnlocked(){ return allLevelsUnlocked || (bestScores.dragonHoard || 0) >= 300; }
   function themeUnlocked(key) {
+    if (key === "dragonHoard") return dragonPermanentlyUnlocked() || secretDragonSession;
     if (allLevelsUnlocked || key === worldOrder[0]) return true;
     const index = worldOrder.indexOf(key);
     if (index < 1) return false;
-    return (bestScores[worldOrder[index - 1]] || 0) >= 100;
+    const previous = worldOrder[index - 1];
+    return (bestScores[previous] || 0) >= completionScores[previous];
   }
 
   function ensureValidSelectedTheme() {
@@ -266,6 +272,7 @@
         bestScores[selectedThemeKey] = score;
         ui.best.textContent = score;
         localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
+        if(selectedThemeKey==="dragonHoard" && score>=300){ secretDragonSession=false; drawThemePreviews(); }
         if (gameCompleted()) {
           localStorage.setItem("koiHuntLunarUnlocked","true");
           updateLunarControls();
@@ -280,7 +287,7 @@
   function endGame() {
     stopGame();
     ui.overlayTitle.textContent = "SELF BITTEN";
-    ui.overlayText.textContent = `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
+    ui.overlayText.textContent = selectedThemeKey==="dragonHoard" && (bestScores.dragonHoard||0)>=300 ? `DRAGON'S HOARD UNLOCKED! SCORE: ${score}` : `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
     ui.overlayButton.textContent = "PLAY AGAIN";
     ui.overlayButton.dataset.action = "restart";
     ui.overlay.classList.remove("hidden");
@@ -369,10 +376,81 @@
     const theme = currentTheme();
     drawWorldBackground(ctx, gameCanvas.width, gameCanvas.height, theme.background, animationFrame);
     drawWorldDecorations(ctx, theme.background, tileSize);
+
+    if (lunarMode) {
+      // Darken the world before drawing characters so their glow stays vivid.
+      ctx.save();
+      ctx.fillStyle = "rgba(2, 7, 28, .64)";
+      ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+      const pulse = .72 + Math.sin(performance.now() / 310) * .18;
+      const glow = theme.snake.accent || "#66ddff";
+
+      // Large soft halos under every snake segment.
+      ctx.globalCompositeOperation = "screen";
+      snake.forEach((seg, i) => {
+        const cx = seg.x * tileSize + tileSize / 2;
+        const cy = seg.y * tileSize + tileSize / 2;
+        const radius = tileSize * (i === 0 ? 1.15 : .95);
+        const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, radius);
+        g.addColorStop(0, glow + "cc");
+        g.addColorStop(.35, glow + "77");
+        g.addColorStop(1, glow + "00");
+        ctx.globalAlpha = pulse;
+        ctx.fillStyle = g;
+        ctx.fillRect(cx-radius, cy-radius, radius*2, radius*2);
+      });
+
+      // Strong prey halo, brighter still for golden prey.
+      const tx = target.x * tileSize + tileSize / 2;
+      const ty = target.y * tileSize + tileSize / 2;
+      const preyGlow = target.golden ? "#ffd84d" : glow;
+      const tr = tileSize * (target.golden ? 1.65 : 1.28);
+      const tg = ctx.createRadialGradient(tx, ty, 1, tx, ty, tr);
+      tg.addColorStop(0, preyGlow + "ee");
+      tg.addColorStop(.32, preyGlow + "99");
+      tg.addColorStop(1, preyGlow + "00");
+      ctx.globalAlpha = target.golden ? 1 : pulse;
+      ctx.fillStyle = tg;
+      ctx.fillRect(tx-tr, ty-tr, tr*2, tr*2);
+      ctx.restore();
+
+      // Multiple luminous render passes make the sprites themselves glow.
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.shadowColor = preyGlow;
+      ctx.shadowBlur = target.golden ? 34 : 25;
+      ctx.globalAlpha = .92;
+      drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
+      ctx.restore();
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.shadowColor = glow;
+      ctx.shadowBlur = 30;
+      ctx.globalAlpha = .9;
+      drawSnake(ctx, snake, theme, tileSize, direction);
+      ctx.restore();
+    }
+
     drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
     drawSnake(ctx, snake, theme, tileSize, direction);
     drawAmbientEvent(ctx, theme, performance.now());
-    if(lunarMode){ctx.fillStyle="rgba(7,18,48,.48)";ctx.fillRect(0,0,gameCanvas.width,gameCanvas.height);ctx.globalCompositeOperation="screen";ctx.fillStyle=(theme.snake.accent||"#66ddff")+"55";snake.forEach(seg=>ctx.fillRect(seg.x*tileSize+4,seg.y*tileSize+4,tileSize-8,tileSize-8));ctx.globalCompositeOperation="source-over";}
+    drawLunarCreatures(ctx, theme, performance.now());
+
+    if (lunarMode) {
+      // Bright eye and sparkle highlights on top of the normal sprites.
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.shadowColor = "#ffffff";
+      ctx.shadowBlur = 18;
+      const head = snake[0];
+      if (head) {
+        ctx.fillStyle = "rgba(255,255,255,.95)";
+        ctx.fillRect(head.x*tileSize + tileSize*.34, head.y*tileSize + tileSize*.27, 3, 3);
+        ctx.fillRect(head.x*tileSize + tileSize*.62, head.y*tileSize + tileSize*.27, 3, 3);
+      }
+      ctx.restore();
+    }
+
     ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" || theme.background === "openOcean" ? "#16443a" : "#493c27";
     ctx.lineWidth = 8;
     ctx.strokeRect(4, 4, gameCanvas.width - 8, gameCanvas.height - 8);
@@ -384,6 +462,7 @@
       pond: ["#078cc4","#0879aa","#0b96c5","#087fae"],
       deepPond: ["#075f88","#084e72","#0a7397","#086488"],
       openOcean: ["#064f78","#075f8e","#08709c","#0a5a83"],
+      dragonCave: ["#3a211c","#4b2a20","#2b1918","#5c321f"],
       brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
       canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
       cherry: [["flower",2,2],["flower",16,3],["stone",4,16],["stone",15,15],["leaf",9,3]],
@@ -397,7 +476,14 @@
       c.fillStyle = palette[(x * 5 + y * 7) % palette.length];
       c.fillRect(x * cell, y * cell, cell, cell);
     }
-    if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
+    if (kind === "dragonCave") {
+      c.fillStyle="#6b431d"; for(let i=0;i<38;i++){const x=(i*97)%width,y=(i*61)%height;c.fillRect(x,y,cell*.8,cell*.45);}
+      c.fillStyle="#e5b83f"; for(let i=0;i<24;i++){const x=(i*73+40)%width,y=(i*109+90)%height;c.fillRect(x,y,cell*.42,cell*.3);}
+      // Huge resting dragon, seen from above on the treasure bed.
+      c.fillStyle="#6e171d";c.fillRect(width*.18,height*.12,width*.62,height*.19);c.fillRect(width*.58,height*.22,width*.18,height*.44);
+      c.fillStyle="#b72d25";c.fillRect(width*.12,height*.16,width*.22,height*.14);c.fillRect(width*.72,height*.14,width*.15,height*.12);
+      c.fillStyle="#efb83b";c.fillRect(width*.18,height*.18,width*.08,height*.04);
+    } else if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
       c.fillStyle = "rgba(220,250,255,.18)";
       for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
     } else if (kind === "brightGrass") {
@@ -569,6 +655,17 @@
       c.fillStyle=pal.dark;c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
       c.fillStyle=pal.main;c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
       c.fillStyle=pal.light;c.fillRect(cell*.38,cell*.38,cell*.22,cell*.12);
+    } else if(theme.targetName==="TREASURE HUNTER"){
+      if(target.golden){
+        c.fillStyle="#f6d85e";c.fillRect(cell*.32,cell*.22,cell*.38,cell*.48);c.fillStyle="#fff4aa";c.fillRect(cell*.38,cell*.08,cell*.26,cell*.22);
+        c.fillStyle="#9b6b12";c.fillRect(cell*.18,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.68,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.33,cell*.68,cell*.13,cell*.24);c.fillRect(cell*.56,cell*.68,cell*.13,cell*.24);
+      } else {
+        c.fillStyle=pal.skin;c.fillRect(cell*.38,cell*.10,cell*.25,cell*.23);
+        c.fillStyle=pal.hair;c.fillRect(cell*.36,cell*.07,cell*.29,cell*.09);
+        c.fillStyle=pal.shirt;c.fillRect(cell*.31,cell*.31,cell*.40,cell*.34);
+        c.fillStyle=pal.skin;c.fillRect(cell*.10,cell*.36,cell*.24,cell*.12);c.fillRect(cell*.68,cell*.49,cell*.24,cell*.12);
+        c.fillStyle=pal.pants;c.fillRect(cell*.34,cell*.63,cell*.14,cell*.29);c.fillRect(cell*.56,cell*.63,cell*.14,cell*.29);
+      }
     } else {
       const kind=pal.kind||"swimmer";
       if(kind==="puffer"){
@@ -587,25 +684,46 @@
   }
 
   function drawAmbientEvent(c,theme,now){
-    const cycle=35000, elapsed=(now-ambientStart)%cycle;
-    if(elapsed<28000) return;
-    const p=(elapsed-28000)/7000, w=gameCanvas.width, h=gameCanvas.height;
-    c.save();
-    if(theme.background==="pond"){
-      const x=p*w;c.fillStyle="#68b83f";c.fillRect(x,h*.72,24,14);c.fillStyle="#d7ef77";c.fillRect(x+16,h*.68,12,12);
+    const cycle=42000, elapsed=(now-ambientStart)%cycle;
+    if(elapsed<30000) return;
+    const p=(elapsed-30000)/12000, w=gameCanvas.width, h=gameCanvas.height;
+    c.save(); c.globalAlpha=Math.min(1,p*4,(1-p)*4);
+    if(theme.background==="dragonCave"){
+      const burst=Math.sin(p*Math.PI);
+      c.fillStyle="rgba(255,102,20,.22)";c.fillRect(0,0,w,h);
+      c.fillStyle="#ff5a19";for(let i=0;i<9;i++)c.fillRect(w*.22+i*28,h*.22+i*6,44+burst*35,20);
+      c.fillStyle="#ffd34e";for(let i=0;i<7;i++)c.fillRect(w*.25+i*31,h*.235+i*6,28+burst*24,9);
+      c.fillStyle="#ff9a35";for(let i=0;i<18;i++)c.fillRect((w*.25+i*53+p*w*.2)%w,h*.12+(i%5)*26,6,6);
+    } else if(theme.background==="pond"){
+      const x=p*w;c.fillStyle="#55b83e";c.fillRect(x,h*.66,52,30);c.fillStyle="#d9f27a";c.fillRect(x+36,h*.61,22,22);
+      c.fillStyle="#f5aac8";for(let i=0;i<26;i++)c.fillRect((p*w+i*47)%w,(i*31+p*h*.55)%h,9,6);
     } else if(theme.background==="brightGrass"){
-      const x=w*(1-p);c.fillStyle="#a94f4f";c.fillRect(x,h*.26,32,24);c.fillStyle="#f2d8b2";c.fillRect(x+22,h*.22,12,12);
+      c.fillStyle="#171717";c.fillRect(w*.02,h*.24,80,90);c.fillStyle="#f4efe0";c.fillRect(w*.04,h*.28,28,28);c.fillRect(w*.11,h*.28,28,28);
+      c.fillStyle="#88a83d";for(let i=0;i<28;i++)c.fillRect((p*w+i*37)%w,(i*67)%h,10,6);
     } else if(theme.background==="canopy"){
-      c.fillStyle="#ff4a4a";for(let i=0;i<7;i++)c.fillRect((p*w+i*42)%w,50+(i%3)*22,18,10);
+      c.fillStyle="#ed3c38";for(let i=0;i<4;i++){let x=(p*w+i*145)%w;c.fillRect(x,45+(i%2)*60,58,24);c.fillStyle="#ffd34d";c.fillRect(x+44,51+(i%2)*60,14,10);c.fillStyle="#ed3c38";}
+      c.fillStyle="#84542d";c.fillRect(p*w,h*.74,65,38);
     } else if(theme.background==="cherry"){
-      c.fillStyle="#f7a4c8";for(let i=0;i<18;i++)c.fillRect((p*w+i*53)%w,(i*37+elapsed*.03)%h,7,5);
-      c.fillStyle="#b7865f";c.fillRect(w*.08+p*w*.55,h*.78,28,18);
+      c.fillStyle="#f7a4c8";for(let i=0;i<36;i++)c.fillRect((p*w+i*53)%w,(i*37+elapsed*.05)%h,10,7);
+      c.fillStyle="#a97951";c.fillRect(w*.05+p*w*.68,h*.72,58,34);c.fillStyle="#f4e4c8";c.fillRect(w*.09+p*w*.68,h*.67,26,24);
     } else if(theme.background==="desert"){
-      const x=p*w;c.fillStyle="#7a552d";c.fillRect(x,h*.72,34,13);c.fillStyle="#e1bd72";c.fillRect(x-15,h*.67,20,8);
+      const x=p*w;c.fillStyle="#7a552d";c.fillRect(x,h*.68,70,27);c.fillStyle="#e1bd72";c.fillRect(x-30,h*.62,38,16);
+      c.strokeStyle="rgba(224,184,105,.75)";c.lineWidth=12;c.beginPath();c.arc(w*(1-p),h*.5,45+p*30,0,Math.PI*2);c.stroke();
     } else {
-      const x=w*(1-p);c.fillStyle="#4b8fa7";c.fillRect(x,h*.25,120,42);c.fillStyle="#a9d7e0";c.fillRect(x+85,h*.30,16,6);
+      const x=w*(1-p);c.fillStyle="#4b8fa7";c.fillRect(x,h*.20,190,68);c.fillStyle="#a9d7e0";c.fillRect(x+135,h*.27,28,10);
+      c.fillStyle="#6fc6a2";c.fillRect(p*w,h*.65,95,48);
+      c.fillStyle="#d7f4ff";for(let i=0;i<24;i++)c.fillRect((i*41+p*w)%w,h-(i*29%h),7,7);
     }
     c.restore();
+  }
+  function drawLunarCreatures(c,theme,now){
+    if(!lunarMode) return; const w=gameCanvas.width,h=gameCanvas.height,t=now/1000; c.save();c.globalCompositeOperation="screen";
+    if(theme.background==="openOcean"){
+      for(let i=0;i<5;i++){const x=((t*(22+i*5)+i*130)%(w+100))-50,y=70+i*105+Math.sin(t+i)*20;c.shadowColor=i%2?"#8c7bff":"#54e5ff";c.shadowBlur=24;c.fillStyle=i%2?"#9a83ff":"#63e8ff";c.fillRect(x,y,35+i*3,22);for(let j=0;j<4;j++)c.fillRect(x+5+j*8,y+22,3,22+Math.sin(t*3+j)*5);}
+    } else {
+      const color=theme.background==="desert"?"#ffc957":theme.background==="cherry"?"#ff9cda":theme.background==="canopy"?"#a9ff54":theme.background==="brightGrass"?"#62ff9c":"#55eaff";
+      c.shadowColor=color;c.shadowBlur=14;c.fillStyle=color;for(let i=0;i<28;i++){const x=(i*83+Math.sin(t*.8+i)*52+w)%w,y=(i*47+t*(8+i%4))%h;c.globalAlpha=.35+.65*Math.abs(Math.sin(t*2+i));c.fillRect(x,y,4+(i%2)*2,4+(i%2)*2);}
+    } c.restore();
   }
   function startMenuAnimation() {
     if (menuAnimationId) return;
@@ -631,10 +749,33 @@
       c.beginPath(); c.moveTo(0,i*cell); c.lineTo(menuCanvas.width,i*cell); c.stroke();
     }
     drawMenuPondDecorations(frame);
-    // The main menu keeps the living pond/gameplay background, but no animated
-    // snake or koi circles around the title/menu.
-
+    drawMenuFish(frame);
   }
+
+  function initMenuFish(){
+    if(menuFish.length) return;
+    for(let i=0;i<13;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:i===0,phase:Math.random()*20});
+  }
+  function drawMenuFish(frame){
+    initMenuFish(); const c=menuCtx;
+    menuFish.forEach((f,i)=>{
+      f.x += f.speed; f.y += Math.sin(frame*.025+f.phase)*.18;
+      if(f.x>590){f.x=-35;f.y=35+Math.random()*610;}
+      c.save(); c.translate(f.x,f.y);
+      if(f.golden){c.shadowColor="#ffe45d";c.shadowBlur=18+Math.sin(frame*.08)*6;}
+      c.fillStyle=f.golden?"#f7cf3e":(i%3===0?"#f07d42":i%3===1?"#f3eee2":"#d75a35");
+      c.fillRect(-f.size*.45,-f.size*.22,f.size*.72,f.size*.44);
+      c.fillRect(f.size*.18,-f.size*.14,f.size*.3,f.size*.28);
+      c.fillRect(-f.size*.68,-f.size*.28,f.size*.25,f.size*.22); c.fillRect(-f.size*.68,f.size*.06,f.size*.25,f.size*.22);
+      c.fillStyle="#111";c.fillRect(f.size*.3,-f.size*.1,3,3); c.restore();
+    });
+  }
+  menuCanvas.addEventListener("pointerdown",event=>{
+    if(screens.home.classList.contains("hidden")) return;
+    const r=menuCanvas.getBoundingClientRect(), x=(event.clientX-r.left)*menuCanvas.width/r.width, y=(event.clientY-r.top)*menuCanvas.height/r.height;
+    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<34);
+    if(gold){ secretDragonSession=true; selectedThemeKey="dragonHoard"; startGame(); }
+  });
 
   function drawMenuPondDecorations(frame) {
     const c=menuCtx;
@@ -680,12 +821,13 @@
       drawSnake(pctx,[{x:8,y:5},{x:7,y:5},{x:6,y:5},{x:5,y:5},{x:4,y:5},{x:3,y:5}],theme,cell,{x:1,y:0});
       const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,12*cell,5*cell,theme,cell*1.25,{x:1,y:0});target=savedTarget;
       const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
+      if(key==="dragonHoard") card.classList.toggle("secret-hidden",!dragonPermanentlyUnlocked());
       card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
       const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":"LOCKED";
       const note=card.querySelector("[data-unlock-note]");
       if(note) {
-        const index=worldOrder.indexOf(key);
-        note.textContent=unlocked ? "AVAILABLE" : `SCORE 100 IN ${themes[worldOrder[index-1]].name}`;
+        if(key==="dragonHoard") note.textContent=dragonPermanentlyUnlocked()?"SECRET WORLD UNLOCKED":"SCORE 300 IN THE SECRET LEVEL";
+        else { const index=worldOrder.indexOf(key); const previous=worldOrder[index-1]; note.textContent=unlocked ? "AVAILABLE" : `SCORE ${completionScores[previous]} IN ${themes[previous].name}`; }
       }
     });
   }
@@ -699,7 +841,7 @@
   let collectionPage=0;
   function updateCollectionScroller(){
     const grid=document.querySelector(".theme-grid");
-    const cards=[...document.querySelectorAll(".theme-card")];
+    const cards=[...document.querySelectorAll(".theme-card:not(.secret-hidden)")];
     const maxPage=Math.max(0,Math.ceil(cards.length/2)-1);
     collectionPage=Math.max(0,Math.min(collectionPage,maxPage));
     if(grid) grid.style.transform=`translateX(-${collectionPage*100}%)`;
@@ -738,7 +880,7 @@
     music.volume = musicVolume;
     localStorage.setItem("koiHuntMusicVolume", String(musicVolume));
   });
-  const gameCompleted = () => worldOrder.every(k => (bestScores[k] || 0) >= 100);
+  const gameCompleted = () => worldOrder.every(k => (bestScores[k] || 0) >= completionScores[k]);
   const lunarUnlocked = () => gameCompleted() || allLevelsUnlocked;
   function updateLunarControls(){
     if(!ui.lunarToggle) return;
@@ -774,13 +916,28 @@
     localStorage.setItem("koiHuntBestScores","{}");
     localStorage.removeItem("koiHuntUnlockAll");
     localStorage.removeItem("koiHuntLunar");
-    allLevelsUnlocked=false; lunarMode=false; selectedThemeKey="anacondaPond";
+    allLevelsUnlocked=false; lunarMode=false; secretDragonSession=false; selectedThemeKey="anacondaPond";
     localStorage.setItem("koiHuntTheme",selectedThemeKey);
     showPasswordMessage("LEVELS AND SCORES RESET",true);
     drawThemePreviews();
     updateLunarControls();
   });
   ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
+
+
+  document.querySelectorAll(".dpad-button[data-direction]").forEach(button => {
+    const move = event => {
+      event.preventDefault();
+      if (gameRunning && !paused) setDirection(button.dataset.direction);
+    };
+    button.addEventListener("pointerdown", move);
+    button.addEventListener("touchstart", move, { passive: false });
+  });
+  const mobilePause = document.querySelector(".dpad-button[data-action='pause']");
+  if (mobilePause) mobilePause.addEventListener("pointerdown", event => {
+    event.preventDefault();
+    if (gameRunning) togglePause();
+  });
 
   document.addEventListener("keydown",event=>{
     const key=event.key.toLowerCase(), controls={arrowup:"up",w:"up",arrowdown:"down",s:"down",arrowleft:"left",a:"left",arrowright:"right",d:"right"};
