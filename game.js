@@ -27,7 +27,13 @@
     musicToggle: document.getElementById("music-toggle"),
     musicVolume: document.getElementById("music-volume"),
     lunarToggle: document.getElementById("lunar-toggle"),
-    lunarStatus: document.getElementById("lunar-status")
+    lunarStatus: document.getElementById("lunar-status"),
+    passwordInput: document.getElementById("password-input"),
+    passwordMessage: document.getElementById("password-message"),
+    resetProgress: document.getElementById("reset-progress-button"),
+    unlockAll: document.getElementById("unlock-all-button"),
+    collectionPrev: document.getElementById("collection-prev"),
+    collectionNext: document.getElementById("collection-next")
   };
 
   const gameCanvas = document.getElementById("game-canvas");
@@ -117,7 +123,7 @@
       snake: { main: "#60c93f", alt: "#83e75b", light: "#b4f47d", dark: "#164f27", accent: "#f4e36f", eye: "#ffdc4e" }
     },
     leucisticCherry: {
-      name: "WHITE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
+      name: "BLUE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
       snakeStyle: "leucistic", unlockScore: 220, unlockText: "UNLOCK AT 220 POINTS",
       preyUnlocks:[0,50,100], preyNames:["RED CARDINAL","WHITE CARDINAL","YELLOW CARDINAL"],
       preyPalettes:[
@@ -126,7 +132,7 @@
         {main:"#f0c83f",light:"#fff08a",dark:"#a77a17",beak:"#f28b38"}
       ],
       goldenName:"GOLDEN CARDINAL",
-      snake: { main:"#f4f2e8",alt:"#ffffff",light:"#ffffff",dark:"#c9c5b9",accent:"#f3d6ea",white:"#ffffff",eye:"#e8edf7" }
+      snake: { main:"#f4f2e8",alt:"#ffffff",light:"#ffffff",dark:"#c9c5b9",accent:"#f3d6ea",white:"#ffffff",eye:"#35a7ff" }
     },
     rattlesnakeDesert: {
       name: "RATTLESNAKE DESERT", targetName: "DESERT LIZARD", background: "desert",
@@ -172,23 +178,22 @@
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
-  // Versioned unlock progress. This update intentionally starts the collection
-  // progression from zero so worlds remain locked until a new qualifying score
-  // is earned in this version of the game.
-  const unlockResetKey = "koiHuntUnlockResetV4SeaSnake";
-  if (localStorage.getItem(unlockResetKey) !== "done") {
-    localStorage.setItem("koiHuntUnlockProgressV4", "0");
-    localStorage.setItem("koiHuntTheme", "anacondaPond");
-    localStorage.setItem(unlockResetKey, "done");
-  }
-  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV4")) || 0);
+  // Sequential world progression. Each new world opens after scoring 100 points
+  // in the world immediately before it. A password can also unlock everything.
+  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","leucisticCherry","rattlesnakeDesert","giantSeaSnake"];
+  let allLevelsUnlocked = localStorage.getItem("koiHuntUnlockAll") === "true";
 
   function highestScore() {
-    return unlockProgress;
+    return Math.max(0, ...Object.values(bestScores).map(Number));
   }
 
   function currentTheme() { return themes[selectedThemeKey]; }
-  function themeUnlocked(key) { return unlockProgress >= themes[key].unlockScore; }
+  function themeUnlocked(key) {
+    if (allLevelsUnlocked || key === worldOrder[0]) return true;
+    const index = worldOrder.indexOf(key);
+    if (index < 1) return false;
+    return (bestScores[worldOrder[index - 1]] || 0) >= 100;
+  }
 
   function ensureValidSelectedTheme() {
     if (!themeUnlocked(selectedThemeKey)) {
@@ -203,7 +208,7 @@
     screens[name].classList.remove("hidden");
     if (name === "home") startMenuAnimation();
     else stopMenuAnimation();
-    if (name === "collection") drawThemePreviews();
+    if (name === "collection") { drawThemePreviews(); updateCollectionScroller(); }
     playMusic(name === "game" ? selectedThemeKey : "menu");
   }
 
@@ -261,10 +266,10 @@
         bestScores[selectedThemeKey] = score;
         ui.best.textContent = score;
         localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
-      }
-      if (score > unlockProgress) {
-        unlockProgress = score;
-        localStorage.setItem("koiHuntUnlockProgressV4", String(unlockProgress));
+        if (gameCompleted()) {
+          localStorage.setItem("koiHuntLunarUnlocked","true");
+          updateLunarControls();
+        }
       }
       if (target.golden) playGoldenChime();
       placeTarget();
@@ -302,8 +307,7 @@
   }
 
   function availablePreyVariants(theme) {
-    const worldBest = bestScores[selectedThemeKey] || 0;
-    return theme.preyUnlocks.map((need,i)=>worldBest>=need?i:null).filter(i=>i!==null);
+    return (theme.preyPalettes || []).map((_, index) => index);
   }
 
   function placeTarget() {
@@ -513,8 +517,10 @@
     c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
     c.fillStyle=theme.snake.dark;
     if (theme.snakeStyle === "leucistic") {
-      c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
-      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
+      c.fillStyle=theme.snake.accent;
+      c.fillRect(x+cell*.18,y+cell*.20,cell*.24,cell*.24);
+      c.fillRect(x+cell*.58,y+cell*.54,cell*.22,cell*.22);
+      c.fillRect(x+cell*.44,y+cell*.10,cell*.12,cell*.70);
     } else if (theme.snakeStyle === "bamboo") {
       c.fillRect(x+cell*.15,y+cell*.22,cell*.7,cell*.5); c.fillStyle=theme.snake.white; c.fillRect(x+cell*.1,y+cell*.12,cell*.28,cell*.22); c.fillRect(x+cell*.62,y+cell*.12,cell*.28,cell*.22);
     } else if (theme.snakeStyle === "treePython") {
@@ -670,14 +676,17 @@
       pctx.imageSmoothingEnabled=false;
       drawWorldBackground(pctx,canvas.width,canvas.height,theme.background,0);
       drawWorldDecorations(pctx,theme.background,canvas.width/20);
-      const cell=canvas.width/20;
-      drawSnake(pctx,[{x:10,y:7},{x:9,y:7},{x:8,y:7},{x:7,y:7},{x:6,y:7},{x:5,y:7}],theme,cell,{x:1,y:0});
-      const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});target=savedTarget;
+      const cell=canvas.width/16;
+      drawSnake(pctx,[{x:8,y:5},{x:7,y:5},{x:6,y:5},{x:5,y:5},{x:4,y:5},{x:3,y:5}],theme,cell,{x:1,y:0});
+      const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,12*cell,5*cell,theme,cell*1.25,{x:1,y:0});target=savedTarget;
       const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
       card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
-      const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":`LOCKED · ${theme.unlockScore}`;
+      const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":"LOCKED";
       const note=card.querySelector("[data-unlock-note]");
-      if(note) note.textContent=unlocked?`PREY SKINS: DEFAULT · 50 PTS · 100 PTS`:`${Math.min(highestScore(),theme.unlockScore)} / ${theme.unlockScore} TOTAL BEST POINTS`;
+      if(note) {
+        const index=worldOrder.indexOf(key);
+        note.textContent=unlocked ? "AVAILABLE" : `SCORE 100 IN ${themes[worldOrder[index-1]].name}`;
+      }
     });
   }
 
@@ -685,6 +694,20 @@
     if(!themeUnlocked(key)) return;
     selectedThemeKey=key; localStorage.setItem("koiHuntTheme",key); drawThemePreviews();
   }
+
+
+  let collectionPage=0;
+  function updateCollectionScroller(){
+    const grid=document.querySelector(".theme-grid");
+    const cards=[...document.querySelectorAll(".theme-card")];
+    const maxPage=Math.max(0,Math.ceil(cards.length/2)-1);
+    collectionPage=Math.max(0,Math.min(collectionPage,maxPage));
+    if(grid) grid.style.transform=`translateX(-${collectionPage*100}%)`;
+    if(ui.collectionPrev) ui.collectionPrev.disabled=collectionPage===0;
+    if(ui.collectionNext) ui.collectionNext.disabled=collectionPage===maxPage;
+  }
+  ui.collectionPrev?.addEventListener("click",()=>{collectionPage--;updateCollectionScroller();});
+  ui.collectionNext?.addEventListener("click",()=>{collectionPage++;updateCollectionScroller();});
 
   document.addEventListener("pointerdown", unlockAudio, { once: true });
   document.addEventListener("keydown", unlockAudio, { once: true });
@@ -715,14 +738,48 @@
     music.volume = musicVolume;
     localStorage.setItem("koiHuntMusicVolume", String(musicVolume));
   });
-  const lunarUnlocked = () => Object.keys(themes).every(k => (bestScores[k]||0) >= 100);
-  if(ui.lunarToggle){
+  const gameCompleted = () => worldOrder.every(k => (bestScores[k] || 0) >= 100);
+  const lunarUnlocked = () => gameCompleted() || allLevelsUnlocked;
+  function updateLunarControls(){
+    if(!ui.lunarToggle) return;
     ui.lunarToggle.disabled=!lunarUnlocked();
     lunarMode=lunarUnlocked() && localStorage.getItem("koiHuntLunar")==="true";
     ui.lunarToggle.checked=lunarMode;
-    if(ui.lunarStatus) ui.lunarStatus.textContent=lunarUnlocked()?"UNLOCKED":"SCORE 100+ IN EVERY WORLD";
+    if(ui.lunarStatus) ui.lunarStatus.textContent=lunarUnlocked()?"UNLOCKED · PASSWORD: MONSTERA":"COMPLETE ALL LEVELS";
+  }
+  updateLunarControls();
+  if(ui.lunarToggle){
     ui.lunarToggle.addEventListener("change",()=>{lunarMode=ui.lunarToggle.checked;localStorage.setItem("koiHuntLunar",String(lunarMode));});
   }
+
+  function passwordAccepted(){
+    return (ui.passwordInput?.value || "").trim().toLowerCase() === "monstera";
+  }
+  function showPasswordMessage(text, ok=false){
+    if(!ui.passwordMessage) return;
+    ui.passwordMessage.textContent=text;
+    ui.passwordMessage.dataset.ok=ok?"true":"false";
+  }
+  ui.unlockAll?.addEventListener("click",()=>{
+    if(!passwordAccepted()) return showPasswordMessage("INCORRECT PASSWORD");
+    allLevelsUnlocked=true;
+    localStorage.setItem("koiHuntUnlockAll","true");
+    showPasswordMessage("ALL LEVELS UNLOCKED",true);
+    drawThemePreviews();
+    updateLunarControls();
+  });
+  ui.resetProgress?.addEventListener("click",()=>{
+    if(!passwordAccepted()) return showPasswordMessage("INCORRECT PASSWORD");
+    Object.keys(bestScores).forEach(k=>delete bestScores[k]);
+    localStorage.setItem("koiHuntBestScores","{}");
+    localStorage.removeItem("koiHuntUnlockAll");
+    localStorage.removeItem("koiHuntLunar");
+    allLevelsUnlocked=false; lunarMode=false; selectedThemeKey="anacondaPond";
+    localStorage.setItem("koiHuntTheme",selectedThemeKey);
+    showPasswordMessage("LEVELS AND SCORES RESET",true);
+    drawThemePreviews();
+    updateLunarControls();
+  });
   ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
 
   document.addEventListener("keydown",event=>{

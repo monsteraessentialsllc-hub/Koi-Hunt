@@ -237,6 +237,18 @@ body{padding:14px;background:
   .panel-shell,.game-shell{padding:11px}
 }
 
+
+/* Two-at-a-time collection carousel */
+.collection-carousel{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;gap:10px}
+.collection-window{overflow:hidden;padding:8px}
+.theme-grid{display:flex!important;gap:14px!important;transition:transform .25s steps(4,end);will-change:transform}
+.theme-card{flex:0 0 calc(50% - 7px);box-sizing:border-box}
+.collection-arrow{width:48px;height:64px;border:4px solid #3b2516;background:#f4c95d;color:#315b36;font:900 24px/1 monospace;box-shadow:4px 4px 0 #6d4728;cursor:pointer}
+.collection-arrow:disabled{opacity:.35;cursor:not-allowed}
+.password-panel{margin:14px 0;padding:14px;border:4px solid #6d4728;background:rgba(255,244,190,.78);display:grid;gap:10px}
+.password-title{font-weight:900;color:#3f6e3e}.password-panel input{padding:11px;border:4px solid #6d4728;background:#fff8d9;font:900 13px monospace;text-transform:lowercase}
+.password-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.danger-button{background:#d96a58!important}.password-panel small[data-ok="true"]{color:#237343}.password-panel small[data-ok="false"]{color:#a42d2d}
+@media(max-width:650px){.collection-carousel{grid-template-columns:40px minmax(0,1fr) 40px}.collection-arrow{width:38px}.theme-card{flex-basis:calc(50% - 7px)}.password-actions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -280,7 +292,10 @@ body{padding:14px;background:
           <p>CHOOSE A WORLD</p>
         </header>
 
-        <div class="theme-grid">
+        <div class="collection-carousel">
+          <button id="collection-prev" class="collection-arrow" type="button" aria-label="Previous collections">◀</button>
+          <div class="collection-window">
+            <div class="theme-grid">
           <article class="theme-card" data-theme="anacondaPond">
             <canvas class="theme-preview" width="240" height="150" aria-label="Anaconda Pond preview"></canvas>
             <h3>ANACONDA POND</h3>
@@ -292,7 +307,7 @@ body{padding:14px;background:
             <canvas class="theme-preview" width="240" height="150" aria-label="Bamboo Ball Python preview"></canvas>
             <h3>BAMBOO BALL PYTHON</h3>
             <p>BRIGHT SILVER PYTHON · HIGH-CONTRAST GREY MOUSE · LIGHT GRASS</p>
-            <p class="unlock-note" data-unlock-note>UNLOCK AT 100 POINTS</p>
+            <p class="unlock-note" data-unlock-note>SCORE 100 IN ANACONDA POND</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
 
@@ -300,15 +315,15 @@ body{padding:14px;background:
             <canvas class="theme-preview" width="240" height="150" aria-label="Green Tree Python preview"></canvas>
             <h3>GREEN TREE PYTHON</h3>
             <p>GREEN TREE PYTHON · TREE FROG · MOSSY TREE TRUNK WITH BUGS</p>
-            <p class="unlock-note" data-unlock-note>UNLOCK AT 170 POINTS</p>
+            <p class="unlock-note" data-unlock-note>SCORE 100 IN BAMBOO BALL PYTHON</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
 
           <article class="theme-card" data-theme="leucisticCherry">
-            <canvas class="theme-preview" width="240" height="150" aria-label="White-Eyed Leucistic Ball Python preview"></canvas>
-            <h3>WHITE-EYED LEUCISTIC BALL PYTHON</h3>
+            <canvas class="theme-preview" width="240" height="150" aria-label="Blue-Eyed Leucistic Ball Python preview"></canvas>
+            <h3>BLUE-EYED LEUCISTIC BALL PYTHON</h3>
             <p>WHITE PYTHON · CARDINAL · CHERRY BLOSSOM GROVE</p>
-            <p class="unlock-note" data-unlock-note>UNLOCK AT 220 POINTS</p>
+            <p class="unlock-note" data-unlock-note>SCORE 100 IN GREEN TREE PYTHON</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
 
@@ -316,7 +331,7 @@ body{padding:14px;background:
             <canvas class="theme-preview" width="240" height="150" aria-label="Rattlesnake Desert preview"></canvas>
             <h3>RATTLESNAKE DESERT</h3>
             <p>RATTLESNAKE · COLORFUL LIZARDS · CACTUS AND ROCKS</p>
-            <p class="unlock-note" data-unlock-note>UNLOCK AT 270 POINTS</p>
+            <p class="unlock-note" data-unlock-note>SCORE 100 IN BLUE-EYED LEUCISTIC BALL PYTHON</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
 
@@ -324,9 +339,12 @@ body{padding:14px;background:
             <canvas class="theme-preview" width="240" height="150" aria-label="Giant Sea Snake preview"></canvas>
             <h3>GIANT SEA SNAKE</h3>
             <p>GIANT SEA SNAKE · TWO SWIMMERS + PUFFERFISH · OPEN OCEAN</p>
-            <p class="unlock-note" data-unlock-note>UNLOCK AT 330 POINTS</p>
+            <p class="unlock-note" data-unlock-note>SCORE 100 IN RATTLESNAKE DESERT</p>
             <button class="theme-select small-button" type="button">SELECT</button>
           </article>
+            </div>
+          </div>
+          <button id="collection-next" class="collection-arrow" type="button" aria-label="Next collections">▶</button>
         </div>
 
         <button class="back-button pixel-button" data-back-home type="button">BACK</button>
@@ -362,12 +380,19 @@ body{padding:14px;background:
         </label>
 
         <label class="setting-row">
-          <span>LUNAR KOI MODE <small id="lunar-status">SCORE 100+ IN EVERY WORLD</small></span>
+          <span>LUNAR KOI MODE <small id="lunar-status">COMPLETE ALL LEVELS</small></span>
           <input id="lunar-toggle" type="checkbox">
         </label>
-        <div class="setting-row" style="display:block;line-height:1.7">
-          <span>KOI COLLECTION</span>
-          <small>STARTER: ORANGE · SECOND: WHITE WITH RED · THIRD: YELLOW, WHITE & ORANGE</small>
+
+        <div class="password-panel">
+          <span class="password-title">PROGRESS PASSWORD</span>
+          <small>THE PASSWORD IS REVEALED AFTER COMPLETING EVERY LEVEL.</small>
+          <input id="password-input" type="password" autocomplete="off" placeholder="ENTER PASSWORD">
+          <div class="password-actions">
+            <button id="unlock-all-button" class="small-button" type="button">UNLOCK ALL LEVELS</button>
+            <button id="reset-progress-button" class="small-button danger-button" type="button">RESET LEVELS + SCORES</button>
+          </div>
+          <small id="password-message" aria-live="polite"></small>
         </div>
 
         <button class="back-button pixel-button" data-back-home type="button">BACK</button>
@@ -465,7 +490,13 @@ body{padding:14px;background:
     musicToggle: document.getElementById("music-toggle"),
     musicVolume: document.getElementById("music-volume"),
     lunarToggle: document.getElementById("lunar-toggle"),
-    lunarStatus: document.getElementById("lunar-status")
+    lunarStatus: document.getElementById("lunar-status"),
+    passwordInput: document.getElementById("password-input"),
+    passwordMessage: document.getElementById("password-message"),
+    resetProgress: document.getElementById("reset-progress-button"),
+    unlockAll: document.getElementById("unlock-all-button"),
+    collectionPrev: document.getElementById("collection-prev"),
+    collectionNext: document.getElementById("collection-next")
   };
 
   const gameCanvas = document.getElementById("game-canvas");
@@ -555,7 +586,7 @@ body{padding:14px;background:
       snake: { main: "#60c93f", alt: "#83e75b", light: "#b4f47d", dark: "#164f27", accent: "#f4e36f", eye: "#ffdc4e" }
     },
     leucisticCherry: {
-      name: "WHITE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
+      name: "BLUE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
       snakeStyle: "leucistic", unlockScore: 220, unlockText: "UNLOCK AT 220 POINTS",
       preyUnlocks:[0,50,100], preyNames:["RED CARDINAL","WHITE CARDINAL","YELLOW CARDINAL"],
       preyPalettes:[
@@ -564,7 +595,7 @@ body{padding:14px;background:
         {main:"#f0c83f",light:"#fff08a",dark:"#a77a17",beak:"#f28b38"}
       ],
       goldenName:"GOLDEN CARDINAL",
-      snake: { main:"#f4f2e8",alt:"#ffffff",light:"#ffffff",dark:"#c9c5b9",accent:"#f3d6ea",white:"#ffffff",eye:"#e8edf7" }
+      snake: { main:"#f4f2e8",alt:"#ffffff",light:"#ffffff",dark:"#c9c5b9",accent:"#f3d6ea",white:"#ffffff",eye:"#35a7ff" }
     },
     rattlesnakeDesert: {
       name: "RATTLESNAKE DESERT", targetName: "DESERT LIZARD", background: "desert",
@@ -610,23 +641,22 @@ body{padding:14px;background:
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
-  // Versioned unlock progress. This update intentionally starts the collection
-  // progression from zero so worlds remain locked until a new qualifying score
-  // is earned in this version of the game.
-  const unlockResetKey = "koiHuntUnlockResetV4SeaSnake";
-  if (localStorage.getItem(unlockResetKey) !== "done") {
-    localStorage.setItem("koiHuntUnlockProgressV4", "0");
-    localStorage.setItem("koiHuntTheme", "anacondaPond");
-    localStorage.setItem(unlockResetKey, "done");
-  }
-  let unlockProgress = Math.max(0, Number(localStorage.getItem("koiHuntUnlockProgressV4")) || 0);
+  // Sequential world progression. Each new world opens after scoring 100 points
+  // in the world immediately before it. A password can also unlock everything.
+  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","leucisticCherry","rattlesnakeDesert","giantSeaSnake"];
+  let allLevelsUnlocked = localStorage.getItem("koiHuntUnlockAll") === "true";
 
   function highestScore() {
-    return unlockProgress;
+    return Math.max(0, ...Object.values(bestScores).map(Number));
   }
 
   function currentTheme() { return themes[selectedThemeKey]; }
-  function themeUnlocked(key) { return unlockProgress >= themes[key].unlockScore; }
+  function themeUnlocked(key) {
+    if (allLevelsUnlocked || key === worldOrder[0]) return true;
+    const index = worldOrder.indexOf(key);
+    if (index < 1) return false;
+    return (bestScores[worldOrder[index - 1]] || 0) >= 100;
+  }
 
   function ensureValidSelectedTheme() {
     if (!themeUnlocked(selectedThemeKey)) {
@@ -641,7 +671,7 @@ body{padding:14px;background:
     screens[name].classList.remove("hidden");
     if (name === "home") startMenuAnimation();
     else stopMenuAnimation();
-    if (name === "collection") drawThemePreviews();
+    if (name === "collection") { drawThemePreviews(); updateCollectionScroller(); }
     playMusic(name === "game" ? selectedThemeKey : "menu");
   }
 
@@ -699,10 +729,10 @@ body{padding:14px;background:
         bestScores[selectedThemeKey] = score;
         ui.best.textContent = score;
         localStorage.setItem("koiHuntBestScores", JSON.stringify(bestScores));
-      }
-      if (score > unlockProgress) {
-        unlockProgress = score;
-        localStorage.setItem("koiHuntUnlockProgressV4", String(unlockProgress));
+        if (gameCompleted()) {
+          localStorage.setItem("koiHuntLunarUnlocked","true");
+          updateLunarControls();
+        }
       }
       if (target.golden) playGoldenChime();
       placeTarget();
@@ -740,8 +770,7 @@ body{padding:14px;background:
   }
 
   function availablePreyVariants(theme) {
-    const worldBest = bestScores[selectedThemeKey] || 0;
-    return theme.preyUnlocks.map((need,i)=>worldBest>=need?i:null).filter(i=>i!==null);
+    return (theme.preyPalettes || []).map((_, index) => index);
   }
 
   function placeTarget() {
@@ -951,8 +980,10 @@ body{padding:14px;background:
     c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
     c.fillStyle=theme.snake.dark;
     if (theme.snakeStyle === "leucistic") {
-      c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
-      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
+      c.fillStyle=theme.snake.accent;
+      c.fillRect(x+cell*.18,y+cell*.20,cell*.24,cell*.24);
+      c.fillRect(x+cell*.58,y+cell*.54,cell*.22,cell*.22);
+      c.fillRect(x+cell*.44,y+cell*.10,cell*.12,cell*.70);
     } else if (theme.snakeStyle === "bamboo") {
       c.fillRect(x+cell*.15,y+cell*.22,cell*.7,cell*.5); c.fillStyle=theme.snake.white; c.fillRect(x+cell*.1,y+cell*.12,cell*.28,cell*.22); c.fillRect(x+cell*.62,y+cell*.12,cell*.28,cell*.22);
     } else if (theme.snakeStyle === "treePython") {
@@ -1108,14 +1139,17 @@ body{padding:14px;background:
       pctx.imageSmoothingEnabled=false;
       drawWorldBackground(pctx,canvas.width,canvas.height,theme.background,0);
       drawWorldDecorations(pctx,theme.background,canvas.width/20);
-      const cell=canvas.width/20;
-      drawSnake(pctx,[{x:10,y:7},{x:9,y:7},{x:8,y:7},{x:7,y:7},{x:6,y:7},{x:5,y:7}],theme,cell,{x:1,y:0});
-      const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});target=savedTarget;
+      const cell=canvas.width/16;
+      drawSnake(pctx,[{x:8,y:5},{x:7,y:5},{x:6,y:5},{x:5,y:5},{x:4,y:5},{x:3,y:5}],theme,cell,{x:1,y:0});
+      const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,12*cell,5*cell,theme,cell*1.25,{x:1,y:0});target=savedTarget;
       const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
       card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
-      const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":`LOCKED · ${theme.unlockScore}`;
+      const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":"LOCKED";
       const note=card.querySelector("[data-unlock-note]");
-      if(note) note.textContent=unlocked?`PREY SKINS: DEFAULT · 50 PTS · 100 PTS`:`${Math.min(highestScore(),theme.unlockScore)} / ${theme.unlockScore} TOTAL BEST POINTS`;
+      if(note) {
+        const index=worldOrder.indexOf(key);
+        note.textContent=unlocked ? "AVAILABLE" : `SCORE 100 IN ${themes[worldOrder[index-1]].name}`;
+      }
     });
   }
 
@@ -1123,6 +1157,20 @@ body{padding:14px;background:
     if(!themeUnlocked(key)) return;
     selectedThemeKey=key; localStorage.setItem("koiHuntTheme",key); drawThemePreviews();
   }
+
+
+  let collectionPage=0;
+  function updateCollectionScroller(){
+    const grid=document.querySelector(".theme-grid");
+    const cards=[...document.querySelectorAll(".theme-card")];
+    const maxPage=Math.max(0,Math.ceil(cards.length/2)-1);
+    collectionPage=Math.max(0,Math.min(collectionPage,maxPage));
+    if(grid) grid.style.transform=`translateX(-${collectionPage*100}%)`;
+    if(ui.collectionPrev) ui.collectionPrev.disabled=collectionPage===0;
+    if(ui.collectionNext) ui.collectionNext.disabled=collectionPage===maxPage;
+  }
+  ui.collectionPrev?.addEventListener("click",()=>{collectionPage--;updateCollectionScroller();});
+  ui.collectionNext?.addEventListener("click",()=>{collectionPage++;updateCollectionScroller();});
 
   document.addEventListener("pointerdown", unlockAudio, { once: true });
   document.addEventListener("keydown", unlockAudio, { once: true });
@@ -1153,14 +1201,48 @@ body{padding:14px;background:
     music.volume = musicVolume;
     localStorage.setItem("koiHuntMusicVolume", String(musicVolume));
   });
-  const lunarUnlocked = () => Object.keys(themes).every(k => (bestScores[k]||0) >= 100);
-  if(ui.lunarToggle){
+  const gameCompleted = () => worldOrder.every(k => (bestScores[k] || 0) >= 100);
+  const lunarUnlocked = () => gameCompleted() || allLevelsUnlocked;
+  function updateLunarControls(){
+    if(!ui.lunarToggle) return;
     ui.lunarToggle.disabled=!lunarUnlocked();
     lunarMode=lunarUnlocked() && localStorage.getItem("koiHuntLunar")==="true";
     ui.lunarToggle.checked=lunarMode;
-    if(ui.lunarStatus) ui.lunarStatus.textContent=lunarUnlocked()?"UNLOCKED":"SCORE 100+ IN EVERY WORLD";
+    if(ui.lunarStatus) ui.lunarStatus.textContent=lunarUnlocked()?"UNLOCKED · PASSWORD: MONSTERA":"COMPLETE ALL LEVELS";
+  }
+  updateLunarControls();
+  if(ui.lunarToggle){
     ui.lunarToggle.addEventListener("change",()=>{lunarMode=ui.lunarToggle.checked;localStorage.setItem("koiHuntLunar",String(lunarMode));});
   }
+
+  function passwordAccepted(){
+    return (ui.passwordInput?.value || "").trim().toLowerCase() === "monstera";
+  }
+  function showPasswordMessage(text, ok=false){
+    if(!ui.passwordMessage) return;
+    ui.passwordMessage.textContent=text;
+    ui.passwordMessage.dataset.ok=ok?"true":"false";
+  }
+  ui.unlockAll?.addEventListener("click",()=>{
+    if(!passwordAccepted()) return showPasswordMessage("INCORRECT PASSWORD");
+    allLevelsUnlocked=true;
+    localStorage.setItem("koiHuntUnlockAll","true");
+    showPasswordMessage("ALL LEVELS UNLOCKED",true);
+    drawThemePreviews();
+    updateLunarControls();
+  });
+  ui.resetProgress?.addEventListener("click",()=>{
+    if(!passwordAccepted()) return showPasswordMessage("INCORRECT PASSWORD");
+    Object.keys(bestScores).forEach(k=>delete bestScores[k]);
+    localStorage.setItem("koiHuntBestScores","{}");
+    localStorage.removeItem("koiHuntUnlockAll");
+    localStorage.removeItem("koiHuntLunar");
+    allLevelsUnlocked=false; lunarMode=false; selectedThemeKey="anacondaPond";
+    localStorage.setItem("koiHuntTheme",selectedThemeKey);
+    showPasswordMessage("LEVELS AND SCORES RESET",true);
+    drawThemePreviews();
+    updateLunarControls();
+  });
   ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
 
   document.addEventListener("keydown",event=>{
