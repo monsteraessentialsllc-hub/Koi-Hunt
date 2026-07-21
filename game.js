@@ -25,7 +25,9 @@
     animationToggle: document.getElementById("animation-toggle"),
     scanlineToggle: document.getElementById("scanline-toggle"),
     musicToggle: document.getElementById("music-toggle"),
-    musicVolume: document.getElementById("music-volume")
+    musicVolume: document.getElementById("music-volume"),
+    lunarToggle: document.getElementById("lunar-toggle"),
+    lunarStatus: document.getElementById("lunar-status")
   };
 
   const gameCanvas = document.getElementById("game-canvas");
@@ -41,6 +43,7 @@
     anacondaPond: "audio/medusa.mp3",
     bambooBallPython: "audio/tts2.mp3",
     greenTreePython: "audio/gasoline-takes.mp3",
+    leucisticCherry: "audio/ipayforu.m4a",
     rattlesnakeDesert: "audio/loop-demona-finished.mp3",
     giantSeaSnake: "audio/goldie-complete.mp3"
   };
@@ -78,62 +81,83 @@
 
   const themes = {
     anacondaPond: {
-      name: "ANACONDA POND",
-      targetName: "ORANGE KOI",
-      background: "pond",
-      snakeStyle: "anaconda",
-      unlockScore: 0,
-      unlockText: "AVAILABLE FROM THE START",
-      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" },
-      target: { main: "#f38550", light: "#ffc06f", dark: "#cf4f36" }
+      name: "ANACONDA POND", targetName: "POND FISH", background: "pond",
+      snakeStyle: "anaconda", unlockScore: 0, unlockText: "AVAILABLE FROM THE START",
+      preyUnlocks: [0,50,100], preyNames:["SILVER FISH","ORANGE FISH","WHITE FISH"],
+      preyPalettes:[
+        {main:"#b8c8cf",light:"#eef7f7",dark:"#65757e"},
+        {main:"#f38550",light:"#ffc06f",dark:"#cf4f36"},
+        {main:"#f5f0df",light:"#ffffff",dark:"#c7bfa7"}
+      ],
+      goldenName:"GOLDEN KOI",
+      snake: { main: "#086b48", alt: "#0a7a53", light: "#15945f", dark: "#102e31", accent: "#c3ae59", eye: "#f0d56e" }
     },
     bambooBallPython: {
-      name: "BAMBOO BALL PYTHON",
-      targetName: "GREY MOUSE",
-      background: "brightGrass",
-      snakeStyle: "bamboo",
-      unlockScore: 100,
-      unlockText: "UNLOCK AT 100 POINTS",
-      snake: { main: "#d4d8cf", alt: "#eef0e9", light: "#ffffff", dark: "#60473a", accent: "#82604a", white: "#ffffff", eye: "#111818" },
-      target: { main: "#34383b", light: "#dfe4e6", dark: "#101214", pink: "#ff9aa5" }
+      name: "BAMBOO BALL PYTHON", targetName: "MOUSE", background: "brightGrass",
+      snakeStyle: "bamboo", unlockScore: 100, unlockText: "UNLOCK AT 100 POINTS",
+      preyUnlocks:[0,50,100], preyNames:["BLACK MOUSE","BROWN MOUSE","PINK MOUSE"],
+      preyPalettes:[
+        {main:"#24282b",light:"#62696d",dark:"#08090a",pink:"#ff9aa5"},
+        {main:"#7a5238",light:"#b78a65",dark:"#3d281d",pink:"#ff9aa5"},
+        {main:"#ef8eb0",light:"#ffd0de",dark:"#a84f71",pink:"#ffb1c8"}
+      ],
+      goldenName:"GOLDEN MOUSE",
+      snake: { main: "#d4d8cf", alt: "#eef0e9", light: "#ffffff", dark: "#60473a", accent: "#82604a", white: "#ffffff", eye: "#111818" }
     },
     greenTreePython: {
-      name: "GREEN TREE PYTHON",
-      targetName: "TREE FROG",
-      background: "canopy",
-      snakeStyle: "treePython",
-      unlockScore: 170,
-      unlockText: "UNLOCK AT 170 POINTS",
-      snake: { main: "#60c93f", alt: "#83e75b", light: "#b4f47d", dark: "#164f27", accent: "#f4e36f", eye: "#ffdc4e" },
-      target: { main: "#61d85b", light: "#b7f58d", dark: "#185633", pink: "#ff8b70" }
+      name: "GREEN TREE PYTHON", targetName: "TREE FROG", background: "canopy",
+      snakeStyle: "treePython", unlockScore: 170, unlockText: "UNLOCK AT 170 POINTS",
+      preyUnlocks:[0,50,100], preyNames:["EMERALD FROG","SKY BLUE FROG","BLACK & RED FROG"],
+      preyPalettes:[
+        {main:"#61d85b",light:"#b7f58d",dark:"#185633",pink:"#ff8b70"},
+        {main:"#4fbbe8",light:"#a8e9ff",dark:"#185a7a",pink:"#ff8b70"},
+        {main:"#1b171b",light:"#e83636",dark:"#050405",pink:"#ff5555"}
+      ],
+      goldenName:"GOLDEN TREE FROG",
+      snake: { main: "#60c93f", alt: "#83e75b", light: "#b4f47d", dark: "#164f27", accent: "#f4e36f", eye: "#ffdc4e" }
+    },
+    leucisticCherry: {
+      name: "WHITE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
+      snakeStyle: "leucistic", unlockScore: 220, unlockText: "UNLOCK AT 220 POINTS",
+      preyUnlocks:[0,50,100], preyNames:["RED CARDINAL","WHITE CARDINAL","YELLOW CARDINAL"],
+      preyPalettes:[
+        {main:"#d92f3b",light:"#ff747d",dark:"#6e1420",beak:"#f2b14d"},
+        {main:"#f2eee4",light:"#ffffff",dark:"#aaa69d",beak:"#f2b14d"},
+        {main:"#f0c83f",light:"#fff08a",dark:"#a77a17",beak:"#f28b38"}
+      ],
+      goldenName:"GOLDEN CARDINAL",
+      snake: { main:"#f4f2e8",alt:"#ffffff",light:"#ffffff",dark:"#c9c5b9",accent:"#f3d6ea",white:"#ffffff",eye:"#e8edf7" }
     },
     rattlesnakeDesert: {
-      name: "RATTLESNAKE DESERT",
-      targetName: "DESERT LIZARD",
-      background: "desert",
-      snakeStyle: "rattlesnake",
-      unlockScore: 240,
-      unlockText: "UNLOCK AT 240 POINTS",
-      snake: { main: "#bd9a58", alt: "#d4b86f", light: "#ead58c", dark: "#5c472e", accent: "#2e2b22", eye: "#f4ca52" },
-      target: { main: "#6da34b", light: "#a8d16f", dark: "#34512c", pink: "#df805c" }
+      name: "RATTLESNAKE DESERT", targetName: "DESERT LIZARD", background: "desert",
+      snakeStyle: "rattlesnake", unlockScore: 270, unlockText: "UNLOCK AT 270 POINTS",
+      preyUnlocks:[0,50,100], preyNames:["LIME LIZARD","ORANGE LIZARD","TURQUOISE LIZARD"],
+      preyPalettes:[
+        {main:"#8dcc42",light:"#d0ef77",dark:"#3d6a22"},
+        {main:"#ee7c2f",light:"#ffc56e",dark:"#9b3e1d"},
+        {main:"#31c8bd",light:"#8af0e8",dark:"#126d68"}
+      ],
+      goldenName:"GOLDEN LIZARD",
+      snake: { main: "#bd9a58", alt: "#d4b86f", light: "#ead58c", dark: "#5c472e", accent: "#2e2b22", eye: "#f4ca52" }
     },
     giantSeaSnake: {
-      name: "GIANT SEA SNAKE",
-      targetName: "SWIMMER",
-      background: "openOcean",
-      snakeStyle: "seaSnake",
-      unlockScore: 310,
-      unlockText: "UNLOCK AT 310 POINTS",
-      snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" },
-      target: { skin: "#9a5d3c", suit: "#f06d3d", hair: "#251b18", foam: "#d7f4ff" }
+      name: "GIANT SEA SNAKE", targetName: "SEA PREY", background: "openOcean",
+      snakeStyle: "seaSnake", unlockScore: 330, unlockText: "UNLOCK AT 330 POINTS",
+      preyUnlocks:[0,50,100], preyNames:["SWIMMER · PINK SHORTS","SWIMMER · GREEN SHORTS","PUFFERFISH"],
+      preyPalettes:[
+        {kind:"swimmer",skin:"#9a5d3c",suit:"#f06da9",hair:"#251b18",foam:"#d7f4ff"},
+        {kind:"swimmer",skin:"#f0c6a6",suit:"#52bd63",hair:"#6b432b",foam:"#d7f4ff"},
+        {kind:"puffer",main:"#e6c05b",light:"#fff08e",dark:"#7c6330"}
+      ],
+      goldenName:"GOLDEN MERMAID",
+      snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" }
     }
   };
-
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
   if (selectedThemeKey === "anacondaSwimmer") selectedThemeKey = "giantSeaSnake";
   if (!themes[selectedThemeKey]) selectedThemeKey = "anacondaPond";
   let snake = [];
-  let target = { x: 14, y: 10 };
+  let target = { x: 14, y: 10, variant: 0, golden: false, value: 10 };
   let direction = { x: 1, y: 0 };
   let nextDirection = { x: 1, y: 0 };
   let score = 0;
@@ -141,6 +165,9 @@
   let paused = false;
   let timer = null;
   let animationFrame = 0;
+  let ambientStart = 0;
+  let ambientType = 0;
+  let lunarMode = false;
   let menuAnimationId = null;
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
@@ -208,6 +235,8 @@
     gameRunning = true;
     ui.pause.textContent = "PAUSE";
     ui.overlay.classList.add("hidden");
+    ambientStart = performance.now();
+    ambientType = Math.floor(Math.random()*3);
     placeTarget();
     drawGame();
     timer = setInterval(updateGame, 125);
@@ -226,7 +255,7 @@
     if (bodyToCheck.some(s => s.x === newHead.x && s.y === newHead.y)) return endGame();
     snake.unshift(newHead);
     if (eatsTarget) {
-      score += 10;
+      score += target.value || 10;
       ui.score.textContent = score;
       if (score > (bestScores[selectedThemeKey] || 0)) {
         bestScores[selectedThemeKey] = score;
@@ -237,6 +266,7 @@
         unlockProgress = score;
         localStorage.setItem("koiHuntUnlockProgressV4", String(unlockProgress));
       }
+      if (target.golden) playGoldenChime();
       placeTarget();
     } else snake.pop();
     drawGame();
@@ -271,12 +301,28 @@
     ui.overlay.classList.add("hidden");
   }
 
+  function availablePreyVariants(theme) {
+    const worldBest = bestScores[selectedThemeKey] || 0;
+    return theme.preyUnlocks.map((need,i)=>worldBest>=need?i:null).filter(i=>i!==null);
+  }
+
   function placeTarget() {
+    const theme=currentTheme();
     do {
       target = { x: Math.floor(Math.random() * gridSize), y: Math.floor(Math.random() * gridSize) };
     } while (snake.some(s => s.x === target.x && s.y === target.y));
+    const choices=availablePreyVariants(theme);
+    target.variant=choices[Math.floor(Math.random()*choices.length)] || 0;
+    target.golden=Math.random()<0.02;
+    target.value=target.golden?100:10;
   }
 
+  function playGoldenChime(){
+    try{
+      const ac=new (window.AudioContext||window.webkitAudioContext)();
+      [523,659,784].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.08,ac.currentTime+i*.08);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.35+i*.08);o.start(ac.currentTime+i*.08);o.stop(ac.currentTime+.4+i*.08);});
+    }catch(e){}
+  }
   function setDirection(name) {
     const dirs = { up:{x:0,y:-1}, down:{x:0,y:1}, left:{x:-1,y:0}, right:{x:1,y:0} };
     const candidate = dirs[name];
@@ -295,6 +341,7 @@
       ["bug",4,2],["bug",15,5],["bug",8,11],["bug",12,16],
       ["leaf",2,17],["leaf",16,1]
     ],
+    cherry: [["flower",2,2],["flower",16,3],["stone",4,16],["stone",15,15],["leaf",9,3]],
     desert: [
       ["cactus",2,3],["cactus",16,14],["rock",4,16],["rock",15,4],["scrub",8,3],["scrub",12,17]
     ],
@@ -320,6 +367,8 @@
     drawWorldDecorations(ctx, theme.background, tileSize);
     drawTarget(ctx, target.x * tileSize, target.y * tileSize, theme, tileSize, targetEscapeDirection());
     drawSnake(ctx, snake, theme, tileSize, direction);
+    drawAmbientEvent(ctx, theme, performance.now());
+    if(lunarMode){ctx.fillStyle="rgba(7,18,48,.48)";ctx.fillRect(0,0,gameCanvas.width,gameCanvas.height);ctx.globalCompositeOperation="screen";ctx.fillStyle=(theme.snake.accent||"#66ddff")+"55";snake.forEach(seg=>ctx.fillRect(seg.x*tileSize+4,seg.y*tileSize+4,tileSize-8,tileSize-8));ctx.globalCompositeOperation="source-over";}
     ctx.strokeStyle = theme.background.includes("pond") || theme.background === "deepPond" || theme.background === "openOcean" ? "#16443a" : "#493c27";
     ctx.lineWidth = 8;
     ctx.strokeRect(4, 4, gameCanvas.width - 8, gameCanvas.height - 8);
@@ -333,7 +382,9 @@
       openOcean: ["#064f78","#075f8e","#08709c","#0a5a83"],
       brightGrass: ["#a8c96a","#b6d878","#97bc5a","#c5df89"],
       canopy: ["#174f2d","#1c6334","#245b31","#0f4228"],
-      desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"]
+      cherry: [["flower",2,2],["flower",16,3],["stone",4,16],["stone",15,15],["leaf",9,3]],
+    desert: ["#d4a95d","#e1bd72","#c9974f","#eccb84"],
+      cherry: ["#efb7cf","#f8d8e5","#d999ba","#f6c8d9"]
     };
     const palette = palettes[kind] || palettes.pond;
     c.fillStyle = palette[0];
@@ -348,6 +399,11 @@
     } else if (kind === "brightGrass") {
       c.fillStyle = "rgba(255,255,210,.17)";
       for (let i=0;i<20;i++) c.fillRect(((i*83)+(frame*2))%width,(i*53)%height,cell,Math.max(3,cell/5));
+    } else if (kind === "cherry") {
+      c.fillStyle="#7f9d62"; c.fillRect(0,height*.64,width,height*.36);
+      c.fillStyle="#8b5a3c";
+      for(let i=0;i<5;i++){const tx=(i*.23+.05)*width;c.fillRect(tx,height*.16,cell*.55,height*.58);c.fillStyle=i%2?"#f59bc2":"#ffd2e2";c.fillRect(tx-cell*1.2,height*.08,cell*2.8,cell*2.2);c.fillStyle="#8b5a3c";}
+      c.fillStyle="rgba(255,245,252,.35)";for(let i=0;i<20;i++)c.fillRect(((i*83)+(frame*2))%width,(i*47)%height,cell*.35,cell*.18);
     } else if (kind === "canopy") {
       // This level is viewed from directly above a massive moss-covered trunk.
       const trunkX = width * .18;
@@ -432,7 +488,10 @@
     c.fillStyle=index%2?theme.snake.main:theme.snake.alt;
     c.fillRect(ox,oy,size,size);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "bamboo") {
+    if (theme.snakeStyle === "leucistic") {
+      c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
+    } else if (theme.snakeStyle === "bamboo") {
       c.fillRect(ox+size*.15,oy+size*.15,size*.7,size*.22); c.fillRect(ox+size*.34,oy+size*.45,size*.46,size*.34);
       c.fillStyle=theme.snake.white; c.fillRect(ox+size*.08,oy+size*.62,size*.28,size*.22);
     } else if (theme.snakeStyle === "treePython") {
@@ -453,7 +512,10 @@
     c.fillStyle=theme.snake.main; c.fillRect(x+cell*.08,y+cell*.08,cell*.84,cell*.84);
     c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "bamboo") {
+    if (theme.snakeStyle === "leucistic") {
+      c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
+      c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
+    } else if (theme.snakeStyle === "bamboo") {
       c.fillRect(x+cell*.15,y+cell*.22,cell*.7,cell*.5); c.fillStyle=theme.snake.white; c.fillRect(x+cell*.1,y+cell*.12,cell*.28,cell*.22); c.fillRect(x+cell*.62,y+cell*.12,cell*.28,cell*.22);
     } else if (theme.snakeStyle === "treePython") {
       c.fillRect(x+cell*.35,y+cell*.12,cell*.22,cell*.68); c.fillStyle=theme.snake.accent; c.fillRect(x+cell*.1,y+cell*.38,cell*.22,cell*.18);
@@ -472,118 +534,73 @@
   }
 
   function drawTarget(c,x,y,theme,cell,facing={x:1,y:0}) {
-    // Every prey sprite is a full-body, directly overhead silhouette.
-    c.save();
-    c.translate(x + cell/2, y + cell/2);
-    const angle = facing.x === 1 ? 0 : facing.x === -1 ? Math.PI : facing.y === 1 ? Math.PI/2 : -Math.PI/2;
-    c.rotate(angle);
-    c.translate(-cell/2, -cell/2);
+    c.save(); c.translate(x+cell/2,y+cell/2);
+    const angle=facing.x===1?0:facing.x===-1?Math.PI:facing.y===1?Math.PI/2:-Math.PI/2;
+    c.rotate(angle); c.translate(-cell/2,-cell/2);
+    let pal=(theme.preyPalettes||[])[target.variant||0]||theme.preyPalettes?.[0]||{};
+    if(target.golden) pal={main:"#f2c83f",light:"#fff29a",dark:"#9b6b12",pink:"#ffd65c",beak:"#fff0a0",skin:"#e5b94f",suit:"#fff08a",hair:"#8a611c",foam:"#fff8bd",kind:theme.targetName==="SEA PREY"?"mermaid":pal.kind};
 
-    if (theme.targetName === "ORANGE KOI") {
-      // Tail, full body, fins and head viewed from above.
-      c.fillStyle=theme.target.light;
-      c.fillRect(cell*.03,cell*.34,cell*.25,cell*.32);
-      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.24);
-      c.fillRect(cell*.02,cell*.58,cell*.16,cell*.24);
-      c.fillStyle=theme.target.main;
-      c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);
-      c.fillRect(cell*.70,cell*.30,cell*.23,cell*.40);
-      c.fillStyle=theme.target.light;
-      c.fillRect(cell*.38,cell*.08,cell*.20,cell*.22);
-      c.fillRect(cell*.38,cell*.70,cell*.20,cell*.22);
-      c.fillStyle=theme.target.dark;
-      c.fillRect(cell*.42,cell*.34,cell*.16,cell*.16);
-      c.fillRect(cell*.62,cell*.52,cell*.12,cell*.12);
-      c.fillStyle="#111";
-      c.fillRect(cell*.80,cell*.34,cell*.07,cell*.07);
-      c.fillRect(cell*.80,cell*.59,cell*.07,cell*.07);
-    } else if (theme.targetName === "GREY MOUSE") {
-      // Thin pink tail, hind legs, torso, ears and pointed snout.
-      c.fillStyle=theme.target.pink;
-      c.fillRect(cell*.02,cell*.46,cell*.27,cell*.09);
-      c.fillRect(cell*.06,cell*.39,cell*.08,cell*.10);
-      c.fillStyle=theme.target.main;
-      c.fillRect(cell*.24,cell*.28,cell*.49,cell*.44);
-      c.fillRect(cell*.68,cell*.35,cell*.22,cell*.30);
-      c.fillStyle=theme.target.light;
-      c.fillRect(cell*.30,cell*.18,cell*.19,cell*.19);
-      c.fillRect(cell*.30,cell*.63,cell*.19,cell*.19);
-      c.fillRect(cell*.78,cell*.41,cell*.14,cell*.18);
-      c.fillStyle=theme.target.pink;
-      c.fillRect(cell*.33,cell*.21,cell*.10,cell*.10);
-      c.fillRect(cell*.33,cell*.69,cell*.10,cell*.10);
-      c.fillRect(cell*.89,cell*.47,cell*.09,cell*.09);
-      c.fillStyle=theme.target.dark;
-      c.fillRect(cell*.73,cell*.39,cell*.07,cell*.07);
-      c.fillRect(cell*.73,cell*.57,cell*.07,cell*.07);
-      c.fillRect(cell*.28,cell*.18,cell*.11,cell*.10);
-      c.fillRect(cell*.28,cell*.72,cell*.11,cell*.10);
-    } else if (theme.targetName === "TREE FROG") {
-      // Complete frog from above: four spread legs, body and two eyes.
-      c.fillStyle=theme.target.dark;
-      c.fillRect(cell*.05,cell*.12,cell*.28,cell*.13);
-      c.fillRect(cell*.05,cell*.75,cell*.28,cell*.13);
-      c.fillRect(cell*.65,cell*.08,cell*.28,cell*.13);
-      c.fillRect(cell*.65,cell*.79,cell*.28,cell*.13);
-      c.fillStyle=theme.target.main;
-      c.fillRect(cell*.25,cell*.23,cell*.52,cell*.54);
-      c.fillRect(cell*.60,cell*.18,cell*.25,cell*.25);
-      c.fillRect(cell*.60,cell*.58,cell*.25,cell*.25);
-      c.fillStyle=theme.target.light;
-      c.fillRect(cell*.34,cell*.30,cell*.26,cell*.40);
-      c.fillStyle="#fff";
-      c.fillRect(cell*.70,cell*.23,cell*.10,cell*.10);
-      c.fillRect(cell*.70,cell*.67,cell*.10,cell*.10);
-      c.fillStyle="#111";
-      c.fillRect(cell*.74,cell*.26,cell*.05,cell*.05);
-      c.fillRect(cell*.74,cell*.70,cell*.05,cell*.05);
-      c.fillStyle=theme.target.pink;
-      c.fillRect(cell*.80,cell*.45,cell*.14,cell*.09);
-    } else if (theme.targetName === "DESERT LIZARD") {
-      // Long full lizard with visible tail and all four legs.
-      c.fillStyle=theme.target.dark;
-      c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);
-      c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);
-      c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
-      c.fillRect(cell*.50,cell*.24,cell*.14,cell*.18);
-      c.fillRect(cell*.50,cell*.59,cell*.14,cell*.18);
-      c.fillStyle=theme.target.main;
-      c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);
-      c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
-      c.fillStyle=theme.target.light;
-      c.fillRect(cell*.38,cell*.38,cell*.22,cell*.12);
-      c.fillRect(cell*.77,cell*.38,cell*.12,cell*.24);
-      c.fillStyle="#111";
-      c.fillRect(cell*.82,cell*.34,cell*.06,cell*.06);
-      c.fillRect(cell*.82,cell*.60,cell*.06,cell*.06);
+    if(theme.targetName==="POND FISH"){
+      c.fillStyle=pal.light;c.fillRect(cell*.03,cell*.34,cell*.25,cell*.32);c.fillRect(cell*.02,cell*.18,cell*.16,cell*.24);c.fillRect(cell*.02,cell*.58,cell*.16,cell*.24);
+      c.fillStyle=pal.main;c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);c.fillRect(cell*.70,cell*.30,cell*.23,cell*.40);
+      c.fillStyle=pal.dark;c.fillRect(cell*.42,cell*.34,cell*.16,cell*.16);c.fillRect(cell*.62,cell*.52,cell*.12,cell*.12);
+    } else if(theme.targetName==="MOUSE"){
+      c.fillStyle=pal.pink;c.fillRect(cell*.02,cell*.46,cell*.27,cell*.09);
+      c.fillStyle=pal.main;c.fillRect(cell*.24,cell*.28,cell*.49,cell*.44);c.fillRect(cell*.68,cell*.35,cell*.22,cell*.30);
+      c.fillStyle=pal.light;c.fillRect(cell*.30,cell*.18,cell*.19,cell*.19);c.fillRect(cell*.30,cell*.63,cell*.19,cell*.19);
+      c.fillStyle=pal.dark;c.fillRect(cell*.73,cell*.39,cell*.07,cell*.07);c.fillRect(cell*.73,cell*.57,cell*.07,cell*.07);
+    } else if(theme.targetName==="TREE FROG"){
+      c.fillStyle=pal.dark;c.fillRect(cell*.05,cell*.12,cell*.28,cell*.13);c.fillRect(cell*.05,cell*.75,cell*.28,cell*.13);c.fillRect(cell*.65,cell*.08,cell*.28,cell*.13);c.fillRect(cell*.65,cell*.79,cell*.28,cell*.13);
+      c.fillStyle=pal.main;c.fillRect(cell*.25,cell*.23,cell*.52,cell*.54);c.fillRect(cell*.60,cell*.18,cell*.25,cell*.25);c.fillRect(cell*.60,cell*.58,cell*.25,cell*.25);
+      c.fillStyle=pal.light;c.fillRect(cell*.34,cell*.30,cell*.26,cell*.40);
+    } else if(theme.targetName==="CARDINAL"){
+      c.fillStyle=pal.dark;c.fillRect(cell*.12,cell*.42,cell*.28,cell*.16);c.fillRect(cell*.30,cell*.25,cell*.45,cell*.50);
+      c.fillStyle=pal.main;c.fillRect(cell*.38,cell*.24,cell*.38,cell*.52);c.fillRect(cell*.62,cell*.31,cell*.22,cell*.36);
+      c.fillStyle=pal.light;c.fillRect(cell*.42,cell*.31,cell*.18,cell*.18);
+      c.fillStyle=pal.beak;c.fillRect(cell*.82,cell*.43,cell*.14,cell*.14);
+      c.fillStyle="#111";c.fillRect(cell*.72,cell*.35,cell*.06,cell*.06);
+    } else if(theme.targetName==="DESERT LIZARD"){
+      c.fillStyle=pal.dark;c.fillRect(cell*.02,cell*.46,cell*.30,cell*.09);c.fillRect(cell*.20,cell*.37,cell*.17,cell*.09);c.fillRect(cell*.20,cell*.56,cell*.17,cell*.09);
+      c.fillStyle=pal.main;c.fillRect(cell*.25,cell*.34,cell*.50,cell*.32);c.fillRect(cell*.69,cell*.29,cell*.24,cell*.42);
+      c.fillStyle=pal.light;c.fillRect(cell*.38,cell*.38,cell*.22,cell*.12);
     } else {
-      // Swimmer viewed from above, stretched forward and actively escaping.
-      c.fillStyle=theme.target.foam;
-      c.fillRect(cell*.02,cell*.18,cell*.16,cell*.15);
-      c.fillRect(cell*.02,cell*.67,cell*.16,cell*.15);
-      c.fillRect(cell*.20,cell*.08,cell*.12,cell*.14);
-      c.fillRect(cell*.20,cell*.78,cell*.12,cell*.14);
-      c.fillStyle=theme.target.skin;
-      // kicking legs behind
-      c.fillRect(cell*.08,cell*.28,cell*.32,cell*.13);
-      c.fillRect(cell*.08,cell*.59,cell*.32,cell*.13);
-      // torso
-      c.fillRect(cell*.34,cell*.34,cell*.32,cell*.32);
-      // both arms reaching forward
-      c.fillRect(cell*.55,cell*.18,cell*.32,cell*.12);
-      c.fillRect(cell*.55,cell*.70,cell*.32,cell*.12);
-      c.fillRect(cell*.81,cell*.24,cell*.12,cell*.12);
-      c.fillRect(cell*.81,cell*.64,cell*.12,cell*.12);
-      // head leads the escape
-      c.fillRect(cell*.67,cell*.37,cell*.24,cell*.26);
-      c.fillStyle=theme.target.suit;
-      c.fillRect(cell*.31,cell*.35,cell*.32,cell*.30);
-      c.fillStyle=theme.target.hair;
-      c.fillRect(cell*.72,cell*.36,cell*.17,cell*.10);
+      const kind=pal.kind||"swimmer";
+      if(kind==="puffer"){
+        c.fillStyle=pal.dark;for(let i=0;i<6;i++)c.fillRect(cell*(.18+i*.11),cell*(i%2?.16:.75),cell*.08,cell*.1);
+        c.fillStyle=pal.main;c.fillRect(cell*.22,cell*.22,cell*.58,cell*.56);c.fillStyle=pal.light;c.fillRect(cell*.34,cell*.31,cell*.28,cell*.24);c.fillStyle="#111";c.fillRect(cell*.68,cell*.34,cell*.07,cell*.07);
+      } else {
+        c.fillStyle=pal.foam;c.fillRect(cell*.02,cell*.18,cell*.16,cell*.15);c.fillRect(cell*.02,cell*.67,cell*.16,cell*.15);
+        c.fillStyle=pal.skin;c.fillRect(cell*.08,cell*.28,cell*.32,cell*.13);c.fillRect(cell*.08,cell*.59,cell*.32,cell*.13);c.fillRect(cell*.34,cell*.34,cell*.32,cell*.32);c.fillRect(cell*.55,cell*.18,cell*.32,cell*.12);c.fillRect(cell*.55,cell*.70,cell*.32,cell*.12);c.fillRect(cell*.67,cell*.37,cell*.24,cell*.26);
+        c.fillStyle=pal.suit;c.fillRect(cell*.31,cell*.35,cell*.32,cell*.30);c.fillStyle=pal.hair;c.fillRect(cell*.72,cell*.36,cell*.17,cell*.10);
+        if(kind==="mermaid"){c.fillStyle="#f3d35c";c.fillRect(cell*.06,cell*.40,cell*.30,cell*.20);c.fillRect(cell*.00,cell*.27,cell*.16,cell*.18);c.fillRect(cell*.00,cell*.55,cell*.16,cell*.18);}
+      }
     }
+    if(target.golden){c.fillStyle="rgba(255,255,190,.9)";const t=(animationFrame%8)/8;for(let i=0;i<4;i++)c.fillRect(cell*(.15+((i*37+t*20)%70)/100),cell*(.12+((i*29+t*18)%70)/100),cell*.07,cell*.07);}
+    c.fillStyle="#111";c.fillRect(cell*.80,cell*.34,cell*.06,cell*.06);
     c.restore();
   }
 
+  function drawAmbientEvent(c,theme,now){
+    const cycle=35000, elapsed=(now-ambientStart)%cycle;
+    if(elapsed<28000) return;
+    const p=(elapsed-28000)/7000, w=gameCanvas.width, h=gameCanvas.height;
+    c.save();
+    if(theme.background==="pond"){
+      const x=p*w;c.fillStyle="#68b83f";c.fillRect(x,h*.72,24,14);c.fillStyle="#d7ef77";c.fillRect(x+16,h*.68,12,12);
+    } else if(theme.background==="brightGrass"){
+      const x=w*(1-p);c.fillStyle="#a94f4f";c.fillRect(x,h*.26,32,24);c.fillStyle="#f2d8b2";c.fillRect(x+22,h*.22,12,12);
+    } else if(theme.background==="canopy"){
+      c.fillStyle="#ff4a4a";for(let i=0;i<7;i++)c.fillRect((p*w+i*42)%w,50+(i%3)*22,18,10);
+    } else if(theme.background==="cherry"){
+      c.fillStyle="#f7a4c8";for(let i=0;i<18;i++)c.fillRect((p*w+i*53)%w,(i*37+elapsed*.03)%h,7,5);
+      c.fillStyle="#b7865f";c.fillRect(w*.08+p*w*.55,h*.78,28,18);
+    } else if(theme.background==="desert"){
+      const x=p*w;c.fillStyle="#7a552d";c.fillRect(x,h*.72,34,13);c.fillStyle="#e1bd72";c.fillRect(x-15,h*.67,20,8);
+    } else {
+      const x=w*(1-p);c.fillStyle="#4b8fa7";c.fillRect(x,h*.25,120,42);c.fillStyle="#a9d7e0";c.fillRect(x+85,h*.30,16,6);
+    }
+    c.restore();
+  }
   function startMenuAnimation() {
     if (menuAnimationId) return;
     const loop = () => {
@@ -655,12 +672,12 @@
       drawWorldDecorations(pctx,theme.background,canvas.width/20);
       const cell=canvas.width/20;
       drawSnake(pctx,[{x:10,y:7},{x:9,y:7},{x:8,y:7},{x:7,y:7},{x:6,y:7},{x:5,y:7}],theme,cell,{x:1,y:0});
-      drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});
+      const savedTarget={...target};target.variant=0;target.golden=false;drawTarget(pctx,14*cell,7*cell,theme,cell,{x:1,y:0});target=savedTarget;
       const unlocked=themeUnlocked(key), selected=key===selectedThemeKey;
       card.classList.toggle("selected",selected); card.classList.toggle("locked",!unlocked);
       const button=card.querySelector(".theme-select"); button.disabled=!unlocked; button.textContent=selected?"EQUIPPED":unlocked?"SELECT":`LOCKED · ${theme.unlockScore}`;
       const note=card.querySelector("[data-unlock-note]");
-      if(note) note.textContent=unlocked?`UNLOCKED — CHASE THE ${theme.targetName}`:`${Math.min(highestScore(),theme.unlockScore)} / ${theme.unlockScore} TOTAL BEST POINTS`;
+      if(note) note.textContent=unlocked?`PREY SKINS: DEFAULT · 50 PTS · 100 PTS`:`${Math.min(highestScore(),theme.unlockScore)} / ${theme.unlockScore} TOTAL BEST POINTS`;
     });
   }
 
@@ -698,6 +715,14 @@
     music.volume = musicVolume;
     localStorage.setItem("koiHuntMusicVolume", String(musicVolume));
   });
+  const lunarUnlocked = () => Object.keys(themes).every(k => (bestScores[k]||0) >= 100);
+  if(ui.lunarToggle){
+    ui.lunarToggle.disabled=!lunarUnlocked();
+    lunarMode=lunarUnlocked() && localStorage.getItem("koiHuntLunar")==="true";
+    ui.lunarToggle.checked=lunarMode;
+    if(ui.lunarStatus) ui.lunarStatus.textContent=lunarUnlocked()?"UNLOCKED":"SCORE 100+ IN EVERY WORLD";
+    ui.lunarToggle.addEventListener("change",()=>{lunarMode=ui.lunarToggle.checked;localStorage.setItem("koiHuntLunar",String(lunarMode));});
+  }
   ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
 
   document.addEventListener("keydown",event=>{
