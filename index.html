@@ -82,6 +82,30 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 .theme-card.secret-hidden{display:none!important}
 #menu-canvas{cursor:pointer}
 
+
+/* v8 bright pixel-garden button texture restored */
+.main-menu{gap:12px;width:min(100%,360px)}
+.pixel-button,.small-button{
+  font-family:"Courier New",monospace;font-weight:900;color:#fff7ce;text-shadow:2px 2px 0 #375c2a;
+  letter-spacing:2px;border-radius:0;
+}
+.pixel-button{min-height:62px;padding:12px 46px;font-size:18px}
+.pixel-button::before,.small-button::before{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  background:#234e2d;border:0;transform:translate(7px,8px);
+}
+.pixel-button::after,.small-button::after{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  border:0;background:linear-gradient(#9ddd67 0 23%,#69b94c 24% 72%,#3b813e 73%);
+  box-shadow:inset 0 6px 0 rgba(242,255,183,.42),inset -7px -8px 0 rgba(31,96,45,.35);
+}
+.main-menu .pixel-button:nth-child(odd)::after,.main-menu .pixel-button:nth-child(even)::after{transform:none}
+.main-menu .pixel-button:nth-child(odd)::before,.main-menu .pixel-button:nth-child(even)::before{transform:translate(7px,8px)}
+.pixel-button:hover::after,.small-button:hover::after{filter:brightness(1.12);transform:translateY(-3px)}
+.pixel-button:active,.small-button:active{transform:translate(5px,6px)}
+.main-menu .pixel-button .menu-icon::after{content:"✿";left:260px;top:-6px;color:#f7a3bd;font-size:23px;text-shadow:2px 2px #7e4560}
+.pixel-button.primary::after{background:linear-gradient(#bdea75 0 23%,#7ccc53 24% 72%,#4c9544 73%)}
+
 </style>
 </head>
 <body>
@@ -469,7 +493,17 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       ],
       goldenName:"GOLDEN MERMAID",
       snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" }
-    }
+    },
+    dragonHoard: {
+      name: "DRAGON'S HOARD", targetName: "TREASURE HUNTER", background: "dragonCave",
+      snakeStyle: "dragon", unlockScore: 300, unlockText: "SECRET WORLD · SCORE 300 TO KEEP",
+      preyUnlocks:[0], preyNames:["RUNNING TREASURE HUNTER"],
+      preyPalettes:[
+        {kind:"runner",skin:"#d7a06f",suit:"#4da3d9",hair:"#4a2d1c",boots:"#39251b"}
+      ],
+      goldenName:"GOLDEN KNIGHT",
+      snake: { main:"#b73a2b",alt:"#d25a34",light:"#f28b45",dark:"#5b1b1a",accent:"#f2c84b",eye:"#fff06a" }
+    },
   };
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
   if (selectedThemeKey === "anacondaSwimmer") selectedThemeKey = "giantSeaSnake";
@@ -1081,12 +1115,21 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillStyle="#111";c.fillRect(f.size*.3,-f.size*.1,3,3); c.restore();
     });
   }
-  menuCanvas.addEventListener("pointerdown",event=>{
+  const menuStage = document.querySelector(".menu-stage");
+  menuStage.addEventListener("pointerdown",event=>{
     if(screens.home.classList.contains("hidden")) return;
-    const r=menuCanvas.getBoundingClientRect(), x=(event.clientX-r.left)*menuCanvas.width/r.width, y=(event.clientY-r.top)*menuCanvas.height/r.height;
-    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<34);
-    if(gold){ secretDragonSession=true; selectedThemeKey="dragonHoard"; startGame(); }
-  });
+    const r=menuCanvas.getBoundingClientRect();
+    const x=(event.clientX-r.left)*menuCanvas.width/r.width;
+    const y=(event.clientY-r.top)*menuCanvas.height/r.height;
+    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<42);
+    if(gold){
+      event.preventDefault();
+      event.stopPropagation();
+      secretDragonSession=true;
+      selectedThemeKey="dragonHoard";
+      startGame();
+    }
+  }, true);
 
   function drawMenuPondDecorations(frame) {
     const c=menuCtx;

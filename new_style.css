@@ -74,3 +74,27 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 
 .theme-card.secret-hidden{display:none!important}
 #menu-canvas{cursor:pointer}
+
+
+/* v8 bright pixel-garden button texture restored */
+.main-menu{gap:12px;width:min(100%,360px)}
+.pixel-button,.small-button{
+  font-family:"Courier New",monospace;font-weight:900;color:#fff7ce;text-shadow:2px 2px 0 #375c2a;
+  letter-spacing:2px;border-radius:0;
+}
+.pixel-button{min-height:62px;padding:12px 46px;font-size:18px}
+.pixel-button::before,.small-button::before{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  background:#234e2d;border:0;transform:translate(7px,8px);
+}
+.pixel-button::after,.small-button::after{
+  border-radius:0;clip-path:polygon(8% 0,88% 0,88% 8%,96% 8%,96% 84%,88% 84%,88% 94%,12% 94%,12% 100%,4% 100%,4% 16%,8% 16%);
+  border:0;background:linear-gradient(#9ddd67 0 23%,#69b94c 24% 72%,#3b813e 73%);
+  box-shadow:inset 0 6px 0 rgba(242,255,183,.42),inset -7px -8px 0 rgba(31,96,45,.35);
+}
+.main-menu .pixel-button:nth-child(odd)::after,.main-menu .pixel-button:nth-child(even)::after{transform:none}
+.main-menu .pixel-button:nth-child(odd)::before,.main-menu .pixel-button:nth-child(even)::before{transform:translate(7px,8px)}
+.pixel-button:hover::after,.small-button:hover::after{filter:brightness(1.12);transform:translateY(-3px)}
+.pixel-button:active,.small-button:active{transform:translate(5px,6px)}
+.main-menu .pixel-button .menu-icon::after{content:"✿";left:260px;top:-6px;color:#f7a3bd;font-size:23px;text-shadow:2px 2px #7e4560}
+.pixel-button.primary::after{background:linear-gradient(#bdea75 0 23%,#7ccc53 24% 72%,#4c9544 73%)}

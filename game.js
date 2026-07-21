@@ -158,7 +158,17 @@
       ],
       goldenName:"GOLDEN MERMAID",
       snake: { main: "#176f85", alt: "#238ea1", light: "#67d0d8", dark: "#0b3442", accent: "#f0d05a", eye: "#fff08a" }
-    }
+    },
+    dragonHoard: {
+      name: "DRAGON'S HOARD", targetName: "TREASURE HUNTER", background: "dragonCave",
+      snakeStyle: "dragon", unlockScore: 300, unlockText: "SECRET WORLD · SCORE 300 TO KEEP",
+      preyUnlocks:[0], preyNames:["RUNNING TREASURE HUNTER"],
+      preyPalettes:[
+        {kind:"runner",skin:"#d7a06f",suit:"#4da3d9",hair:"#4a2d1c",boots:"#39251b"}
+      ],
+      goldenName:"GOLDEN KNIGHT",
+      snake: { main:"#b73a2b",alt:"#d25a34",light:"#f28b45",dark:"#5b1b1a",accent:"#f2c84b",eye:"#fff06a" }
+    },
   };
   let selectedThemeKey = localStorage.getItem("koiHuntTheme") || "anacondaPond";
   if (selectedThemeKey === "anacondaSwimmer") selectedThemeKey = "giantSeaSnake";
@@ -770,12 +780,21 @@
       c.fillStyle="#111";c.fillRect(f.size*.3,-f.size*.1,3,3); c.restore();
     });
   }
-  menuCanvas.addEventListener("pointerdown",event=>{
+  const menuStage = document.querySelector(".menu-stage");
+  menuStage.addEventListener("pointerdown",event=>{
     if(screens.home.classList.contains("hidden")) return;
-    const r=menuCanvas.getBoundingClientRect(), x=(event.clientX-r.left)*menuCanvas.width/r.width, y=(event.clientY-r.top)*menuCanvas.height/r.height;
-    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<34);
-    if(gold){ secretDragonSession=true; selectedThemeKey="dragonHoard"; startGame(); }
-  });
+    const r=menuCanvas.getBoundingClientRect();
+    const x=(event.clientX-r.left)*menuCanvas.width/r.width;
+    const y=(event.clientY-r.top)*menuCanvas.height/r.height;
+    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<42);
+    if(gold){
+      event.preventDefault();
+      event.stopPropagation();
+      secretDragonSession=true;
+      selectedThemeKey="dragonHoard";
+      startGame();
+    }
+  }, true);
 
   function drawMenuPondDecorations(frame) {
     const c=menuCtx;
