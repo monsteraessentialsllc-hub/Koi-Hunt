@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Koi Hunt</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Koi Hunt</title>
+<style>
 :root{
   --ink:#071a20;--deep:#082f3c;--water:#087d9a;--water2:#0a9bb0;--foam:#b9f1e9;
   --wood:#4b2b16;--wood2:#7a4a20;--gold:#f3c64e;--cream:#fff2b4;
@@ -140,240 +141,208 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
 </style>
 </head>
 <body>
-  <main id="koi-hunt" class="game-app">
-    <!-- MAIN MENU -->
-    <section id="home-screen" class="screen home-screen">
-      <div class="menu-stage">
-        <canvas id="menu-canvas" width="560" height="680" aria-hidden="true"></canvas>
+<main class="game-app" id="koi-hunt">
+<!-- MAIN MENU -->
+<section class="screen home-screen" id="home-screen">
+<div class="menu-stage">
+<canvas aria-hidden="true" height="680" id="menu-canvas" width="560"></canvas>
+<button aria-label="Enter the secret Dragon's Hoard level" id="secret-golden-koi" title="A mysterious golden koi..." type="button">
+<svg aria-hidden="true" viewbox="0 0 96 48"><g shape-rendering="crispEdges">
+<path d="M8 16h12v-6h12V6h36v4h12v6h10v16H80v6H68v4H32v-4H20v-6H8z" fill="#f7cf3e"></path>
+<path d="M26 11h18v10H26zM48 8h18v9H48zM55 27h17v9H55z" fill="#fff08a"></path>
+<path d="M19 16h12v16H19zM68 15h12v17H68z" fill="#d9921e"></path>
+<path d="M0 9h10v9h10v12H10v9H0l7-15zM42 0h16v7H42zM42 41h16v7H42z" fill="#ffd85c"></path>
+<rect fill="#21170a" height="5" width="5" x="78" y="19"></rect>
+</g></svg>
+</button>
+<div class="home-card">
+<h1 aria-label="Koi Hunt" class="game-logo">
+<span class="logo-row"><span class="logo-koi">KOI</span><span class="logo-hunt">HUNT</span></span>
+<svg aria-label="Pixel koi fish" class="logo-fish" role="img" viewbox="0 0 96 36">
+<g shape-rendering="crispEdges">
+<path d="M8 13h10V8h11V5h29v3h12v5h10v10H70v5H58v3H29v-3H18v-5H8z" fill="#f47b32"></path>
+<path d="M23 9h14v8H23zM45 6h13v8H45zM54 20h12v7H54zM30 21h13v7H30z" fill="#ffd36d"></path>
+<path d="M18 13h10v10H18zM64 12h10v11H64z" fill="#d95427"></path>
+<path d="M2 8h8v7h8v6h-8v7H2l5-10zM38 1h13v5H38zM38 30h13v5H38z" fill="#ff9d45"></path>
+<rect fill="#071a20" height="4" width="4" x="71" y="14"></rect>
+</g>
+</svg>
+<span class="logo-sub">A MONSTERA ARCADE</span>
+</h1>
+<nav aria-label="Game menu" class="main-menu">
+<button class="pixel-button primary" id="play-button" type="button"><span aria-hidden="true" class="menu-icon icon-play"></span>PLAY</button>
+<button class="pixel-button" id="collection-button" type="button"><span aria-hidden="true" class="menu-icon icon-collection"></span>COLLECTION</button>
+<button class="pixel-button" id="settings-button" type="button"><span aria-hidden="true" class="menu-icon icon-settings"></span>SETTINGS</button>
+<button class="pixel-button" id="credits-button" type="button"><span aria-hidden="true" class="menu-icon icon-credits"></span>CREDITS</button>
+</nav>
+</div>
+</div>
+</section>
+<!-- COLLECTION -->
+<section class="screen hidden" id="collection-screen">
+<div class="panel-shell collection-shell">
+<header class="panel-heading">
+<h2>COLLECTION</h2>
+<p>CHOOSE A WORLD</p>
+</header>
+<div class="collection-carousel">
+<button aria-label="Previous collections" class="collection-arrow" id="collection-prev" type="button">◀</button>
+<div class="collection-window">
+<div class="theme-grid">
 
-        <button id="secret-golden-koi" type="button" aria-label="Enter the secret Dragon's Hoard level" title="A mysterious golden koi...">
-          <svg viewBox="0 0 96 48" aria-hidden="true"><g shape-rendering="crispEdges">
-            <path fill="#f7cf3e" d="M8 16h12v-6h12V6h36v4h12v6h10v16H80v6H68v4H32v-4H20v-6H8z"/>
-            <path fill="#fff08a" d="M26 11h18v10H26zM48 8h18v9H48zM55 27h17v9H55z"/>
-            <path fill="#d9921e" d="M19 16h12v16H19zM68 15h12v17H68z"/>
-            <path fill="#ffd85c" d="M0 9h10v9h10v12H10v9H0l7-15zM42 0h16v7H42zM42 41h16v7H42z"/>
-            <rect fill="#21170a" x="78" y="19" width="5" height="5"/>
-          </g></svg>
-        </button>
-
-        <div class="home-card">
-          <h1 class="game-logo" aria-label="Koi Hunt">
-            <span class="logo-row"><span class="logo-koi">KOI</span><span class="logo-hunt">HUNT</span></span>
-            <svg class="logo-fish" viewBox="0 0 96 36" role="img" aria-label="Pixel koi fish">
-              <g shape-rendering="crispEdges">
-                <path fill="#f47b32" d="M8 13h10V8h11V5h29v3h12v5h10v10H70v5H58v3H29v-3H18v-5H8z"/>
-                <path fill="#ffd36d" d="M23 9h14v8H23zM45 6h13v8H45zM54 20h12v7H54zM30 21h13v7H30z"/>
-                <path fill="#d95427" d="M18 13h10v10H18zM64 12h10v11H64z"/>
-                <path fill="#ff9d45" d="M2 8h8v7h8v6h-8v7H2l5-10zM38 1h13v5H38zM38 30h13v5H38z"/>
-                <rect fill="#071a20" x="71" y="14" width="4" height="4"/>
-              </g>
-            </svg>
-            <span class="logo-sub">A MONSTERA ARCADE</span>
-          </h1>
-          <nav class="main-menu" aria-label="Game menu">
-            <button id="play-button" class="pixel-button primary" type="button"><span class="menu-icon icon-play" aria-hidden="true"></span>PLAY</button>
-            <button id="collection-button" class="pixel-button" type="button"><span class="menu-icon icon-collection" aria-hidden="true"></span>COLLECTION</button>
-            <button id="settings-button" class="pixel-button" type="button"><span class="menu-icon icon-settings" aria-hidden="true"></span>SETTINGS</button>
-            <button id="credits-button" class="pixel-button" type="button"><span class="menu-icon icon-credits" aria-hidden="true"></span>CREDITS</button>
-          </nav>
 
 
-        </div>
-      </div>
-    </section>
 
-    <!-- COLLECTION -->
-    <section id="collection-screen" class="screen hidden">
-      <div class="panel-shell collection-shell">
-        <header class="panel-heading">
-          <h2>COLLECTION</h2>
-          <p>CHOOSE A WORLD</p>
-        </header>
 
-        <div class="collection-carousel">
-          <button id="collection-prev" class="collection-arrow" type="button" aria-label="Previous collections">◀</button>
-          <div class="collection-window">
-            <div class="theme-grid">
-          <article class="theme-card" data-theme="anacondaPond">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Anaconda Pond preview"></canvas>
-            <h3>ANACONDA POND</h3>
-            <p>GREEN ANACONDA · ORANGE KOI · BLUE POND</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
 
-          <article class="theme-card" data-theme="bambooBallPython">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Bamboo Ball Python preview"></canvas>
-            <h3>BAMBOO BALL PYTHON</h3>
-            <p>BRIGHT SILVER PYTHON · HIGH-CONTRAST GREY MOUSE · LIGHT GRASS</p>
-            <p class="unlock-note" data-unlock-note>SCORE 100 IN ANACONDA POND</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
 
-          <article class="theme-card" data-theme="greenTreePython">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Green Tree Python preview"></canvas>
-            <h3>GREEN TREE PYTHON</h3>
-            <p>GREEN TREE PYTHON · TREE FROG · MOSSY TREE TRUNK WITH BUGS</p>
-            <p class="unlock-note" data-unlock-note>SCORE 100 IN BAMBOO BALL PYTHON</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
-
-          <article class="theme-card" data-theme="leucisticCherry">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Blue-Eyed Leucistic Ball Python preview"></canvas>
-            <h3>BLUE-EYED LEUCISTIC BALL PYTHON</h3>
-            <p>WHITE PYTHON · CARDINAL · CHERRY BLOSSOM GROVE</p>
-            <p class="unlock-note" data-unlock-note>SCORE 100 IN GREEN TREE PYTHON</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
-
-          <article class="theme-card" data-theme="rattlesnakeDesert">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Rattlesnake Desert preview"></canvas>
-            <h3>RATTLESNAKE DESERT</h3>
-            <p>RATTLESNAKE · COLORFUL LIZARDS · CACTUS AND ROCKS</p>
-            <p class="unlock-note" data-unlock-note>SCORE 100 IN BLUE-EYED LEUCISTIC BALL PYTHON</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
-
-          <article class="theme-card" data-theme="giantSeaSnake">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Giant Sea Snake preview"></canvas>
-            <h3>GIANT SEA SNAKE</h3>
-            <p>GIANT SEA SNAKE · TWO SWIMMERS + PUFFERFISH · OPEN OCEAN</p>
-            <p class="unlock-note" data-unlock-note>SCORE 100 IN RATTLESNAKE DESERT</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
-          <article class="theme-card dragon-secret-card" data-theme="dragonHoard">
-            <canvas class="theme-preview" width="240" height="150" aria-label="Dragon's Hoard preview"></canvas>
-            <h3>DRAGON'S HOARD</h3>
-            <p>SLEEPING DRAGON · TREASURE HUNTER · CAVERN OF GOLD</p>
-            <p class="unlock-note" data-unlock-note>HIDDEN SECRET WORLD</p>
-            <button class="theme-select small-button" type="button">SELECT</button>
-          </article>
-            </div>
-          </div>
-          <button id="collection-next" class="collection-arrow" type="button" aria-label="Next collections">▶</button>
-        </div>
-
-        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
-      </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="settings-screen" class="screen hidden">
-      <div class="panel-shell simple-panel">
-        <header class="panel-heading">
-          <h2>SETTINGS</h2>
-          <p>DISPLAY OPTIONS</p>
-        </header>
-
-        <label class="setting-row">
-          <span>WATER / GRASS ANIMATION</span>
-          <input id="animation-toggle" type="checkbox" checked />
-        </label>
-
-        <label class="setting-row">
-          <span>PIXEL SCANLINES</span>
-          <input id="scanline-toggle" type="checkbox" />
-        </label>
-
-        <label class="setting-row">
-          <span>MUSIC</span>
-          <input id="music-toggle" type="checkbox" checked />
-        </label>
-
-        <label class="setting-row music-volume-row">
-          <span>MUSIC VOLUME</span>
-          <input id="music-volume" type="range" min="0" max="100" value="55" />
-        </label>
-
-        <label class="setting-row">
-          <span>LUNAR KOI MODE <small id="lunar-status">COMPLETE ALL LEVELS</small></span>
-          <input id="lunar-toggle" type="checkbox">
-        </label>
-
-        <div class="password-panel">
-          <span class="password-title">PROGRESS PASSWORD</span>
-          <small>THE PASSWORD IS REVEALED AFTER COMPLETING EVERY LEVEL.</small>
-          <input id="password-input" type="password" autocomplete="off" placeholder="ENTER PASSWORD">
-          <div class="password-actions">
-            <button id="unlock-all-button" class="small-button" type="button">UNLOCK ALL LEVELS</button>
-            <button id="reset-progress-button" class="small-button danger-button" type="button">RESET LEVELS + SCORES</button>
-          </div>
-          <small id="password-message" aria-live="polite"></small>
-        </div>
-
-        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
-      </div>
-    </section>
-
-    <!-- CREDITS -->
-    <section id="credits-screen" class="screen hidden">
-      <div class="panel-shell simple-panel credits-panel">
-        <header class="panel-heading">
-          <h2>CREDITS</h2>
-        </header>
-
-        <p>GAME CONCEPT &amp; ORIGINAL ART</p>
-        <strong>SANTINO · MONSTERA ESSENTIALS</strong>
-        <p>PIXEL GAME BUILD</p>
-        <strong>KOI HUNT</strong>
-        <p>ORIGINAL MUSIC</p>
-        <strong>SANTINOVS</strong>
-
-        <button class="back-button pixel-button" data-back-home type="button">BACK</button>
-      </div>
-    </section>
-
-    <!-- GAME SCREEN -->
-    <section id="game-screen" class="screen game-screen hidden">
-      <div class="game-shell">
-        <header class="safe-bar">
-          <button id="menu-button" class="small-button" type="button">MAIN MENU</button>
-
-          <div class="scores" aria-live="polite">
-            <div>
-              <span>SCORE</span>
-              <strong id="score">0</strong>
-            </div>
-            <div>
-              <span>BEST</span>
-              <strong id="best-score">0</strong>
-            </div>
-          </div>
-
-          <button id="pause-button" class="small-button" type="button">PAUSE</button>
-        </header>
-
-        <div class="world-label" id="world-label">ANACONDA POND</div>
-
-        <div class="play-space">
-          <canvas id="game-canvas" width="480" height="480" aria-label="Koi Hunt game"></canvas>
-
-          <div id="overlay" class="overlay hidden">
-            <div class="overlay-panel">
-              <h2 id="overlay-title">PAUSED</h2>
-              <p id="overlay-text">Press Space to continue.</p>
-              <button id="overlay-button" class="pixel-button primary" type="button">CONTINUE</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="mobile-controls" aria-label="Touch controls">
-          <button class="dpad-button dpad-up" data-direction="up" type="button" aria-label="Move up">▲</button>
-          <button class="dpad-button dpad-left" data-direction="left" type="button" aria-label="Move left">◀</button>
-          <button class="dpad-button dpad-down" data-direction="down" type="button" aria-label="Move down">▼</button>
-          <button class="dpad-button dpad-right" data-direction="right" type="button" aria-label="Move right">▶</button>
-          <button class="dpad-button dpad-pause" data-action="pause" type="button" aria-label="Pause game">Ⅱ</button>
-        </div>
-
-        <footer class="bottom-bar">
-          <span>MOVE: ARROWS / WASD</span>
-          <span>WALLS WRAP · ONLY SELF-BITES END THE GAME</span>
-          <span>PAUSE: SPACE</span>
-        </footer>
-      </div>
-    </section>
-  </main>
-
-  <script>
+<article class="theme-card" data-theme="anacondaPond">
+<canvas aria-label="Anaconda Pond preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>ANACONDA POND</h3>
+<p>GREEN ANACONDA · ORANGE KOI · BLUE POND</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card" data-theme="bambooBallPython">
+<canvas aria-label="Bamboo Ball Python preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>BAMBOO BALL PYTHON</h3>
+<p>BRIGHT SILVER PYTHON · HIGH-CONTRAST GREY MOUSE · LIGHT GRASS</p>
+<p class="unlock-note" data-unlock-note="">SCORE 100 IN ANACONDA POND</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card" data-theme="greenTreePython">
+<canvas aria-label="Green Tree Python preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>GREEN TREE PYTHON</h3>
+<p>GREEN TREE PYTHON · TREE FROG · MOSSY TREE TRUNK WITH BUGS</p>
+<p class="unlock-note" data-unlock-note="">SCORE 180 IN BAMBOO BALL PYTHON</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card" data-theme="rattlesnakeDesert">
+<canvas aria-label="Rattlesnake Desert preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>RATTLESNAKE DESERT</h3>
+<p>RATTLESNAKE · COLORFUL LIZARDS · CACTUS AND ROCKS</p>
+<p class="unlock-note" data-unlock-note="">SCORE 260 IN GREEN TREE PYTHON</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card" data-theme="giantSeaSnake">
+<canvas aria-label="Giant Sea Snake preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>GIANT SEA SNAKE</h3>
+<p>GIANT SEA SNAKE · TWO SWIMMERS + PUFFERFISH · OPEN OCEAN</p>
+<p class="unlock-note" data-unlock-note="">SCORE 340 IN RATTLESNAKE DESERT</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card" data-theme="leucisticCherry">
+<canvas aria-label="Blue-Eyed Leucistic Ball Python preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>BLUE-EYED LEUCISTIC BALL PYTHON</h3>
+<p>WHITE PYTHON · CARDINAL · CHERRY BLOSSOM GROVE</p>
+<p class="unlock-note" data-unlock-note="">SCORE 420 IN GIANT SEA SNAKE</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article><article class="theme-card dragon-secret-card" data-theme="dragonHoard">
+<canvas aria-label="Dragon's Hoard preview" class="theme-preview" height="150" width="240"></canvas>
+<h3>DRAGON'S HOARD</h3>
+<p>PLAY AS THE DRAGON · HUNT THE TREASURE THIEF · SWORDS, COINS, AND CHESTS</p>
+<p class="unlock-note" data-unlock-note="">HIDDEN SECRET WORLD</p>
+<button class="theme-select small-button" type="button">SELECT</button>
+</article></div>
+</div>
+<button aria-label="Next collections" class="collection-arrow" id="collection-next" type="button">▶</button>
+</div>
+<button class="back-button pixel-button" data-back-home="" type="button">BACK</button>
+</div>
+</section>
+<!-- SETTINGS -->
+<section class="screen hidden" id="settings-screen">
+<div class="panel-shell simple-panel">
+<header class="panel-heading">
+<h2>SETTINGS</h2>
+<p>DISPLAY OPTIONS</p>
+</header>
+<label class="setting-row">
+<span>WATER / GRASS ANIMATION</span>
+<input checked="" id="animation-toggle" type="checkbox"/>
+</label>
+<label class="setting-row">
+<span>PIXEL SCANLINES</span>
+<input id="scanline-toggle" type="checkbox"/>
+</label>
+<label class="setting-row">
+<span>MUSIC</span>
+<input checked="" id="music-toggle" type="checkbox"/>
+</label>
+<label class="setting-row music-volume-row">
+<span>MUSIC VOLUME</span>
+<input id="music-volume" max="100" min="0" type="range" value="55"/>
+</label>
+<label class="setting-row">
+<span>LUNAR KOI MODE <small id="lunar-status">COMPLETE ALL LEVELS</small></span>
+<input id="lunar-toggle" type="checkbox"/>
+</label>
+<div class="password-panel">
+<span class="password-title">PROGRESS PASSWORD</span>
+<small>THE PASSWORD IS REVEALED AFTER COMPLETING EVERY LEVEL.</small>
+<input autocomplete="off" id="password-input" placeholder="ENTER PASSWORD" type="password"/>
+<div class="password-actions">
+<button class="small-button" id="unlock-all-button" type="button">UNLOCK ALL LEVELS</button>
+<button class="small-button danger-button" id="reset-progress-button" type="button">RESET LEVELS + SCORES</button>
+</div>
+<small aria-live="polite" id="password-message"></small>
+</div>
+<button class="back-button pixel-button" data-back-home="" type="button">BACK</button>
+</div>
+</section>
+<!-- CREDITS -->
+<section class="screen hidden" id="credits-screen">
+<div class="panel-shell simple-panel credits-panel">
+<header class="panel-heading">
+<h2>CREDITS</h2>
+</header>
+<p>GAME CONCEPT &amp; ORIGINAL ART</p>
+<strong>SANTINO · MONSTERA ESSENTIALS</strong>
+<p>PIXEL GAME BUILD</p>
+<strong>KOI HUNT</strong>
+<p>ORIGINAL MUSIC</p>
+<strong>SANTINOVS</strong>
+<button class="back-button pixel-button" data-back-home="" type="button">BACK</button>
+</div>
+</section>
+<!-- GAME SCREEN -->
+<section class="screen game-screen hidden" id="game-screen">
+<div class="game-shell">
+<header class="safe-bar">
+<button class="small-button" id="menu-button" type="button">MAIN MENU</button>
+<div aria-live="polite" class="scores">
+<div>
+<span>SCORE</span>
+<strong id="score">0</strong>
+</div>
+<div>
+<span>BEST</span>
+<strong id="best-score">0</strong>
+</div>
+</div>
+<button class="small-button" id="pause-button" type="button">PAUSE</button>
+</header>
+<div class="world-label" id="world-label">ANACONDA POND</div>
+<div class="play-space">
+<canvas aria-label="Koi Hunt game" height="480" id="game-canvas" width="480"></canvas>
+<div class="overlay hidden" id="overlay">
+<div class="overlay-panel">
+<h2 id="overlay-title">PAUSED</h2>
+<p id="overlay-text">Press Space to continue.</p>
+<button class="pixel-button primary" id="overlay-button" type="button">CONTINUE</button>
+</div>
+</div>
+</div>
+<div aria-label="Touch controls" class="mobile-controls">
+<button aria-label="Move up" class="dpad-button dpad-up" data-direction="up" type="button">▲</button>
+<button aria-label="Move left" class="dpad-button dpad-left" data-direction="left" type="button">◀</button>
+<button aria-label="Move down" class="dpad-button dpad-down" data-direction="down" type="button">▼</button>
+<button aria-label="Move right" class="dpad-button dpad-right" data-direction="right" type="button">▶</button>
+<button aria-label="Pause game" class="dpad-button dpad-pause" data-action="pause" type="button">Ⅱ</button>
+</div>
+<footer class="bottom-bar">
+<span>MOVE: ARROWS / WASD</span>
+<span>WALLS WRAP · ONLY SELF-BITES END THE GAME</span>
+<span>PAUSE: SPACE</span>
+</footer>
+</div>
+</section>
+</main>
+<script>
 (() => {
   const app = document.getElementById("koi-hunt");
   const screens = {
@@ -409,8 +378,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     resetProgress: document.getElementById("reset-progress-button"),
     unlockAll: document.getElementById("unlock-all-button"),
     collectionPrev: document.getElementById("collection-prev"),
-    collectionNext: document.getElementById("collection-next"),
-    secretGoldenKoi: document.getElementById("secret-golden-koi")
+    collectionNext: document.getElementById("collection-next")
   };
 
   const gameCanvas = document.getElementById("game-canvas");
@@ -502,7 +470,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     },
     leucisticCherry: {
       name: "BLUE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
-      snakeStyle: "leucistic", unlockScore: 220, unlockText: "UNLOCK AT 220 POINTS",
+      snakeStyle: "leucistic", unlockScore: 420, unlockText: "UNLOCK AT 420 POINTS",
       preyUnlocks:[0,50,100], preyNames:["RED CARDINAL","WHITE CARDINAL","YELLOW CARDINAL"],
       preyPalettes:[
         {main:"#d92f3b",light:"#ff747d",dark:"#6e1420",beak:"#f2b14d"},
@@ -514,7 +482,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     },
     rattlesnakeDesert: {
       name: "RATTLESNAKE DESERT", targetName: "DESERT LIZARD", background: "desert",
-      snakeStyle: "rattlesnake", unlockScore: 270, unlockText: "UNLOCK AT 270 POINTS",
+      snakeStyle: "rattlesnake", unlockScore: 260, unlockText: "UNLOCK AT 260 POINTS",
       preyUnlocks:[0,50,100], preyNames:["LIME LIZARD","ORANGE LIZARD","TURQUOISE LIZARD"],
       preyPalettes:[
         {main:"#8dcc42",light:"#d0ef77",dark:"#3d6a22"},
@@ -526,7 +494,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     },
     giantSeaSnake: {
       name: "GIANT SEA SNAKE", targetName: "SEA PREY", background: "openOcean",
-      snakeStyle: "seaSnake", unlockScore: 330, unlockText: "UNLOCK AT 330 POINTS",
+      snakeStyle: "seaSnake", unlockScore: 340, unlockText: "UNLOCK AT 340 POINTS",
       preyUnlocks:[0,50,100], preyNames:["SWIMMER · PINK SHORTS","SWIMMER · GREEN SHORTS","PUFFERFISH"],
       preyPalettes:[
         {kind:"swimmer",skin:"#9a5d3c",suit:"#f06da9",hair:"#251b18",foam:"#d7f4ff"},
@@ -564,13 +532,16 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
   let lunarMode = false;
   let menuAnimationId = null;
   let menuFish = [];
+  let goldenKoiAvailable = false;
+  let goldenKoiVisibleUntil = 0;
+  let nextGoldenKoiAt = performance.now() + 45000 + Math.random() * 45000;
   let secretDragonSession = false;
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
   // Progressive world unlocks. Pond starts open; each later world uses a higher score in the previous world.
-  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","leucisticCherry","rattlesnakeDesert","giantSeaSnake"];
-  const completionScores = {anacondaPond:100,bambooBallPython:180,greenTreePython:260,leucisticCherry:340,rattlesnakeDesert:420,giantSeaSnake:500};
+  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","rattlesnakeDesert","giantSeaSnake","leucisticCherry"];
+  const completionScores = {anacondaPond:100,bambooBallPython:180,greenTreePython:260,rattlesnakeDesert:340,giantSeaSnake:420,leucisticCherry:500};
   let allLevelsUnlocked = localStorage.getItem("koiHuntUnlockAll") === "true";
 
   function highestScore() {
@@ -674,9 +645,19 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
   function endGame() {
     stopGame();
     ui.overlayTitle.textContent = "SELF BITTEN";
-    ui.overlayText.textContent = selectedThemeKey==="dragonHoard" && (bestScores.dragonHoard||0)>=300 ? `DRAGON'S HOARD UNLOCKED! SCORE: ${score}` : `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
-    ui.overlayButton.textContent = "PLAY AGAIN";
-    ui.overlayButton.dataset.action = "restart";
+    if(selectedThemeKey==="dragonHoard" && !dragonPermanentlyUnlocked()){
+      secretDragonSession=false;
+      selectedThemeKey="anacondaPond";
+      localStorage.setItem("koiHuntTheme",selectedThemeKey);
+      scheduleNextGoldenKoi(45000,90000);
+      ui.overlayText.textContent = `THE DRAGON LOST THE HOARD. SCORE: ${score} · WAIT FOR THE GOLDEN KOI TO RETURN.`;
+      ui.overlayButton.textContent = "RETURN TO MENU";
+      ui.overlayButton.dataset.action = "home";
+    } else {
+      ui.overlayText.textContent = selectedThemeKey==="dragonHoard" && (bestScores.dragonHoard||0)>=300 ? `DRAGON'S HOARD UNLOCKED! SCORE: ${score}` : `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
+      ui.overlayButton.textContent = "PLAY AGAIN";
+      ui.overlayButton.dataset.action = "restart";
+    }
     ui.overlay.classList.remove("hidden");
   }
 
@@ -864,12 +845,35 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillRect(x * cell, y * cell, cell, cell);
     }
     if (kind === "dragonCave") {
-      c.fillStyle="#6b431d"; for(let i=0;i<38;i++){const x=(i*97)%width,y=(i*61)%height;c.fillRect(x,y,cell*.8,cell*.45);}
-      c.fillStyle="#e5b83f"; for(let i=0;i<24;i++){const x=(i*73+40)%width,y=(i*109+90)%height;c.fillRect(x,y,cell*.42,cell*.3);}
-      // Huge resting dragon, seen from above on the treasure bed.
-      c.fillStyle="#6e171d";c.fillRect(width*.18,height*.12,width*.62,height*.19);c.fillRect(width*.58,height*.22,width*.18,height*.44);
-      c.fillStyle="#b72d25";c.fillRect(width*.12,height*.16,width*.22,height*.14);c.fillRect(width*.72,height*.14,width*.15,height*.12);
-      c.fillStyle="#efb83b";c.fillRect(width*.18,height*.18,width*.08,height*.04);
+      // The entire floor is a dense treasure hoard: coins, swords and chests.
+      c.fillStyle="#8a5a17"; c.fillRect(0,0,width,height);
+      for(let i=0;i<260;i++){
+        const x=(i*67+31)%width, y=(i*101+17)%height;
+        c.fillStyle=i%3===0?"#ffd65a":i%3===1?"#e5ad2f":"#b97d1d";
+        c.fillRect(x,y,cell*.24,cell*.18);
+        c.fillStyle="rgba(255,245,150,.8)";
+        c.fillRect(x+cell*.06,y+cell*.03,cell*.08,cell*.05);
+      }
+      // Treasure chests.
+      for(let i=0;i<30;i++){
+        const x=(i*149+55)%width, y=(i*83+92)%height;
+        c.fillStyle="#6f351d"; c.fillRect(x,y,cell*1.35,cell*.9);
+        c.fillStyle="#9c5127"; c.fillRect(x+cell*.10,y-cell*.22,cell*1.12,cell*.40);
+        c.fillStyle="#f2c14d"; c.fillRect(x+cell*.58,y+cell*.25,cell*.18,cell*.34);
+        c.fillStyle="#d89d32"; c.fillRect(x,y+cell*.12,cell*1.35,cell*.12);
+      }
+      // Crossed swords scattered through the gold.
+      c.save();
+      for(let i=0;i<38;i++){
+        const x=(i*113+25)%width, y=(i*157+48)%height;
+        c.save(); c.translate(x,y); c.rotate((i%4)*Math.PI/4);
+        c.fillStyle="#dfe7ea"; c.fillRect(-cell*.05,-cell*.65,cell*.10,cell*1.05);
+        c.fillStyle="#ffffff"; c.fillRect(-cell*.02,-cell*.62,cell*.035,cell*.72);
+        c.fillStyle="#8b5a2b"; c.fillRect(-cell*.10,cell*.34,cell*.20,cell*.30);
+        c.fillStyle="#f0c14b"; c.fillRect(-cell*.26,cell*.27,cell*.52,cell*.10);
+        c.restore();
+      }
+      c.restore();
     } else if (kind === "pond" || kind === "deepPond" || kind === "openOcean") {
       c.fillStyle = "rgba(220,250,255,.18)";
       for (let i=0;i<18;i++) c.fillRect(((i*109)+(frame*3))%width,(i*71)%height,cell*1.8,Math.max(3,cell/5));
@@ -965,7 +969,14 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     c.fillStyle=index%2?theme.snake.main:theme.snake.alt;
     c.fillRect(ox,oy,size,size);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "leucistic") {
+    if (theme.snakeStyle === "dragon") {
+      // Armored dragon body viewed from above: ridge, scales and side spikes.
+      c.fillStyle=index%2?"#a92226":"#c43b2f"; c.fillRect(ox,oy,size,size);
+      c.fillStyle="#6b1119"; c.fillRect(ox+size*.42,oy,size*.16,size);
+      c.fillStyle="#ef9a34"; c.fillRect(ox+size*.15,oy+size*.20,size*.22,size*.22); c.fillRect(ox+size*.62,oy+size*.58,size*.20,size*.20);
+      c.fillStyle="#e7c05d";
+      c.fillRect(ox-size*.10,oy+size*.22,size*.16,size*.18); c.fillRect(ox+size*.94,oy+size*.58,size*.16,size*.18);
+    } else if (theme.snakeStyle === "leucistic") {
       c.fillRect(ox+size*.18,oy+size*.18,size*.28,size*.28); c.fillRect(ox+size*.55,oy+size*.55,size*.25,size*.25);
       c.fillStyle=theme.snake.accent; c.fillRect(ox+size*.42,oy,size*.12,size);
     } else if (theme.snakeStyle === "bamboo") {
@@ -989,7 +1000,14 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     c.fillStyle=theme.snake.main; c.fillRect(x+cell*.08,y+cell*.08,cell*.84,cell*.84);
     c.fillStyle=theme.snake.light; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.58);
     c.fillStyle=theme.snake.dark;
-    if (theme.snakeStyle === "leucistic") {
+    if (theme.snakeStyle === "dragon") {
+      // Large horned dragon head with a gold brow and fiery nostrils.
+      c.fillStyle="#b62b2d"; c.fillRect(x+cell*.04,y+cell*.10,cell*.92,cell*.78);
+      c.fillStyle="#e45a32"; c.fillRect(x+cell*.18,y+cell*.18,cell*.64,cell*.54);
+      c.fillStyle="#f2c552"; c.fillRect(x+cell*.12,y+cell*.02,cell*.18,cell*.30); c.fillRect(x+cell*.70,y+cell*.02,cell*.18,cell*.30);
+      c.fillStyle="#6d1117"; c.fillRect(x+cell*.30,y+cell*.52,cell*.14,cell*.14); c.fillRect(x+cell*.58,y+cell*.52,cell*.14,cell*.14);
+      c.fillStyle="#ff8a2a"; c.fillRect(x+cell*.34,y+cell*.56,cell*.06,cell*.06); c.fillRect(x+cell*.62,y+cell*.56,cell*.06,cell*.06);
+    } else if (theme.snakeStyle === "leucistic") {
       c.fillStyle=theme.snake.accent;
       c.fillRect(x+cell*.18,y+cell*.20,cell*.24,cell*.24);
       c.fillRect(x+cell*.58,y+cell*.54,cell*.22,cell*.22);
@@ -1047,11 +1065,16 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
         c.fillStyle="#f6d85e";c.fillRect(cell*.32,cell*.22,cell*.38,cell*.48);c.fillStyle="#fff4aa";c.fillRect(cell*.38,cell*.08,cell*.26,cell*.22);
         c.fillStyle="#9b6b12";c.fillRect(cell*.18,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.68,cell*.35,cell*.18,cell*.12);c.fillRect(cell*.33,cell*.68,cell*.13,cell*.24);c.fillRect(cell*.56,cell*.68,cell*.13,cell*.24);
       } else {
-        c.fillStyle=pal.skin;c.fillRect(cell*.38,cell*.10,cell*.25,cell*.23);
-        c.fillStyle=pal.hair;c.fillRect(cell*.36,cell*.07,cell*.29,cell*.09);
-        c.fillStyle=pal.shirt;c.fillRect(cell*.31,cell*.31,cell*.40,cell*.34);
-        c.fillStyle=pal.skin;c.fillRect(cell*.10,cell*.36,cell*.24,cell*.12);c.fillRect(cell*.68,cell*.49,cell*.24,cell*.12);
-        c.fillStyle=pal.pants;c.fillRect(cell*.34,cell*.63,cell*.14,cell*.29);c.fillRect(cell*.56,cell*.63,cell*.14,cell*.29);
+        // High-contrast running adventurer, readable at a glance from above.
+        c.fillStyle="rgba(0,0,0,.55)"; c.fillRect(cell*.16,cell*.10,cell*.70,cell*.82);
+        c.fillStyle=pal.skin;c.fillRect(cell*.38,cell*.08,cell*.27,cell*.24);
+        c.fillStyle=pal.hair;c.fillRect(cell*.34,cell*.04,cell*.35,cell*.10);
+        c.fillStyle="#f3e25a"; c.fillRect(cell*.29,cell*.30,cell*.44,cell*.34);
+        c.fillStyle="#d94132"; c.fillRect(cell*.29,cell*.30,cell*.12,cell*.34); c.fillRect(cell*.61,cell*.30,cell*.12,cell*.34);
+        c.fillStyle="#4b2d1d"; c.fillRect(cell*.40,cell*.34,cell*.22,cell*.25); // backpack
+        c.fillStyle=pal.skin;c.fillRect(cell*.08,cell*.34,cell*.27,cell*.13);c.fillRect(cell*.67,cell*.51,cell*.27,cell*.13);
+        c.fillStyle="#2957a4";c.fillRect(cell*.31,cell*.62,cell*.17,cell*.29);c.fillRect(cell*.55,cell*.62,cell*.17,cell*.29);
+        c.fillStyle="#f6f0db"; c.fillRect(cell*.30,cell*.86,cell*.20,cell*.09); c.fillRect(cell*.54,cell*.86,cell*.20,cell*.09);
       }
     } else {
       const kind=pal.kind||"swimmer";
@@ -1139,15 +1162,31 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     drawMenuFish(frame);
   }
 
+  function scheduleNextGoldenKoi(delayMin=45000, delayMax=90000){
+    goldenKoiAvailable=false;
+    goldenKoiVisibleUntil=0;
+    nextGoldenKoiAt=performance.now()+delayMin+Math.random()*(delayMax-delayMin);
+  }
   function initMenuFish(){
     if(menuFish.length) return;
-    for(let i=0;i<13;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:i===0,phase:Math.random()*20});
+    for(let i=0;i<12;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:false,phase:Math.random()*20});
+    menuFish.push({x:-60,y:120,speed:.55,size:27,golden:true,phase:Math.random()*20});
   }
   function drawMenuFish(frame){
-    initMenuFish(); const c=menuCtx;
+    initMenuFish(); const c=menuCtx, now=performance.now();
+    if(!goldenKoiAvailable && now>=nextGoldenKoiAt){
+      goldenKoiAvailable=true;
+      goldenKoiVisibleUntil=now+9000;
+      const gold=menuFish.find(f=>f.golden); if(gold){gold.x=-45;gold.y=70+Math.random()*570;}
+    }
+    if(goldenKoiAvailable && now>goldenKoiVisibleUntil) scheduleNextGoldenKoi();
     menuFish.forEach((f,i)=>{
+      if(f.golden && !goldenKoiAvailable) return;
       f.x += f.speed; f.y += Math.sin(frame*.025+f.phase)*.18;
-      if(f.x>590){f.x=-35;f.y=35+Math.random()*610;}
+      if(f.x>590){
+        if(f.golden){ scheduleNextGoldenKoi(); return; }
+        f.x=-35;f.y=35+Math.random()*610;
+      }
       c.save(); c.translate(f.x,f.y);
       if(f.golden){c.shadowColor="#ffe45d";c.shadowBlur=18+Math.sin(frame*.08)*6;}
       c.fillStyle=f.golden?"#f7cf3e":(i%3===0?"#f07d42":i%3===1?"#f3eee2":"#d75a35");
@@ -1157,28 +1196,21 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
       c.fillStyle="#111";c.fillRect(f.size*.3,-f.size*.1,3,3); c.restore();
     });
   }
-  function launchDragonHoard(){
-    secretDragonSession = true;
-    selectedThemeKey = "dragonHoard";
-    startGame();
-  }
-  ui.secretGoldenKoi?.addEventListener("click", event => {
-    event.preventDefault();
-    event.stopPropagation();
-    launchDragonHoard();
-  });
-
   const menuStage = document.querySelector(".menu-stage");
   menuStage.addEventListener("pointerdown",event=>{
     if(screens.home.classList.contains("hidden")) return;
     const r=menuCanvas.getBoundingClientRect();
     const x=(event.clientX-r.left)*menuCanvas.width/r.width;
     const y=(event.clientY-r.top)*menuCanvas.height/r.height;
-    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<42);
+    const gold=menuFish.find(f=>f.golden && goldenKoiAvailable && Math.hypot(x-f.x,y-f.y)<42);
     if(gold){
       event.preventDefault();
       event.stopPropagation();
-      launchDragonHoard();
+      goldenKoiAvailable=false;
+      goldenKoiVisibleUntil=0;
+      secretDragonSession=true;
+      selectedThemeKey="dragonHoard";
+      startGame();
     }
   }, true);
 
@@ -1249,7 +1281,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     const cards=[...document.querySelectorAll(".theme-card:not(.secret-hidden)")];
     const maxPage=Math.max(0,Math.ceil(cards.length/2)-1);
     collectionPage=Math.max(0,Math.min(collectionPage,maxPage));
-    if(grid) grid.style.transform=`translateX(calc(-${collectionPage * 100}% - ${collectionPage * 14}px))`;
+    if(grid) grid.style.transform=`translateX(-${collectionPage*100}%)`;
     if(ui.collectionPrev) ui.collectionPrev.disabled=collectionPage===0;
     if(ui.collectionNext) ui.collectionNext.disabled=collectionPage===maxPage;
   }
@@ -1327,7 +1359,7 @@ button,input{font:inherit}.hidden{display:none!important}.game-app{width:min(96v
     drawThemePreviews();
     updateLunarControls();
   });
-  ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
+  ui.overlayButton.addEventListener("click",()=>{const action=ui.overlayButton.dataset.action;if(action==="continue") resumeGame(); else if(action==="home") showHome(); else startGame();});
 
 
   document.querySelectorAll(".dpad-button[data-direction]").forEach(button => {

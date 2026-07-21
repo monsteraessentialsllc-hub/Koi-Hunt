@@ -125,7 +125,7 @@
     },
     leucisticCherry: {
       name: "BLUE-EYED LEUCISTIC BALL PYTHON", targetName: "CARDINAL", background: "cherry",
-      snakeStyle: "leucistic", unlockScore: 220, unlockText: "UNLOCK AT 220 POINTS",
+      snakeStyle: "leucistic", unlockScore: 420, unlockText: "UNLOCK AT 420 POINTS",
       preyUnlocks:[0,50,100], preyNames:["RED CARDINAL","WHITE CARDINAL","YELLOW CARDINAL"],
       preyPalettes:[
         {main:"#d92f3b",light:"#ff747d",dark:"#6e1420",beak:"#f2b14d"},
@@ -137,7 +137,7 @@
     },
     rattlesnakeDesert: {
       name: "RATTLESNAKE DESERT", targetName: "DESERT LIZARD", background: "desert",
-      snakeStyle: "rattlesnake", unlockScore: 270, unlockText: "UNLOCK AT 270 POINTS",
+      snakeStyle: "rattlesnake", unlockScore: 260, unlockText: "UNLOCK AT 260 POINTS",
       preyUnlocks:[0,50,100], preyNames:["LIME LIZARD","ORANGE LIZARD","TURQUOISE LIZARD"],
       preyPalettes:[
         {main:"#8dcc42",light:"#d0ef77",dark:"#3d6a22"},
@@ -149,7 +149,7 @@
     },
     giantSeaSnake: {
       name: "GIANT SEA SNAKE", targetName: "SEA PREY", background: "openOcean",
-      snakeStyle: "seaSnake", unlockScore: 330, unlockText: "UNLOCK AT 330 POINTS",
+      snakeStyle: "seaSnake", unlockScore: 340, unlockText: "UNLOCK AT 340 POINTS",
       preyUnlocks:[0,50,100], preyNames:["SWIMMER · PINK SHORTS","SWIMMER · GREEN SHORTS","PUFFERFISH"],
       preyPalettes:[
         {kind:"swimmer",skin:"#9a5d3c",suit:"#f06da9",hair:"#251b18",foam:"#d7f4ff"},
@@ -187,13 +187,16 @@
   let lunarMode = false;
   let menuAnimationId = null;
   let menuFish = [];
+  let goldenKoiAvailable = false;
+  let goldenKoiVisibleUntil = 0;
+  let nextGoldenKoiAt = performance.now() + 45000 + Math.random() * 45000;
   let secretDragonSession = false;
   let animateBackground = localStorage.getItem("koiHuntAnimate") !== "false";
   const bestScores = JSON.parse(localStorage.getItem("koiHuntBestScores") || "{}");
 
   // Progressive world unlocks. Pond starts open; each later world uses a higher score in the previous world.
-  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","leucisticCherry","rattlesnakeDesert","giantSeaSnake"];
-  const completionScores = {anacondaPond:100,bambooBallPython:180,greenTreePython:260,leucisticCherry:340,rattlesnakeDesert:420,giantSeaSnake:500};
+  const worldOrder = ["anacondaPond","bambooBallPython","greenTreePython","rattlesnakeDesert","giantSeaSnake","leucisticCherry"];
+  const completionScores = {anacondaPond:100,bambooBallPython:180,greenTreePython:260,rattlesnakeDesert:340,giantSeaSnake:420,leucisticCherry:500};
   let allLevelsUnlocked = localStorage.getItem("koiHuntUnlockAll") === "true";
 
   function highestScore() {
@@ -297,9 +300,19 @@
   function endGame() {
     stopGame();
     ui.overlayTitle.textContent = "SELF BITTEN";
-    ui.overlayText.textContent = selectedThemeKey==="dragonHoard" && (bestScores.dragonHoard||0)>=300 ? `DRAGON'S HOARD UNLOCKED! SCORE: ${score}` : `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
-    ui.overlayButton.textContent = "PLAY AGAIN";
-    ui.overlayButton.dataset.action = "restart";
+    if(selectedThemeKey==="dragonHoard" && !dragonPermanentlyUnlocked()){
+      secretDragonSession=false;
+      selectedThemeKey="anacondaPond";
+      localStorage.setItem("koiHuntTheme",selectedThemeKey);
+      scheduleNextGoldenKoi(45000,90000);
+      ui.overlayText.textContent = `THE DRAGON LOST THE HOARD. SCORE: ${score} · WAIT FOR THE GOLDEN KOI TO RETURN.`;
+      ui.overlayButton.textContent = "RETURN TO MENU";
+      ui.overlayButton.dataset.action = "home";
+    } else {
+      ui.overlayText.textContent = selectedThemeKey==="dragonHoard" && (bestScores.dragonHoard||0)>=300 ? `DRAGON'S HOARD UNLOCKED! SCORE: ${score}` : `THE SNAKE CAUGHT ITS OWN BODY. SCORE: ${score}`;
+      ui.overlayButton.textContent = "PLAY AGAIN";
+      ui.overlayButton.dataset.action = "restart";
+    }
     ui.overlay.classList.remove("hidden");
   }
 
@@ -488,8 +501,8 @@
     }
     if (kind === "dragonCave") {
       // The entire floor is a dense treasure hoard: coins, swords and chests.
-      c.fillStyle="#4b2a20"; c.fillRect(0,0,width,height);
-      for(let i=0;i<150;i++){
+      c.fillStyle="#8a5a17"; c.fillRect(0,0,width,height);
+      for(let i=0;i<260;i++){
         const x=(i*67+31)%width, y=(i*101+17)%height;
         c.fillStyle=i%3===0?"#ffd65a":i%3===1?"#e5ad2f":"#b97d1d";
         c.fillRect(x,y,cell*.24,cell*.18);
@@ -497,16 +510,16 @@
         c.fillRect(x+cell*.06,y+cell*.03,cell*.08,cell*.05);
       }
       // Treasure chests.
-      for(let i=0;i<18;i++){
+      for(let i=0;i<30;i++){
         const x=(i*149+55)%width, y=(i*83+92)%height;
-        c.fillStyle="#6f351d"; c.fillRect(x,y,cell*.9,cell*.62);
-        c.fillStyle="#9c5127"; c.fillRect(x+cell*.08,y-cell*.16,cell*.74,cell*.28);
-        c.fillStyle="#f2c14d"; c.fillRect(x+cell*.39,y+cell*.18,cell*.14,cell*.25);
-        c.fillStyle="#d89d32"; c.fillRect(x,y+cell*.08,cell*.9,cell*.09);
+        c.fillStyle="#6f351d"; c.fillRect(x,y,cell*1.35,cell*.9);
+        c.fillStyle="#9c5127"; c.fillRect(x+cell*.10,y-cell*.22,cell*1.12,cell*.40);
+        c.fillStyle="#f2c14d"; c.fillRect(x+cell*.58,y+cell*.25,cell*.18,cell*.34);
+        c.fillStyle="#d89d32"; c.fillRect(x,y+cell*.12,cell*1.35,cell*.12);
       }
       // Crossed swords scattered through the gold.
       c.save();
-      for(let i=0;i<24;i++){
+      for(let i=0;i<38;i++){
         const x=(i*113+25)%width, y=(i*157+48)%height;
         c.save(); c.translate(x,y); c.rotate((i%4)*Math.PI/4);
         c.fillStyle="#dfe7ea"; c.fillRect(-cell*.05,-cell*.65,cell*.10,cell*1.05);
@@ -804,15 +817,31 @@
     drawMenuFish(frame);
   }
 
+  function scheduleNextGoldenKoi(delayMin=45000, delayMax=90000){
+    goldenKoiAvailable=false;
+    goldenKoiVisibleUntil=0;
+    nextGoldenKoiAt=performance.now()+delayMin+Math.random()*(delayMax-delayMin);
+  }
   function initMenuFish(){
     if(menuFish.length) return;
-    for(let i=0;i<13;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:i===0,phase:Math.random()*20});
+    for(let i=0;i<12;i++) menuFish.push({x:Math.random()*560,y:Math.random()*680,speed:.35+Math.random()*.7,size:16+Math.random()*12,golden:false,phase:Math.random()*20});
+    menuFish.push({x:-60,y:120,speed:.55,size:27,golden:true,phase:Math.random()*20});
   }
   function drawMenuFish(frame){
-    initMenuFish(); const c=menuCtx;
+    initMenuFish(); const c=menuCtx, now=performance.now();
+    if(!goldenKoiAvailable && now>=nextGoldenKoiAt){
+      goldenKoiAvailable=true;
+      goldenKoiVisibleUntil=now+9000;
+      const gold=menuFish.find(f=>f.golden); if(gold){gold.x=-45;gold.y=70+Math.random()*570;}
+    }
+    if(goldenKoiAvailable && now>goldenKoiVisibleUntil) scheduleNextGoldenKoi();
     menuFish.forEach((f,i)=>{
+      if(f.golden && !goldenKoiAvailable) return;
       f.x += f.speed; f.y += Math.sin(frame*.025+f.phase)*.18;
-      if(f.x>590){f.x=-35;f.y=35+Math.random()*610;}
+      if(f.x>590){
+        if(f.golden){ scheduleNextGoldenKoi(); return; }
+        f.x=-35;f.y=35+Math.random()*610;
+      }
       c.save(); c.translate(f.x,f.y);
       if(f.golden){c.shadowColor="#ffe45d";c.shadowBlur=18+Math.sin(frame*.08)*6;}
       c.fillStyle=f.golden?"#f7cf3e":(i%3===0?"#f07d42":i%3===1?"#f3eee2":"#d75a35");
@@ -828,10 +857,12 @@
     const r=menuCanvas.getBoundingClientRect();
     const x=(event.clientX-r.left)*menuCanvas.width/r.width;
     const y=(event.clientY-r.top)*menuCanvas.height/r.height;
-    const gold=menuFish.find(f=>f.golden && Math.hypot(x-f.x,y-f.y)<42);
+    const gold=menuFish.find(f=>f.golden && goldenKoiAvailable && Math.hypot(x-f.x,y-f.y)<42);
     if(gold){
       event.preventDefault();
       event.stopPropagation();
+      goldenKoiAvailable=false;
+      goldenKoiVisibleUntil=0;
       secretDragonSession=true;
       selectedThemeKey="dragonHoard";
       startGame();
@@ -983,7 +1014,7 @@
     drawThemePreviews();
     updateLunarControls();
   });
-  ui.overlayButton.addEventListener("click",()=>ui.overlayButton.dataset.action==="continue"?resumeGame():startGame());
+  ui.overlayButton.addEventListener("click",()=>{const action=ui.overlayButton.dataset.action;if(action==="continue") resumeGame(); else if(action==="home") showHome(); else startGame();});
 
 
   document.querySelectorAll(".dpad-button[data-direction]").forEach(button => {
